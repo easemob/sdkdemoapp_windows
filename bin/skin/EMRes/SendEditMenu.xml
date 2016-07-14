@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+  <Default name="Menu" value="inset=&quot;2,2,2,2&quot; itemtextpadding=&quot;30,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='30,8,8,8'&quot; hole=&quot;false&quot; itemselectedtextcolor=&quot;#FFFFFFFF&quot; itemselectedimage=&quot;menu_selected.png&quot;" />
+  <Menu>
+    <MenuElement name="Menu_Cut" text=" 剪切(&amp;T) "  />
+    <MenuElement name="Menu_Copy" text=" 复制(&amp;C) " />
+    <MenuElement name="Menu_Paste" text=" 粘贴(&amp;P) " />
+    <MenuElement name="Menu_SelAll" text=" 全部选择(&amp;A)" />
+    <MenuElement text="" height="3" enabled="false">
+      <HorizontalLayout>
+        <Label width="26"/>
+        <Label bkimage="file='menu_separtor.png'"/>
+        <Label width="8"/>
+      </HorizontalLayout>
+    </MenuElement>
+    <MenuElement name="Menu_SaveAs" text=" 另存为(&amp;S)... " />
+    <MenuElement text="" height="3" enabled="false">
+      <HorizontalLayout>
+        <Label width="26"/>
+        <Label bkimage="file='menu_separtor.png'"/>
+        <Label width="8"/>
+      </HorizontalLayout>
+    </MenuElement>
+    <MenuElement name="Menu_Font" text=" 字体(&amp;F) " />
+  </Menu>
+</Window>

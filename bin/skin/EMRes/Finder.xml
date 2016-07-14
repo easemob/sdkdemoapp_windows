@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="430,330" mininfo="200,300" caption="0,0,0,40" sizebox="4,4,4,4" roundcorner="4,4,4,4">
+  <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
+  <Font id="1" name="微软雅黑" size="12" bold="true"/>
+<Default name="VScrollBar" value="button1normalimage=&quot;file='scrollbar.png' source='0,0,16,16'&quot; button1hotimage=&quot;file='scrollbar.png' source='16,0,32,16,16'&quot; button1pushedimage=&quot;file='scrollbar.png' source='32,0,48,16'&quot; button2normalimage=&quot;file='scrollbar.png' source='0,32,16,48'&quot; button2hotimage=&quot;file='scrollbar.png' source='16,32,32,48'&quot; button2pushedimage=&quot;file='scrollbar.png' source='32,32,48,48'&quot; thumbnormalimage=&quot;file='scrollbar.png' source='0,48,16,64' corner='0,2,0,2'&quot; thumbhotimage=&quot;file='scrollbar.png' source='16,48,32,64' corner='0,2,0,2'&quot; thumbpushedimage=&quot;file='scrollbar.png' source='32,48,48,64' corner='0,2,0,2'&quot; bknormalimage=&quot;file='scrollbar.png' source='0,16,16,32'&quot;" />
+<HorizontalLayout name="bg" bkimage="file='bg0.png' corner='600,200,1,1'" hole="true">
+	<VerticalLayout bkimage="file='border.png' corner='5,5,5,5'" inset="1,0,1,1" hole="true">
+		<HorizontalLayout height="52">
+			<VerticalLayout width="60" inset="10,2,0,0">
+				<Label text="查找好友" textcolor="#FFFFFFFF"/>
+			</VerticalLayout>
+			<VerticalLayout>
+			</VerticalLayout>
+
+			<VerticalLayout width="94">
+				<Button name="closebtn" float="true" pos="56,0,95,19" width="39" height="19" maxheight="19" maxwidth="39"  normalimage="file='btn_close_normal.png'" hotimage="btn_close_highlight.png" pushedimage="btn_close_down.png"  />
+			</VerticalLayout>
+		</HorizontalLayout>
+		<VerticalLayout bkcolor="#55444444" inset="10,10,10,10">
+			<HorizontalLayout height="125" childpadding="5">
+				<VerticalLayout inset="0,5,5,10" childpadding="5">
+					<Label height="22" bkcolor="#00000000" text="账号：" textcolor="#FFDDDDDD" align="left"/>
+					<Edit name="accountedit" tooltip="请输入对方账号"/>
+					<Label height="22" bkcolor="#00000000" text="验证消息" textcolor="#FFDDDDDD" align="left"/>
+					<Edit name="invite_msg" tooltip="请输入验证消息"/>
+				</VerticalLayout>
+				<VerticalLayout inset="0,5,5,10" childpadding="5" width="40">
+					<VerticalLayout>
+					</VerticalLayout>
+					<Button name="findbtn" height="32" bkcolor="#FF09A3DC" text="查找" textcolor="#FFFFFFFF"/>
+				</VerticalLayout>
+			</HorizontalLayout>
+			<HorizontalLayout height="30" childpadding="5" visible="false" name="result_add">
+				<Button name="result" height="32" bkcolor="#00000000" text="Result" textcolor="#FFFFFFFF" align="left"/>
+				<Button name="addbtn" width="60" height="32" bkcolor="#FF09A3DC" text="添加好友" textcolor="#FFFFFFFF"/>
+			</HorizontalLayout>
+		</VerticalLayout>
+	</VerticalLayout>
+</HorizontalLayout>
+</Window>

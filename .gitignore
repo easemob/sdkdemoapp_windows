@@ -1,0 +1,27 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.sbr
+*.idb
+emsdkdemo/Debug/color_skin.obj
+*.obj
+emsdkdemo/Debug/emsdkdemo.map
+*.pdb
+*.ncb
+DuiLib.suo
+*.pch
+*.bsc
+*.user
+emsdkdemo/Debug/mt.dep
+*.dep
+*.map

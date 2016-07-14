@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="330,200" mininfo="200,300" caption="0,0,0,40" sizebox="4,4,4,4" roundcorner="4,4,4,4">
+  <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
+  <Font id="1" name="微软雅黑" size="12" bold="true"/>
+<Default name="VScrollBar" value="button1normalimage=&quot;file='scrollbar.png' source='0,0,16,16'&quot; button1hotimage=&quot;file='scrollbar.png' source='16,0,32,16,16'&quot; button1pushedimage=&quot;file='scrollbar.png' source='32,0,48,16'&quot; button2normalimage=&quot;file='scrollbar.png' source='0,32,16,48'&quot; button2hotimage=&quot;file='scrollbar.png' source='16,32,32,48'&quot; button2pushedimage=&quot;file='scrollbar.png' source='32,32,48,48'&quot; thumbnormalimage=&quot;file='scrollbar.png' source='0,48,16,64' corner='0,2,0,2'&quot; thumbhotimage=&quot;file='scrollbar.png' source='16,48,32,64' corner='0,2,0,2'&quot; thumbpushedimage=&quot;file='scrollbar.png' source='32,48,48,64' corner='0,2,0,2'&quot; bknormalimage=&quot;file='scrollbar.png' source='0,16,16,32'&quot;" />
+<HorizontalLayout name="bg" bkimage="file='bg0.png' corner='600,200,1,1'" hole="true">
+	<VerticalLayout bkimage="file='border.png' corner='5,5,5,5'" inset="1,0,1,1" hole="true">
+		<HorizontalLayout height="52">
+			<VerticalLayout width="60" inset="10,2,0,0">
+				<Label text="个人资料" textcolor="#FFFFFFFF"/>
+			</VerticalLayout>
+			<VerticalLayout>
+			</VerticalLayout>
+
+			<VerticalLayout width="94">
+				<Button name="closebtn" float="true" pos="56,0,95,19" width="39" height="19" maxheight="19" maxwidth="39"  normalimage="file='btn_close_normal.png'" hotimage="btn_close_highlight.png" pushedimage="btn_close_down.png"  />
+			</VerticalLayout>
+		</HorizontalLayout>
+		<VerticalLayout bkcolor="#55444444" inset="10,10,10,10">
+			<VerticalLayout height="125" childpadding="5">
+				<VerticalLayout inset="0,5,5,10" childpadding="5">
+					<Label name="result" height="22" bkcolor="#00000000" text="昵称：" textcolor="#FFDDDDDD" align="left"/>
+					<Edit name="nicknameedit" tooltip="请输入新昵称"/>
+				</VerticalLayout>
+				<HorizontalLayout inset="0,5,5,10" childpadding="5" height="40">
+					<VerticalLayout>
+					</VerticalLayout>
+					<Button name="okbtn" width="42" bkcolor="#FF09A3DC" text="确定" textcolor="#FFFFFFFF"/>
+					<Button name="cancelbtn" width="42" bkcolor="#FF09A3DC" text="取消" textcolor="#FFFFFFFF"/>
+				</HorizontalLayout>
+			</VerticalLayout>
+		</VerticalLayout>
+	</VerticalLayout>
+</HorizontalLayout>
+</Window>

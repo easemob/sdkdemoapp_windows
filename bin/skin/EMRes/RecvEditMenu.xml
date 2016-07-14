@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+  <Default name="Menu" value="inset=&quot;2,2,2,2&quot; itemtextpadding=&quot;30,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='30,8,8,8'&quot; hole=&quot;false&quot; itemselectedtextcolor=&quot;#FFFFFFFF&quot; itemselectedimage=&quot;menu_selected.png&quot;" />
+  <Menu>
+    <MenuElement name="Menu_Copy" text=" 复制(&amp;C) " />
+    <MenuElement name="Menu_SelAll" text=" 全部选择(&amp;A) " />
+    <MenuElement text="" height="3" enabled="false">
+      <HorizontalLayout>
+        <Label width="26"/>
+        <Label bkimage="file='menu_separtor.png'"/>
+        <Label width="8"/>
+      </HorizontalLayout>
+    </MenuElement>
+    <MenuElement text=" 显示比例 " >
+      <HorizontalLayout>
+        <Label />
+        <Label width="20" bkimage="file='menu_arrow.png' dest='0,7,5,16'"/>
+      </HorizontalLayout>
+      <MenuElement name="Menu_ZoomRatio_400" text=" 400% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+      <MenuElement name="Menu_ZoomRatio_200" text=" 200% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+      <MenuElement name="Menu_ZoomRatio_150" text=" 150% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+      <MenuElement name="Menu_ZoomRatio_125" text=" 125% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+      <MenuElement name="Menu_ZoomRatio_100" text=" 100% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+      <MenuElement name="Menu_ZoomRatio_75" text=" 75% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+      <MenuElement name="Menu_ZoomRatio_50" text=" 50% " checkimg="file='menu_check.png' dest='4,4,20,20'" />
+    </MenuElement>
+    <MenuElement name="Menu_SaveAs" text=" 另存为(&amp;S)... " />
+    <MenuElement text="" height="3" enabled="false">
+      <HorizontalLayout>
+        <Label width="26"/>
+        <Label bkimage="file='menu_separtor.png'"/>
+        <Label width="8"/>
+      </HorizontalLayout>
+    </MenuElement>
+    <MenuElement name="Menu_Clear" text=" 清屏 " />
+  </Menu>
+</Window>
