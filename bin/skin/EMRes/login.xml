@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="430,330" mininfo="200,300" caption="0,0,0,40" sizebox="0,0,0,0" roundcorner="0,0,0,0">
+  <Font id="0" name="微软雅黑" size="12" bold="false" default="true" />
+  <Font id="1" name="微软雅黑" size="12" bold="true"/>
+<Default name="VScrollBar" value="button1normalimage=&quot;file='scrollbar.png' source='0,0,16,16'&quot; button1hotimage=&quot;file='scrollbar.png' source='16,0,32,16,16'&quot; button1pushedimage=&quot;file='scrollbar.png' source='32,0,48,16'&quot; button2normalimage=&quot;file='scrollbar.png' source='0,32,16,48'&quot; button2hotimage=&quot;file='scrollbar.png' source='16,32,32,48'&quot; button2pushedimage=&quot;file='scrollbar.png' source='32,32,48,48'&quot; thumbnormalimage=&quot;file='scrollbar.png' source='0,48,16,64' corner='0,2,0,2'&quot; thumbhotimage=&quot;file='scrollbar.png' source='16,48,32,64' corner='0,2,0,2'&quot; thumbpushedimage=&quot;file='scrollbar.png' source='32,48,48,64' corner='0,2,0,2'&quot; bknormalimage=&quot;file='scrollbar.png' source='0,16,16,32'&quot;" />
+<HorizontalLayout name="bg" bkimage="file='bg_login.png' corner='600,200,1,1'" hole="false">
+	<VerticalLayout >
+		<HorizontalLayout height="182">
+			<VerticalLayout inset="2,6,2,0">
+			</VerticalLayout>
+			<VerticalLayout width="94">
+				<Button name="closebtn" float="true" pos="56,0,95,19" width="39" height="19" maxheight="19" maxwidth="39"  normalimage="file='btn_close_normal.png'" hotimage="btn_close_highlight.png" pushedimage="btn_close_down.png"  />
+			</VerticalLayout>
+		</HorizontalLayout>
+		<HorizontalLayout height="105">
+			<VerticalLayout width="130" inset="35,6,0,0">
+				<Button name="logo" width="90" height="90"  bkimage="file='man_big.png' corner='5,5,5,5'"/>
+			</VerticalLayout>
+			<VerticalLayout width="200" inset="10,15,5,10" childpadding="5">
+				<Edit name="accountedit" width="180" tooltip="请在这里输入您的账号"/>
+				<Edit name="pwedit" width="180" password="true" tooltip="请在这里输入您的密码"/>
+				<HorizontalLayout height="25">
+					<Option name="save_password" text="记住密码" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='checkbox.png' restype='png' dest='0,5,15,20'" hotimage="file='checkbox_h.png' restype='png' dest='0,5,15,20'" selectedimage="file='checkbox_p.png' dest='0,5,15,20'"/>
+					<Option name="auto_login" text="自动登录" height="25" textpadding="20,0,0,0" align="left"  normalimage="file='checkbox.png' restype='png' dest='0,5,15,20'" hotimage="file='checkbox_h.png' restype='png' dest='0,5,15,20'" selectedimage="file='checkbox_p.png' dest='0,5,15,20'"/>
+				</HorizontalLayout>
+			</VerticalLayout>
+		</HorizontalLayout>
+		<HorizontalLayout height="50" inset="133,0,0,0" childpadding="10">
+			<Button name="loginbtn" width="123" height="32" bkcolor="#FF09A3DC" text="登录" textcolor="#FFFFFFFF"/>
+			<Button name="signupbtn" width="60" height="32" bkcolor="#FF09A3DC" text="注册" textcolor="#FFFFFFFF"/>
+		</HorizontalLayout>
+
+	</VerticalLayout>
+</HorizontalLayout>
+</Window>

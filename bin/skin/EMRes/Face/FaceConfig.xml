@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<faceconfig row ="8" col="15" item_width="28" item_height="28" zoom_width ="84" zoom_height ="84">
+	<face id="1" tip="[):]" file="face/ee_1.png" emoticon="[):]"></face>
+	<face id="2" tip="[:D]" file="face/ee_2.png" emoticon="[:D]"></face>
+	<face id="3" tip="[;)]" file="face/ee_3.png" emoticon="[;)]"></face>
+	<face id="4" tip="[:-o]" file="face/ee_4.png" emoticon="[:-o]"></face>
+	<face id="5" tip="[:p]" file="face/ee_5.png" emoticon="[:p]"></face>
+	<face id="6" tip="[(H)]" file="face/ee_6.png" emoticon="[(H)]"></face>
+	<face id="7" tip="[:@]" file="face/ee_7.png" emoticon="[:@]"></face>
+	<face id="8" tip="[:s]" file="face/ee_8.png" emoticon="[:s]"></face>
+	<face id="9" tip="[:$]" file="face/ee_9.png" emoticon="[:$]"></face>
+	<face id="10" tip="[:(]" file="face/ee_10.png" emoticon="[:(]"></face>
+	<face id="11" tip="[:'(]" file="face/ee_11.png" emoticon="[:'(]"></face>
+	<face id="12" tip="[:|]" file="face/ee_12.png" emoticon="[:|]"></face> 
+	<face id="13" tip="[(a)]" file="face/ee_13.png" emoticon="[(a)]"></face>
+	<face id="14" tip="[8o|]" file="face/ee_14.png" emoticon="[8o|]"></face>
+	<face id="15" tip="[8-|]" file="face/ee_15.png" emoticon="[8-|]"></face>
+	<face id="16" tip="[+o(]" file="face/ee_16.png" emoticon="[+o(]"></face>
+	<face id="17" tip="[&lt;o)]" file="face/ee_17.png" emoticon="[&lt;o)]"></face>
+	<face id="18" tip="[|-)]" file="face/ee_18.png" emoticon="[|-)]"></face>
+	<face id="19" tip="[*-)]" file="face/ee_19.png" emoticon="[*-)]"></face>
+	<face id="20" tip="[:-#]" file="face/ee_20.png" emoticon="[:-#]"></face>
+	<face id="21" tip="[:-*]" file="face/ee_21.png" emoticon="[:-*]"></face>
+	<face id="22" tip="[^o)]" file="face/ee_22.png" emoticon="[^o)]"></face>
+	<face id="23" tip="[8-)]" file="face/ee_23.png" emoticon="[8-)]"></face>
+	<face id="24" tip="[(|)]" file="face/ee_24.png" emoticon="[(|)]"></face>
+	<face id="25" tip="[(u)]" file="face/ee_25.png" emoticon="[(u)]"></face>
+	<face id="26" tip="[(S)]" file="face/ee_26.png" emoticon="[(S)]"></face>
+	<face id="27" tip="[(*)]" file="face/ee_27.png" emoticon="[(*)]"></face>
+	<face id="28" tip="[(#)]" file="face/ee_28.png" emoticon="[(#)]"></face>
+	<face id="29" tip="[(R)]" file="face/ee_29.png" emoticon="[(R)]"></face>
+	<face id="30" tip="[({)]" file="face/ee_30.png" emoticon="[({)]"></face>
+	<face id="31" tip="[(})]" file="face/ee_31.png" emoticon="[(})]"></face>
+	<face id="32" tip="[(k)]" file="face/ee_32.png" emoticon="[(k)]"></face>
+	<face id="33" tip="[(F)]" file="face/ee_33.png" emoticon="[(F)]"></face>
+	<face id="34" tip="[(W)]" file="face/ee_34.png" emoticon="[(W)]"></face>
+	<face id="35" tip="[(D)]" file="face/ee_35.png" emoticon="[(D)]"></face>
+  
+</faceconfig>

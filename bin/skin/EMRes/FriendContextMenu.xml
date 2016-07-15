@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+  <Default name="Menu" value="inset=&quot;2,2,2,2&quot; itemtextpadding=&quot;30,0,0,0&quot; bkimage=&quot;file='menu_bk.png' corner='30,8,8,8'&quot; hole=&quot;false&quot; itemselectedtextcolor=&quot;#FFFFFFFF&quot; itemselectedimage=&quot;menu_selected.png&quot;" />
+  <Menu>
+    <MenuElement name="Menu_Delete" text="删除好友" />
+    <MenuElement name="Menu_Ban" text="加入黑名单" />
+    <MenuElement name="Menu_UnBan" text="移出黑名单" />
+  </Menu>
+</Window>
