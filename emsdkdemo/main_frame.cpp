@@ -296,6 +296,7 @@ MainFrame::~MainFrame()
 	}
 	else
 	{
+		g_client->logout();
 		PostQuitMessage(0);
 	}
 }

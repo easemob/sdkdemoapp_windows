@@ -240,8 +240,8 @@
       <HeaderFileName />
     </Midl>
     <ClCompile>
-      <Optimization>MinSpace</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -251,10 +251,11 @@
       <PrecompiledHeaderOutputFile>.\Release_u/emsdkdemo.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>.\Release_u/</AssemblerListingLocation>
       <ObjectFileName>.\Release_u/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release_u/</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>.\Release_u/$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalIncludeDirectories>..\3rd_party\jsoncpp-src-0.5.0\include;..\include\easemobsdk;.;</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
