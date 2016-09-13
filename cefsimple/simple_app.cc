@@ -40,9 +40,43 @@ void SimpleApp::OnContextInitialized() {
       CefCommandLine::GetGlobalCommandLine();
   url = command_line->GetSwitchValue("url");
   if (url.empty())
-    url = "http://www.google.com";
+    url = "http://webim.easemob.com";
 
   // Create the first browser window.
   CefBrowserHost::CreateBrowser(window_info, handler.get(), url,
                                 browser_settings, NULL);
+}
+
+void SimpleApp::OnRenderThreadCreated(CefRefPtr<CefListValue> extra_info) {
+	js_render_delegate_ = new EasemobCefMessageRouterRendererSideDelegate();
+}
+
+void SimpleApp::OnWebKitInitialized()
+{
+	js_render_delegate_->OnWebKitInitialized(this);
+}
+
+void SimpleApp::OnContextCreated(CefRefPtr<CefBrowser> browser,
+	CefRefPtr<CefFrame> frame,
+	CefRefPtr<CefV8Context> context) {
+	js_render_delegate_->OnContextCreated(this, browser, frame, context);
+}
+
+void SimpleApp::OnContextReleased(CefRefPtr<CefBrowser> browser,
+	CefRefPtr<CefFrame> frame,
+	CefRefPtr<CefV8Context> context) {
+	js_render_delegate_->OnContextCreated(this, browser, frame, context);
+}
+
+bool SimpleApp::OnProcessMessageReceived(
+	CefRefPtr<CefBrowser> browser,
+	CefProcessId source_process,
+	CefRefPtr<CefProcessMessage> message) {
+	DCHECK_EQ(source_process, PID_BROWSER);
+
+	bool handled = false;
+	handled = js_render_delegate_->OnProcessMessageReceived(this, browser, source_process,
+		message);
+
+	return handled;
 }

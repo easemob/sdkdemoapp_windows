@@ -12,6 +12,14 @@ set(CEFSIMPLE_SRCS
   simple_app.h
   simple_handler.cc
   simple_handler.h
+  Devtool.cpp
+  Devtool.h
+  DevtoolClient.cpp
+  DevtoolClient.h
+  EasemobCefMessageRouterBrowserSideDelegate.cpp
+  EasemobCefMessageRouterBrowserSideDelegate.h
+  EasemobCefMessageRouterRendererSideDelegate.cpp
+  EasemobCefMessageRouterRendererSideDelegate.h
   )
 set(CEFSIMPLE_SRCS_LINUX
   cefsimple_linux.cc
