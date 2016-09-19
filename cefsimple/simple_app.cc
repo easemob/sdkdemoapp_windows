@@ -10,6 +10,17 @@
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
 #include "include/wrapper/cef_helpers.h"
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
+std::wstring GetRunPath()
+{
+	WCHAR szEXEPath[MAX_PATH] = { 0 };
+	GetModuleFileNameW(NULL, szEXEPath, MAX_PATH);
+	PathRemoveFileSpecW(szEXEPath);
+
+	return std::wstring(szEXEPath);
+}
 
 SimpleApp::SimpleApp() {
 }
@@ -32,7 +43,7 @@ void SimpleApp::OnContextInitialized() {
   // Specify CEF browser settings here.
   CefBrowserSettings browser_settings;
 
-  std::string url;
+  std::wstring url;
 
   // Check if a "--url=" value was provided via the command-line. If so, use
   // that instead of the default URL.
@@ -40,7 +51,10 @@ void SimpleApp::OnContextInitialized() {
       CefCommandLine::GetGlobalCommandLine();
   url = command_line->GetSwitchValue("url");
   if (url.empty())
-    url = "http://webim.easemob.com";
+  {
+	  url = GetRunPath();
+	  url += L"\\res\\index.html";
+  }
 
   // Create the first browser window.
   CefBrowserHost::CreateBrowser(window_info, handler.get(), url,

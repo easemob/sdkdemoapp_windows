@@ -20,6 +20,29 @@ set(CEFSIMPLE_SRCS
   EasemobCefMessageRouterBrowserSideDelegate.h
   EasemobCefMessageRouterRendererSideDelegate.cpp
   EasemobCefMessageRouterRendererSideDelegate.h
+  application.h
+  application.cpp
+  EasemobCefQueryHandler.h
+  EasemobCefQueryHandler.cpp
+  ChatListener.h
+  ChatListener.cpp
+  ContactListener.h
+  ContactListener.cpp
+  json/autolink.h
+  json/config.h
+  json/json_internalarray.inl
+  json/features.h
+  json/forwards.h
+  json/json.h
+  json/json_batchallocator.h
+  json/reader.h
+  json/value.h
+  json/writer.h
+  json/json_reader.cpp
+  json/json_value.cpp
+  json/json_writer.cpp
+  json/json_internalmap.inl
+  json/json_valueiterator.inl
   )
 set(CEFSIMPLE_SRCS_LINUX
   cefsimple_linux.cc
@@ -78,7 +101,7 @@ set(CEFSIMPLE_RESOURCES_SRCS
   ${CEFSIMPLE_RESOURCES_MAC_ENGLISH_LPROJ_SRCS}
   )
 
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/json)
 #
 # Shared configuration.
 #
@@ -91,6 +114,8 @@ endif()
 
 # Logical target used to link the libcef library.
 ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
+
+ADD_LOGICAL_TARGET("easemob_lib" "${EASEMOB_LIB_DEBUG}" "${EASEMOB_LIB_RELEASE}")
 
 # Determine the target output directory.
 SET_CEF_TARGET_OUT_DIR()
@@ -187,7 +212,7 @@ if(OS_WINDOWS)
   # Executable target.
   add_executable(${CEF_TARGET} WIN32 ${CEFSIMPLE_SRCS})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
-  target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
+  target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper easemob_lib  ${CEF_STANDARD_LIBS})
 
   if(USE_SANDBOX)
     # Logical target used to link the cef_sandbox library.
