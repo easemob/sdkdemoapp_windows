@@ -25,6 +25,7 @@ public:
 		const CefString& request,bool persistent,
 		CefRefPtr<Callback> callback) override;
 	void Login(Json::Value& json, CefRefPtr<Callback> callback);
+	void createAccount(Json::Value& json, CefRefPtr<Callback> callback);
 	void Logout(Json::Value& json, CefRefPtr<Callback> callback);
 	void getRoster(Json::Value& json, CefRefPtr<Callback> callback);
 	void getGroup(Json::Value& json, CefRefPtr<Callback> callback);
