@@ -1,0 +1,1 @@
+Download WIndows SDK package from http://www.easemob.com/download/im, and uncompress "include" directory to current directory.

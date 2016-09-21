@@ -170,6 +170,7 @@ include("macros")
 
 # Source include directory.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/easemobsdk_include/include)
 
 # Allow C++ programs to use stdint.h macros specified in the C99 standard that
 # aren't in the C++ standard (e.g. UINT8_MAX, INT64_MIN, etc).
@@ -380,7 +381,7 @@ endif()
 
 if(OS_WINDOWS)
   # Consumers who run into LNK4099 warnings can pass /Z7 instead (see issue #385).
-  set(CEF_DEBUG_INFO_FLAG "/Zi" CACHE STRING "Optional flag specifying specific /Z flag to use")
+  set(CEF_DEBUG_INFO_FLAG "/ZI" CACHE STRING "Optional flag specifying specific /Z flag to use")
 
   # Platform-specific compiler/linker flags.
   set(CEF_LIBTYPE                 STATIC)
@@ -396,19 +397,20 @@ if(OS_WINDOWS)
   # /wd"4701"             = Ignore "potentially uninitialized local variable" warning
   # /wd"4702"             = Ignore "unreachable code" warning
   # /wd"4996"             = Ignore "function or variable may be unsafe" warning
-  set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /W4 /WX /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\" ${CEF_DEBUG_INFO_FLAG}")
+  set(CEF_COMPILER_FLAGS          "/MP /Gy /W4 /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\" ${CEF_DEBUG_INFO_FLAG}")
   # /MTd                  = Multithreaded debug runtime
   # /Od                   = Disable optimizations
   # /RTC1                 = Enable basic run-time checks
-  set(CEF_COMPILER_FLAGS_DEBUG    "/MTd /RTC1 /Od")
+  set(CEF_COMPILER_FLAGS_DEBUG    "/MDd /RTC1 /Od")
   # /MT                   = Multithreaded release runtime
   # /O2                   = Optimize for maximum speed
   # /Ob2                  = Inline any suitable function
   # /GF                   = Enable string pooling
   # /D NDEBUG /D _NDEBUG  = Not a debug build
-  set(CEF_COMPILER_FLAGS_RELEASE  "/MT /O2 /Ob2 /GF /D NDEBUG /D _NDEBUG")
+  set(CEF_COMPILER_FLAGS_RELEASE  "/MD /Od /Ob0 /GF /D NDEBUG /D _NDEBUG")
   # /DEBUG                = Generate debug information
   set(CEF_LINKER_FLAGS_DEBUG      "/DEBUG")
+  set(CEF_LINKER_FLAGS_RELEASE      "/DEBUG")
   # /MANIFEST:NO          = No default manifest (see ADD_WINDOWS_MANIFEST macro usage)
   set(CEF_EXE_LINKER_FLAGS        "/MANIFEST:NO")
 
@@ -435,11 +437,15 @@ if(OS_WINDOWS)
   set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.lib")
   set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.lib")
 
+  set(EASEMOB_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/easemob_ud.lib")
+  set(EASEMOB_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/easemob_u.lib")
+
   # List of CEF binary files.
   set(CEF_BINARY_FILES
     d3dcompiler_43.dll
     d3dcompiler_47.dll
     libcef.dll
+	libcurl.dll
     libEGL.dll
     libGLESv2.dll
     natives_blob.bin
