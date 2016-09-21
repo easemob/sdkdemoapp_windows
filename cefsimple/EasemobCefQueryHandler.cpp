@@ -71,6 +71,10 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 			{
 				Login(json, callback);
 			}
+			else if (type == std::string("createAccount"))
+			{
+				createAccount(json, callback);
+			}
 			else if (type == std::string("logout"))
 			{
 				Logout(json, callback);
@@ -167,7 +171,31 @@ void EasemobCefQueryHandler::Login(Json::Value& json, CefRefPtr<Callback> callba
 		}
 		else
 		{
-			callback->Failure(error->mErrorCode, "");
+			callback->Failure(error->mErrorCode, error->mDescription);
+		}
+	}
+}
+
+void EasemobCefQueryHandler::createAccount(Json::Value& json, CefRefPtr<Callback> callback)
+{
+	Json::Value defaultValue;
+	if (json.get("id", defaultValue).isString() && json.get("password", defaultValue).isString())
+	{
+		EMErrorPtr error = g_client->createAccount(json.get("id", defaultValue).asString(), json.get("password", defaultValue).asString());
+		if (error->mErrorCode == EMError::EM_NO_ERROR)
+		{
+			mChatListener = new ChatListener();
+			g_client->getChatManager().addListener(mChatListener);
+			mContactListener = new ContactListener();
+			g_client->getContactManager().registerContactListener(mContactListener);
+			mConnectionListener = new ConnectionListener();
+			g_client->addConnectionListener(mConnectionListener);
+
+			callback->Success("Sign up Ok");
+		}
+		else
+		{
+			callback->Failure(error->mErrorCode, error->mDescription);
 		}
 	}
 }
