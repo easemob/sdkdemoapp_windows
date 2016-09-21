@@ -28,6 +28,8 @@ set(CEFSIMPLE_SRCS
   ChatListener.cpp
   ContactListener.h
   ContactListener.cpp
+  ConnectionListener.h
+  ConnectionListener.cpp
   json/autolink.h
   json/config.h
   json/json_internalarray.inl

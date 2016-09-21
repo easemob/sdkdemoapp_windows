@@ -7,6 +7,9 @@
 #include "application.h"
 #include <emclient.h>
 #include <emlogininfo.h>
+#include "ChatListener.h"
+#include "ContactListener.h"
+#include "ConnectionListener.h"
 
 using namespace easemob;
 using namespace std;
@@ -28,6 +31,7 @@ public:
 	void getChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void joinChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void quitChatroom(Json::Value& json, CefRefPtr<Callback> callback);
+	void groupMembers(Json::Value& json, CefRefPtr<Callback> callback);
 	void addFriend(Json::Value& json, CefRefPtr<Callback> callback);
 	void delFriend(Json::Value& json, CefRefPtr<Callback> callback);
 	void acceptInvitation(Json::Value& json, CefRefPtr<Callback> callback);
@@ -37,4 +41,8 @@ public:
 
 private:
 	EMCallbackObserverHandle m_coh;
+
+	ChatListener *mChatListener;
+	ContactListener * mContactListener;
+	ConnectionListener *mConnectionListener;
 };

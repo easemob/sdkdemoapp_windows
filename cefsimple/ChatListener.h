@@ -1,7 +1,5 @@
 #pragma once
 #include "emchatmanager_listener.h"
-#include "simple_handler.h"
-#include <sstream>
 #include "atlstr.h"
 #include <message/emtextmessagebody.h>
 #include <message/emcmdmessagebody.h>
@@ -25,7 +23,6 @@ public:
 	{
 	}
 
-	void CallJS(const std::stringstream & stream);
 	virtual void onReceiveMessages(const EMMessageList &messages);
 
 private:

@@ -1,23 +1,5 @@
 #include "ChatListener.h"
-
-void ChatListener::CallJS(const std::stringstream & stream)
-{
-	std::string strJSCall = stream.str();
-
-	SimpleHandler *sh = SimpleHandler::GetInstance();
-	if (sh != NULL)
-	{
-		CefRefPtr<CefBrowser> browser = sh->GetBrowser();
-		if (browser.get())
-		{
-			CefRefPtr<CefFrame> frame = browser->GetMainFrame();
-			if (frame.get())
-			{
-				frame->ExecuteJavaScript(strJSCall.c_str(), L"", 0);
-			}
-		}
-	}
-}
+#include "application.h"
 
 string GetPathForWebPage(const string& localPath)
 {
@@ -51,7 +33,9 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 		{
 			EMTextMessageBodyPtr body = std::dynamic_pointer_cast<EMTextMessageBody, EMMessageBody>(_body);
 			std::stringstream stream;
-			stream << "Demo.conn.onTextMessage('{id: \"234627367585187824\",type : \"";
+			stream << "Demo.conn.onTextMessage('{id: \"";
+			stream << msg->msgId();
+			stream << "\",type : \"";
 			stream << sChatType;
 			stream << "\", from : \"";
 			stream << msg->from();
@@ -60,7 +44,7 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 			stream << "\",data : \"";
 			stream << body->text();
 			stream << "\",ext : \"\"}');";
-			CallJS(stream);
+			Utils::CallJS(stream);
 			break;
 		}
 		case EMMessageBody::FILE:
@@ -73,7 +57,9 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 				if (EMFileMessageBody::SUCCESSED == body->downloadStatus())
 				{
 					std::stringstream stream;
-					stream << "Demo.conn.onFileMessage('{id: \"234627367585187824\",type : \"";
+					stream << "Demo.conn.onFileMessage('{id: \"";
+					stream << msg->msgId();
+					stream << "\",type : \"";
 					stream << sChatType;
 					stream << "\", from : \"";
 					stream << msg->from();
@@ -88,7 +74,7 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 					stream << "\",filetype : \"";
 					stream << "file";
 					stream << "\",ext : \"\"}');";
-					CallJS(stream);
+					Utils::CallJS(stream);
 				}
 				return true;
 			},
@@ -112,7 +98,9 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 				if (EMFileMessageBody::SUCCESSED == body->downloadStatus() && EMFileMessageBody::SUCCESSED == body->thumbnailDownloadStatus())
 				{
 					std::stringstream stream;
-					stream << "Demo.conn.onPictureMessage('{id: \"234627367585187824\",type : \"";
+					stream << "Demo.conn.onPictureMessage('{id: \"";
+					stream << msg->msgId();
+					stream << "\",type : \"";
 					stream << sChatType;
 					stream << "\", from : \"";
 					stream << msg->from();
@@ -127,7 +115,7 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 					stream << "\",filetype : \"";
 					stream << "img";
 					stream << "\",ext : \"\"}');";
-					CallJS(stream);
+					Utils::CallJS(stream);
 				}
 				return true;
 			},
@@ -151,7 +139,9 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 				if (EMFileMessageBody::SUCCESSED == body->downloadStatus())
 				{
 					std::stringstream stream;
-					stream << "Demo.conn.onAudioMessage('{id: \"234627367585187824\",type : \"";
+					stream << "Demo.conn.onAudioMessage('{id: \"";
+					stream << msg->msgId();
+					stream << "\",type : \"";
 					stream << sChatType;
 					stream << "\", from : \"";
 					stream << msg->from();
@@ -166,7 +156,7 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 					stream << "\",filetype : \"";
 					stream << "audio";
 					stream << "\",ext : \"\"}');";
-					CallJS(stream);
+					Utils::CallJS(stream);
 				}
 				return true;
 			},
@@ -193,7 +183,9 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 				if (EMFileMessageBody::SUCCESSED == body->downloadStatus() && EMFileMessageBody::SUCCESSED == body->thumbnailDownloadStatus())
 				{
 					std::stringstream stream;
-					stream << "Demo.conn.onVideoMessage('{id: \"234627367585187824\",type : \"";
+					stream << "Demo.conn.onVideoMessage('{id: \"";
+					stream << msg->msgId();
+					stream << "\",type : \"";
 					stream << sChatType;
 					stream << "\", from : \"";
 					stream << msg->from();
@@ -208,7 +200,7 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 					stream << "\",filetype : \"";
 					stream << "video";
 					stream << "\",ext : \"\"}');";
-					CallJS(stream);
+					Utils::CallJS(stream);
 				}
 				return true;
 			},
@@ -226,7 +218,9 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 		{
 			EMLocationMessageBodyPtr body = std::dynamic_pointer_cast<EMLocationMessageBody, EMMessageBody>(_body);
 			std::stringstream stream;
-			stream << "Demo.conn.onLocationMessage('{id: \"234627367585187824\",type : \"";
+			stream << "Demo.conn.onLocationMessage('{id: \"";
+			stream << msg->msgId();
+			stream << "\",type : \"";
 			stream << sChatType;
 			stream << "\", from : \"";
 			stream << msg->from();
@@ -239,7 +233,7 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 			stream << "\",lng : \"";
 			stream << body->longitude();
 			stream << "\",ext : \"\"}');";
-			CallJS(stream);
+			Utils::CallJS(stream);
 			break;
 		}
 		}

@@ -2,8 +2,6 @@
 #include "commdlg.h"
 #include "atlstr.h"
 #include <ShlObj.h>
-#include "ChatListener.h"
-#include "ContactListener.h"
 
 CString GetAppDataPath()
 {
@@ -47,11 +45,6 @@ inline string URLEncode(const string &sIn)
 	}
 	return sOut;
 };
-
-
-ChatListener *mChatListener;
-ContactListener * mContactListener;
-
 
 EasemobCefQueryHandler::EasemobCefQueryHandler()
 {
@@ -102,6 +95,10 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 			{
 				quitChatroom(json, callback);
 			}
+			else if (type == std::string("groupMembers"))
+			{
+				groupMembers(json, callback);
+			}
 			else if (type == std::string("addFriend"))
 			{
 				addFriend(json, callback);
@@ -139,12 +136,16 @@ void EasemobCefQueryHandler::CreateEMClient()
 	easemob::EMChatConfigsPtr configs(new easemob::EMChatConfigs(sAppDir, sAppDir, "easemob-demo#chatdemoui"));
 	configs->setOs(EMChatConfigs::OS_MSWIN);
 	configs->setEnableConsoleLog(false);
+	configs->setClientResource("windows");
 	EMClient *client = EMClient::create(configs);
 	g_client = client;
 }
 
 EasemobCefQueryHandler::~EasemobCefQueryHandler()
 {
+	delete mConnectionListener;
+	delete mContactListener;
+	delete mChatListener;
 }
 
 void EasemobCefQueryHandler::Login(Json::Value& json, CefRefPtr<Callback> callback)
@@ -159,6 +160,8 @@ void EasemobCefQueryHandler::Login(Json::Value& json, CefRefPtr<Callback> callba
 			g_client->getChatManager().addListener(mChatListener);
 			mContactListener = new ContactListener();
 			g_client->getContactManager().registerContactListener(mContactListener);
+			mConnectionListener = new ConnectionListener();
+			g_client->addConnectionListener(mConnectionListener);
 
 			callback->Success("Login Ok");
 		}
@@ -178,7 +181,7 @@ void EasemobCefQueryHandler::Logout(Json::Value& json, CefRefPtr<Callback> callb
 void EasemobCefQueryHandler::getRoster(Json::Value& json, CefRefPtr<Callback> callback)
 {
 	EMError error;
-	std::vector<std::string> mContacts(100);
+	std::vector<std::string> mContacts;
 	mContacts = g_client->getContactManager().getContactsFromServer(error);
 	string ret;
 	if (error.mErrorCode == EMError::EM_NO_ERROR)
@@ -299,6 +302,41 @@ void EasemobCefQueryHandler::quitChatroom(Json::Value& json, CefRefPtr<Callback>
 	}
 }
 
+void EasemobCefQueryHandler::groupMembers(Json::Value& json, CefRefPtr<Callback> callback)
+{
+	EMError error;
+	Json::Value defaultValue;
+	if (json.get("id", defaultValue).isString())
+	{
+		string ret;
+		const EMGroupMemberList *gml = g_client->getGroupManager().fetchGroupSpecification(json.get("id", defaultValue).asString(), error)->groupMembers();
+		if (gml == NULL)
+		{
+			return;
+		}
+		for (string member : *gml)
+		{
+			ret += "{\"jid\":\"";
+			ret += member;
+			ret += "\",\"affiliation\":\"";
+			ret += "member";
+			ret += "\"},";
+		}
+		if (!ret.empty())
+		{
+			string tmp = ret.substr(0, ret.length() - 1);
+			ret = "[" + tmp + "]";
+		}
+		if (error.mErrorCode != EMError::EM_NO_ERROR)
+		{
+			callback->Failure(error.mErrorCode, error.mDescription);
+		}
+		else
+		{
+			callback->Success(ret);
+		}
+	}
+}
 void EasemobCefQueryHandler::addFriend(Json::Value& json, CefRefPtr<Callback> callback)
 {
 	EMError error;
