@@ -1,5 +1,5 @@
 # sdkdemoapp_windows
-## Windows demo 构建及打包说明
+## Windows demo 构建及运行说明
 ---
 ### 依赖工具
 - VS2013
@@ -27,3 +27,7 @@
 
 ### 编译CEF
 用VS2013运行cef\build\cef.sln，编译cefsimple Debug和Release两个版本。
+
+### 运行
+编译完成后运行post-build.bat。运行build\cefsimple\Debug\cefsimple.exe或者build\cefsimple\Release\cefsimple.exe
+
