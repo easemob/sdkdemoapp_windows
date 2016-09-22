@@ -184,13 +184,6 @@ void EasemobCefQueryHandler::createAccount(Json::Value& json, CefRefPtr<Callback
 		EMErrorPtr error = g_client->createAccount(json.get("id", defaultValue).asString(), json.get("password", defaultValue).asString());
 		if (error->mErrorCode == EMError::EM_NO_ERROR)
 		{
-			mChatListener = new ChatListener();
-			g_client->getChatManager().addListener(mChatListener);
-			mContactListener = new ContactListener();
-			g_client->getContactManager().registerContactListener(mContactListener);
-			mConnectionListener = new ConnectionListener();
-			g_client->addConnectionListener(mConnectionListener);
-
 			callback->Success("Sign up Ok");
 		}
 		else
