@@ -10,6 +10,7 @@
 #include "ChatListener.h"
 #include "ContactListener.h"
 #include "ConnectionListener.h"
+#include "GroupManagerListener.h"
 
 using namespace easemob;
 using namespace std;
@@ -19,6 +20,7 @@ public:
 	EasemobCefQueryHandler();
 	~EasemobCefQueryHandler();
 
+	void InitSDKFunctionMap();
 	void CreateEMClient();
 	virtual bool OnQuery(CefRefPtr<CefBrowser> browser,
 		CefRefPtr<CefFrame> frame,	int64 query_id,
@@ -29,10 +31,23 @@ public:
 	void Logout(Json::Value& json, CefRefPtr<Callback> callback);
 	void getRoster(Json::Value& json, CefRefPtr<Callback> callback);
 	void getGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void createGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void addGroupMembers(Json::Value& json, CefRefPtr<Callback> callback);
+	void changeGroupSubject(Json::Value& json, CefRefPtr<Callback> callback);
+	void changeGroupDescription(Json::Value& json, CefRefPtr<Callback> callback);
+	void acceptJoinGroupApplication(Json::Value& json, CefRefPtr<Callback> callback);
+	void declineJoinGroupApplication(Json::Value& json, CefRefPtr<Callback> callback);
+	void acceptInvitationFromGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void declineInvitationFromGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void removeGroupMembers(Json::Value& json, CefRefPtr<Callback> callback);
 	void getChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void joinChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void quitChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void groupMembers(Json::Value& json, CefRefPtr<Callback> callback);
+	void leaveGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void destroyGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void joinPublicGroup(Json::Value& json, CefRefPtr<Callback> callback);
+	void applyJoinPublicGroup(Json::Value& json, CefRefPtr<Callback> callback);
 	void addFriend(Json::Value& json, CefRefPtr<Callback> callback);
 	void delFriend(Json::Value& json, CefRefPtr<Callback> callback);
 	void acceptInvitation(Json::Value& json, CefRefPtr<Callback> callback);
@@ -42,8 +57,10 @@ public:
 
 private:
 	EMCallbackObserverHandle m_coh;
-
+	typedef void (EasemobCefQueryHandler::*fnSDKCall)(Json::Value&, CefRefPtr<Callback>);
+	map<string, fnSDKCall> m_mapSDKCall;
 	ChatListener *mChatListener;
 	ContactListener * mContactListener;
 	ConnectionListener *mConnectionListener;
+	GroupManagerListener *mGroupManagerListener;
 };

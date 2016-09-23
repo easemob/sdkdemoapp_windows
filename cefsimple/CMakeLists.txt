@@ -30,6 +30,8 @@ set(CEFSIMPLE_SRCS
   ContactListener.cpp
   ConnectionListener.h
   ConnectionListener.cpp
+  GroupManagerListener.h
+  GroupManagerListener.cpp
   json/autolink.h
   json/config.h
   json/json_internalarray.inl
