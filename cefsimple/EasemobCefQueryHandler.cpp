@@ -16,37 +16,6 @@ CString GetAppDataPath()
 	return appdata_path;
 }
 
-inline BYTE toHex(const BYTE &x)
-{
-	return x > 9 ? x - 10 + 'A' : x + '0';
-}
-
-inline string URLEncode(const string &sIn)
-{
-	string sOut;
-	for (size_t ix = 0; ix < sIn.size(); ix++)
-	{
-		BYTE buf[4];
-		memset(buf, 0, 4);
-		if (isalnum((BYTE)sIn[ix]))
-		{
-			buf[0] = sIn[ix];
-		}
-		//else if (isspace((BYTE)sIn[ix]))//Character SPACE escape to "%20" rather than "+"
-		//{
-		//	buf[0] = '+';
-		//}
-		else
-		{
-			buf[0] = '%';
-			buf[1] = toHex((BYTE)sIn[ix] >> 4);
-			buf[2] = toHex((BYTE)sIn[ix] % 16);
-		}
-		sOut += (char *)buf;
-	}
-	return sOut;
-}
-
 string getStringAttrFromJson(Json::Value& json, string attr)
 {
 	string ret;
@@ -259,7 +228,7 @@ void EasemobCefQueryHandler::getGroup(Json::Value& json, CefRefPtr<Callback> cal
 			string tmp = ret.substr(0, ret.length() - 1);
 			ret = "[" + tmp + "]";
 		}
-		string enc = URLEncode(ret);
+		string enc = Utils::URLEncode(ret);
 
 		callback->Success(ret);
 		lock_guard<std::mutex> guard(Utils::group_mutex);
@@ -382,7 +351,7 @@ void EasemobCefQueryHandler::changeGroupDescription(Json::Value& json, CefRefPtr
 	if (error.mErrorCode == EMError::EM_NO_ERROR)
 	{
 		ret = "{\"id\":\"" + group->groupId()
-			+ "\",\"subject\":\"" + group->groupSubject() + "\"}";
+			+ "\",\"description\":\"" + group->groupDescription() + "\"}";
 		callback->Success(ret);
 	}
 	else
@@ -741,7 +710,7 @@ void EasemobCefQueryHandler::sendMessage(Json::Value& json, CefRefPtr<Callback> 
 	EMCallbackPtr msgCallback(new EMCallback(m_coh,
 		[=](void)->bool
 	{
-		string enc = URLEncode(utf8);
+		string enc = Utils::URLEncode(utf8);
 		callback->Success(enc.c_str());
 		return true;
 	},
@@ -834,7 +803,7 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value& json, CefRefPtr<Callba
 		EMCallbackPtr msgCallback(new EMCallback(m_coh,
 			[=](void)->bool
 		{
-			string enc = URLEncode(utf8);
+			string enc = Utils::URLEncode(utf8);
 			callback->Success(enc.c_str());
 			return true;
 		},
