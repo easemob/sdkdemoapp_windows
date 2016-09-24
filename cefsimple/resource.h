@@ -5,13 +5,16 @@
 #define IDI_CEFSIMPLE                   100
 #define IDI_SMALL                       101
 #define IDD_DLG_DEV_TOOL                102
+#define IDS_ALL_FILES                   103
+#define IDS_IMG_FILES                   104
+#define IDS_AUD_FILES                   105
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        103
+#define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         32700
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           102
