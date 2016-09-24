@@ -107,7 +107,7 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 
 void EasemobCefQueryHandler::CreateEMClient()
 {
-	CString strAppDir = GetAppDataPath();
+	CString strAppDir = GetAppDataPath() + L"\\EasemobDemo";
 	CefString sAppDir(strAppDir);
 	easemob::EMChatConfigsPtr configs(new easemob::EMChatConfigs(sAppDir, sAppDir, "easemob-demo#chatdemoui"));
 	configs->setOs(EMChatConfigs::OS_MSWIN);
