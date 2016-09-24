@@ -27,5 +27,11 @@ public:
 
 private:
 	EMCallbackObserverHandle m_coh;
+	void onTextMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
+	void onFileMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
+	void onImageMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
+	void onVoiceMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
+	void onVideoMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
+	void onLocationMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
 };
 

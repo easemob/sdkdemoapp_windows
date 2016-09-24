@@ -2,6 +2,7 @@
 #include "commdlg.h"
 #include "atlstr.h"
 #include <ShlObj.h>
+#include "resource.h"
 
 CString GetAppDataPath()
 {
@@ -202,6 +203,11 @@ void EasemobCefQueryHandler::createAccount(Json::Value& json, CefRefPtr<Callback
 void EasemobCefQueryHandler::Logout(Json::Value& json, CefRefPtr<Callback> callback)
 {
 	g_client->logout();
+	g_client->getChatManager().removeListener(mChatListener);
+	g_client->getContactManager().removeContactListener(mContactListener);
+	g_client->removeConnectionListener(mConnectionListener);
+	g_client->getGroupManager().removeListener(mGroupManagerListener);
+
 	callback->Success("Logout Ok");
 }
 
@@ -225,6 +231,8 @@ void EasemobCefQueryHandler::getRoster(Json::Value& json, CefRefPtr<Callback> ca
 			ret = "[" + tmp + "]";
 		}
 		callback->Success(ret);
+		lock_guard<std::mutex> guard(Utils::roster_mutex);
+		Utils::g_bRosterDownloaded = true;
 	}
 	else
 	{
@@ -254,6 +262,8 @@ void EasemobCefQueryHandler::getGroup(Json::Value& json, CefRefPtr<Callback> cal
 		string enc = URLEncode(ret);
 
 		callback->Success(ret);
+		lock_guard<std::mutex> guard(Utils::group_mutex);
+		Utils::g_bGroupListDownloaded = true;
 	}
 	else
 	{
@@ -763,14 +773,21 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value& json, CefRefPtr<Callba
 	ofn.lpstrFile = szFile;
 	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = L"所有文件(*.*)\0*.*\0\0";
+	const int FILTER_LENGTH = 500;
+	TCHAR szFilter[FILTER_LENGTH] = {0};
+	LoadString(NULL, IDS_ALL_FILES, szFilter, FILTER_LENGTH);
+	ofn.lpstrFilter = szFilter;
 	if (type.compare("img") == 0)
 	{
-		ofn.lpstrFilter = L"图像文件(*.bmp;*.jpg;*.png;*.gif)\0*.bmp;*.jpg;*.png;*.gif\0\0";
+		memset(szFilter, 0, FILTER_LENGTH);
+		LoadString(NULL, IDS_IMG_FILES, szFilter, FILTER_LENGTH);
+		ofn.lpstrFilter = szFilter;
 	}
 	else if (type.compare("aud") == 0)
 	{
-		ofn.lpstrFilter = L"音频文件(*.mp3;*.amr;*.wmv)\0*.mp3;*.amr;*.wmv\0\0";
+		memset(szFilter, 0, FILTER_LENGTH);
+		LoadString(NULL, IDS_AUD_FILES, szFilter, FILTER_LENGTH);
+		ofn.lpstrFilter = szFilter;
 	}
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
