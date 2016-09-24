@@ -92,7 +92,7 @@ void ChatListener::onTextMessage(const EMMessagePtr msg, const EMMessageBodyPtr 
 	stream << "\",to : \"";
 	stream << msg->to();
 	stream << "\",data : \"";
-	stream << body->text();
+	stream << Utils::URLEncode(body->text());
 	stream << "\",ext : \"\"}');";
 	Utils::CallJS(stream);
 }
