@@ -32,6 +32,8 @@ set(CEFSIMPLE_SRCS
   ConnectionListener.cpp
   GroupManagerListener.h
   GroupManagerListener.cpp
+  )
+set(JSONCPP_SRCS
   json/autolink.h
   json/config.h
   json/json_internalarray.inl
@@ -64,7 +66,9 @@ set(CEFSIMPLE_SRCS_WINDOWS
   simple_handler_win.cc
   )
 APPEND_PLATFORM_SOURCES(CEFSIMPLE_SRCS)
+APPEND_PLATFORM_SOURCES(JSONCPP_SRCS)
 source_group(cefsimple FILES ${CEFSIMPLE_SRCS})
+source_group(cefsimple\\\\jsoncpp FILES ${JSONCPP_SRCS})
 
 set(CEFSIMPLE_RES_SRCS_WINDOWS
   res/cefsimple.ico
@@ -76,6 +80,7 @@ source_group(cefsimple\\\\res FILES ${CEFSIMPLE_RES_SRCS})
 set(CEFSIMPLE_SRCS
   ${CEFSIMPLE_SRCS}
   ${CEFSIMPLE_RES_SRCS}
+  ${JSONCPP_SRCS}
   )
 
 # cefsimple helper sources.
