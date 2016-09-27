@@ -714,8 +714,9 @@ void EasemobCefQueryHandler::sendMessage(Json::Value& json, CefRefPtr<Callback> 
 		callback->Success(enc.c_str());
 		return true;
 	},
-		[=](const easemob::EMErrorPtr)->bool
+		[=](const easemob::EMErrorPtr error)->bool
 	{
+		callback->Failure(error->mErrorCode, error->mDescription);
 		return false;
 	},
 		[](int){}));
@@ -807,8 +808,9 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value& json, CefRefPtr<Callba
 			callback->Success(enc.c_str());
 			return true;
 		},
-			[=](const easemob::EMErrorPtr)->bool
+			[=](const easemob::EMErrorPtr error)->bool
 		{
+			callback->Failure(error->mErrorCode, error->mDescription);
 			return false;
 		},
 			[](int){}));

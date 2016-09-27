@@ -437,9 +437,6 @@ if(OS_WINDOWS)
   set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.lib")
   set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.lib")
 
-  set(EASEMOB_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/easemob_ud.lib")
-  set(EASEMOB_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/easemob_u.lib")
-
   # List of CEF binary files.
   set(CEF_BINARY_FILES
     d3dcompiler_43.dll
