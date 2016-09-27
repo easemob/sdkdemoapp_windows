@@ -121,6 +121,9 @@ if(OS_MACOSX)
   set(CEF_HELPER_TARGET "cefsimple Helper")
 endif()
 
+set(EASEMOB_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/easemob_d.lib")
+set(EASEMOB_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/easemob.lib")
+
 # Logical target used to link the libcef library.
 ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
 
