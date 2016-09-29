@@ -44,6 +44,7 @@ public:
 	void joinChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void quitChatroom(Json::Value& json, CefRefPtr<Callback> callback);
 	void groupMembers(Json::Value& json, CefRefPtr<Callback> callback);
+	void groupOwner(Json::Value& json, CefRefPtr<Callback> callback);
 	void leaveGroup(Json::Value& json, CefRefPtr<Callback> callback);
 	void destroyGroup(Json::Value& json, CefRefPtr<Callback> callback);
 	void joinPublicGroup(Json::Value& json, CefRefPtr<Callback> callback);

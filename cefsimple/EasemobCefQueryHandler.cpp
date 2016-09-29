@@ -62,6 +62,7 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 	m_mapSDKCall["joinChatroom"] = &EasemobCefQueryHandler::joinChatroom;
 	m_mapSDKCall["quitChatroom"] = &EasemobCefQueryHandler::quitChatroom;
 	m_mapSDKCall["groupMembers"] = &EasemobCefQueryHandler::groupMembers;
+	m_mapSDKCall["groupOwner"] = &EasemobCefQueryHandler::groupOwner;
 	m_mapSDKCall["leaveGroup"] = &EasemobCefQueryHandler::leaveGroup;
 	m_mapSDKCall["destroyGroup"] = &EasemobCefQueryHandler::destroyGroup;
 	m_mapSDKCall["joinPublicGroup"] = &EasemobCefQueryHandler::joinPublicGroup;
@@ -109,9 +110,11 @@ void EasemobCefQueryHandler::CreateEMClient()
 {
 	CString strAppDir = GetAppDataPath() + L"\\EasemobDemo";
 	CefString sAppDir(strAppDir);
+	CreateDirectory(strAppDir, NULL);
 	easemob::EMChatConfigsPtr configs(new easemob::EMChatConfigs(sAppDir, sAppDir, "easemob-demo#chatdemoui"));
 	configs->setOs(EMChatConfigs::OS_MSWIN);
-	configs->setEnableConsoleLog(false);
+	configs->setEnableConsoleLog(true);
+	configs->setAutoAcceptGroup(false);
 	configs->setClientResource("windows");
 	EMClient *client = EMClient::create(configs);
 	g_client = client;
@@ -523,6 +526,24 @@ void EasemobCefQueryHandler::groupMembers(Json::Value& json, CefRefPtr<Callback>
 			string tmp = ret.substr(0, ret.length() - 1);
 			ret = "[" + tmp + "]";
 		}
+		if (error.mErrorCode != EMError::EM_NO_ERROR)
+		{
+			callback->Failure(error.mErrorCode, error.mDescription);
+		}
+		else
+		{
+			callback->Success(ret);
+		}
+	}
+}
+
+void EasemobCefQueryHandler::groupOwner(Json::Value& json, CefRefPtr<Callback> callback)
+{
+	EMError error;
+	string id = getStringAttrFromJson(json, "id");
+	if (!id.empty())
+	{
+		string ret = g_client->getGroupManager().fetchGroupSpecification(id, error)->groupOwner();
 		if (error.mErrorCode != EMError::EM_NO_ERROR)
 		{
 			callback->Failure(error.mErrorCode, error.mDescription);

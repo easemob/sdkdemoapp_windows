@@ -128,7 +128,20 @@ bool SimpleHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 {
 	CefString dec = URLDecode(target_url);
 	std::wstring url = dec.ToWString();
-	ShellExecute(NULL, L"open", url.c_str(), NULL, NULL, 0);
+	std::wstring param = url;
+	std::wstring file_tag = L"file:///";
+	std::wstring location_tag = L"location:///";
+	int file_pos = url.find(file_tag);
+	int location_pos = url.find(location_tag);
+	if (file_pos != 0 && location_pos !=0)
+	{
+		return true;
+	}
+	if (location_pos == 0)
+	{
+		param = L"/select, file:///" + url.substr(location_tag.length());
+	}
+	ShellExecuteW(NULL, L"open", L"explorer.exe", param.c_str(), NULL, SW_SHOWNORMAL);
 	return true;
 }
 
