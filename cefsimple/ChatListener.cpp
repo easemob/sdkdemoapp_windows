@@ -67,12 +67,12 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 			break;
 		case EMMessageBody::VIDEO:
 		{
-			onLocationMessage(msg, _body, sChatType);
+			onVideoMessage(msg, _body, sChatType);
 			break;
 		}
 		case EMMessageBody::LOCATION:
 		{
-			onVideoMessage(msg, _body, sChatType);
+			onLocationMessage(msg, _body, sChatType);
 			break;
 		}
 		}
