@@ -46,6 +46,36 @@ public:
 		}
 		return sOut;
 	}
+
+	static inline BYTE fromHex(const BYTE &x)
+	{
+		return isdigit(x) ? x - '0' : x - 'A' + 10;
+	}
+
+	inline static std::string URLDecode(const std::string &sIn)
+	{
+		std::string sOut;
+		for (size_t ix = 0; ix < sIn.size(); ix++)
+		{
+			BYTE ch = 0;
+			if (sIn[ix] == '%')
+			{
+				ch = (fromHex(sIn[ix + 1]) << 4);
+				ch |= fromHex(sIn[ix + 2]);
+				ix += 2;
+			}
+			else if (sIn[ix] == '+')
+			{
+				ch = ' ';
+			}
+			else
+			{
+				ch = sIn[ix];
+			}
+			sOut += (char)ch;
+		}
+		return sOut;
+	}
 };
 
 #endif
