@@ -110,8 +110,12 @@ bool SimpleHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 	if (location_pos == 0)
 	{
 		param = L"/select, file:///" + url.substr(location_tag.length());
+		ShellExecuteW(NULL, L"open", L"explorer.exe", param.c_str(), NULL, SW_SHOWNORMAL);
 	}
-	ShellExecuteW(NULL, L"open", L"explorer.exe", param.c_str(), NULL, SW_SHOWNORMAL);
+	else
+	{
+		ShellExecuteW(NULL, L"open", param.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	}
 	return true;
 }
 
