@@ -3,6 +3,7 @@
 #include "include/cef_base.h"
 #include "include/wrapper/cef_message_router.h"
 
+class EasemobCefQueryHandler;
 class SimpleHandler;
 
 class EasemobCefMessageRouterBrowserSideDelegate : public virtual CefBase
@@ -29,6 +30,7 @@ public:
 
 private:
   CefRefPtr<CefMessageRouterBrowserSide> message_router_;
+  EasemobCefQueryHandler *m_ecqh;
 private:
   IMPLEMENT_REFCOUNTING(EasemobCefMessageRouterBrowserSideDelegate);
 };

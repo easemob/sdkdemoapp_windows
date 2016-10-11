@@ -145,4 +145,5 @@ void GroupManagerListener::onUpdateMyGroupList(const std::vector<EMGroupPtr> &li
 	std::stringstream stream;
 	stream << ret;
 	Utils::CallJS(stream);
+	SetEvent(Utils::g_GroupListDownloaded);
 }

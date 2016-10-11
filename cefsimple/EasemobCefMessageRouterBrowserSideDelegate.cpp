@@ -6,12 +6,14 @@ EasemobCefMessageRouterBrowserSideDelegate::EasemobCefMessageRouterBrowserSideDe
 {
   CefMessageRouterConfig config;
   message_router_ = CefMessageRouterBrowserSide::Create(config);
-  message_router_->AddHandler(new EasemobCefQueryHandler(), false);
+  m_ecqh = new EasemobCefQueryHandler();
+  message_router_->AddHandler(m_ecqh, false);
 }
 
 
 EasemobCefMessageRouterBrowserSideDelegate::~EasemobCefMessageRouterBrowserSideDelegate()
 {
+	delete m_ecqh;
 }
 
 bool EasemobCefMessageRouterBrowserSideDelegate::OnProcessMessageReceived(

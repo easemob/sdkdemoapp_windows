@@ -3,10 +3,8 @@
 using namespace easemob;
 
 EMClient *g_client;
-bool Utils::g_bRosterDownloaded = false;
-bool Utils::g_bGroupListDownloaded = false;
-std::mutex Utils::roster_mutex;
-std::mutex Utils::group_mutex;
+HANDLE Utils::g_RosterDownloaded = CreateEvent(NULL, TRUE, FALSE, NULL);
+HANDLE Utils::g_GroupListDownloaded = CreateEvent(NULL, TRUE, FALSE, NULL);
 
 void Utils::CallJS(const std::stringstream & stream)
 {

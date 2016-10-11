@@ -33,5 +33,9 @@ private:
 	void onVoiceMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
 	void onVideoMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
 	void onLocationMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType);
+	string getJSHead(const EMMessagePtr msg, string sChatType, string JSFuncName);
+	string getJSTail(const EMMessageBodyPtr _body, string type);
+	void CallJSWithoutFilePath(string strJSHead, string strJSTail);
+	void CallJSWithFilePath(string strJSHead, string strJSTail, string strPath);
 };
 

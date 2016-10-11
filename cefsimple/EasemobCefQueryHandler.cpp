@@ -63,6 +63,7 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 	m_mapSDKCall["quitChatroom"] = &EasemobCefQueryHandler::quitChatroom;
 	m_mapSDKCall["groupMembers"] = &EasemobCefQueryHandler::groupMembers;
 	m_mapSDKCall["groupOwner"] = &EasemobCefQueryHandler::groupOwner;
+	m_mapSDKCall["groupStyle"] = &EasemobCefQueryHandler::groupStyle;
 	m_mapSDKCall["leaveGroup"] = &EasemobCefQueryHandler::leaveGroup;
 	m_mapSDKCall["destroyGroup"] = &EasemobCefQueryHandler::destroyGroup;
 	m_mapSDKCall["joinPublicGroup"] = &EasemobCefQueryHandler::joinPublicGroup;
@@ -97,11 +98,18 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 		if (!type.empty())
 		{
 			if (m_mapSDKCall[type] != nullptr)
-			{		
-				std::thread t = thread([=]{
+			{
+				if (type.compare("groupMembers") == 0)
+				{
+					std::thread t = thread([=]{
+						(this->*m_mapSDKCall[type])(json, callback);
+					});
+					t.detach();
+				}
+				else
+				{
 					(this->*m_mapSDKCall[type])(json, callback);
-				});
-				t.detach();
+				}
 			}
 			return true;
 		}
@@ -119,16 +127,33 @@ void EasemobCefQueryHandler::CreateEMClient()
 	configs->setEnableConsoleLog(true);
 	configs->setAutoAcceptGroup(false);
 	configs->setClientResource("windows");
-	configs->setLogLevel(EMChatConfigs::ERROR_LEVEL);
+	configs->setLogLevel(EMChatConfigs::DEBUG_LEVEL);
 	EMClient *client = EMClient::create(configs);
 	g_client = client;
+
+	mChatListener = new ChatListener();
+	g_client->getChatManager().addListener(mChatListener);
+	mContactListener = new ContactListener();
+	g_client->getContactManager().registerContactListener(mContactListener);
+	mConnectionListener = new ConnectionListener();
+	g_client->addConnectionListener(mConnectionListener);
+	mGroupManagerListener = new GroupManagerListener();
+	g_client->getGroupManager().addListener(mGroupManagerListener);
 }
 
 EasemobCefQueryHandler::~EasemobCefQueryHandler()
 {
+	g_client->getChatManager().removeListener(mChatListener);
+	g_client->getContactManager().removeContactListener(mContactListener);
+	g_client->removeConnectionListener(mConnectionListener);
+	g_client->getGroupManager().removeListener(mGroupManagerListener);
+	g_client->logout();
+
 	delete mConnectionListener;
 	delete mContactListener;
 	delete mChatListener;
+	delete mGroupManagerListener;
+	delete g_client;
 }
 
 void EasemobCefQueryHandler::Login(Json::Value json, CefRefPtr<Callback> callback)
@@ -140,16 +165,52 @@ void EasemobCefQueryHandler::Login(Json::Value json, CefRefPtr<Callback> callbac
 		EMErrorPtr error = g_client->login(id, password);
 		if (error->mErrorCode == EMError::EM_NO_ERROR)
 		{
-			mChatListener = new ChatListener();
-			g_client->getChatManager().addListener(mChatListener);
-			mContactListener = new ContactListener();
-			g_client->getContactManager().registerContactListener(mContactListener);
-			mConnectionListener = new ConnectionListener();
-			g_client->addConnectionListener(mConnectionListener);
-			mGroupManagerListener = new GroupManagerListener();
-			g_client->getGroupManager().addListener(mGroupManagerListener);
-
 			callback->Success("Login Ok");
+			EMError error;
+			std::vector<std::string> mContacts;
+			mContacts = g_client->getContactManager().allContacts(error);
+			if (error.mErrorCode == EMError::EM_NO_ERROR)
+			{
+				string ret;
+				for (string username : mContacts)
+				{
+					ret += "{\"subscription\":\"both\",\"name\":\"";
+					ret += username;
+					ret += "\"},";
+				}
+				if (!ret.empty())
+				{
+					string tmp = ret.substr(0, ret.length() - 1);
+					ret = "Demo.conn._onUpdateMyRoster('[" + tmp + "]')";
+				}
+				std::stringstream stream;
+				stream << ret;
+				Utils::CallJS(stream);
+				SetEvent(Utils::g_RosterDownloaded);
+			}
+
+			EMGroupList groupList = g_client->getGroupManager().allMyGroups(error);
+			if (error.mErrorCode == EMError::EM_NO_ERROR)
+			{
+				string ret;
+				for (EMGroupPtr group : groupList)
+				{
+					ret += "{\"jid\":\"blahblah\",\"name\":\"";
+					ret += group->groupSubject();
+					ret += "\",\"roomId\":\"";
+					ret += group->groupId();
+					ret += "\"},";
+				}
+				if (!ret.empty())
+				{
+					string tmp = ret.substr(0, ret.length() - 1);
+					ret = "Demo.conn._onUpdateMyGroupList('[" + tmp + "]')";
+				}
+				std::stringstream stream;
+				stream << ret;
+				Utils::CallJS(stream);
+				SetEvent(Utils::g_GroupListDownloaded);
+			}
 		}
 		else
 		{
@@ -179,11 +240,6 @@ void EasemobCefQueryHandler::createAccount(Json::Value json, CefRefPtr<Callback>
 void EasemobCefQueryHandler::Logout(Json::Value json, CefRefPtr<Callback> callback)
 {
 	g_client->logout();
-	g_client->getChatManager().removeListener(mChatListener);
-	g_client->getContactManager().removeContactListener(mContactListener);
-	g_client->removeConnectionListener(mConnectionListener);
-	g_client->getGroupManager().removeListener(mGroupManagerListener);
-
 	callback->Success("Logout Ok");
 }
 
@@ -207,8 +263,7 @@ void EasemobCefQueryHandler::getRoster(Json::Value json, CefRefPtr<Callback> cal
 			ret = "[" + tmp + "]";
 		}
 		callback->Success(ret);
-		lock_guard<std::mutex> guard(Utils::roster_mutex);
-		Utils::g_bRosterDownloaded = true;
+		SetEvent(Utils::g_RosterDownloaded);
 	}
 	else
 	{
@@ -238,8 +293,7 @@ void EasemobCefQueryHandler::getGroup(Json::Value json, CefRefPtr<Callback> call
 		string enc = Utils::URLEncode(ret);
 
 		callback->Success(ret);
-		lock_guard<std::mutex> guard(Utils::group_mutex);
-		Utils::g_bGroupListDownloaded = true;
+		SetEvent(Utils::g_GroupListDownloaded);
 	}
 	else
 	{
@@ -548,12 +602,49 @@ void EasemobCefQueryHandler::groupOwner(Json::Value json, CefRefPtr<Callback> ca
 	if (!id.empty())
 	{
 		string ret = g_client->getGroupManager().fetchGroupSpecification(id, error)->groupOwner();
+		const EMGroupSetting *setting = g_client->getGroupManager().fetchGroupSpecification(id, error)->groupSetting();
 		if (error.mErrorCode != EMError::EM_NO_ERROR)
 		{
 			callback->Failure(error.mErrorCode, error.mDescription);
 		}
 		else
 		{
+			callback->Success(ret);
+		}
+	}
+}
+
+void EasemobCefQueryHandler::groupStyle(Json::Value json, CefRefPtr<Callback> callback)
+{
+	EMError error;
+	string id = getStringAttrFromJson(json, "id");
+	if (!id.empty())
+	{
+		const EMGroupSetting *setting = g_client->getGroupManager().fetchGroupSpecification(id, error)->groupSetting();
+		if (error.mErrorCode != EMError::EM_NO_ERROR)
+		{
+			callback->Failure(error.mErrorCode, error.mDescription);
+		}
+		else
+		{
+			string ret = "PRIVATE_MEMBER_INVITE";
+			switch (setting->style())
+			{
+			case EMGroupSetting::PRIVATE_MEMBER_INVITE:
+				ret = "PRIVATE_MEMBER_INVITE";
+				break;
+			case EMGroupSetting::PRIVATE_OWNER_INVITE:
+				ret = "PRIVATE_OWNER_INVITE";
+				break;
+			case EMGroupSetting::PUBLIC_JOIN_OPEN:
+				ret = "PUBLIC_JOIN_OPEN";
+				break;
+			case EMGroupSetting::PUBLIC_JOIN_APPROVAL:
+				ret = "PUBLIC_JOIN_APPROVAL";
+				break;
+			default:
+				break;
+			}
 			callback->Success(ret);
 		}
 	}
@@ -711,24 +802,20 @@ void EasemobCefQueryHandler::sendMessage(Json::Value json, CefRefPtr<Callback> c
 	string to = getStringAttrFromJson(json, "to");
 	string content = getStringAttrFromJson(json, "msg");
 	content = Utils::URLDecode(content);
-	string isGoupChat = getStringAttrFromJson(json, "group");
-	string roomType = getStringAttrFromJson(json, "roomType");
+	string chatType = getStringAttrFromJson(json, "chatType");
 
 	EMMessageBodyPtr body = EMTextMessageBodyPtr(new EMTextMessageBody(content.c_str()));
 
 	CefStringUTF8 utf8(content);
 
 	EMMessage::EMChatType type = EMMessage::SINGLE;
-	if (isGoupChat.compare("groupchat") == 0)
+	if (chatType.compare("chatRoom") == 0)
 	{
-		if (roomType.compare("true") == 0)
-		{
-			type = EMMessage::CHATROOM;
-		}
-		else
-		{
-			type = EMMessage::GROUP;
-		}
+		type = EMMessage::CHATROOM;
+	}
+	else if(chatType.compare("groupChat") == 0)
+	{
+		type = EMMessage::GROUP;
 	}
 
 	EMMessagePtr msg = EMMessage::createSendMessage(g_client->getLoginInfo().loginUser(), to,
@@ -756,8 +843,7 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value json, CefRefPtr<Callbac
 {
 	string to = getStringAttrFromJson(json, "to");
 	string content = getStringAttrFromJson(json, "msg");
-	string isGoupChat = getStringAttrFromJson(json, "group");
-	string roomType = getStringAttrFromJson(json, "roomType");
+	string sChatType = getStringAttrFromJson(json, "chatType");
 	string type = getStringAttrFromJson(json, "message_type");
 
 	OPENFILENAME ofn;       // common dialog box structure
@@ -813,17 +899,15 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value json, CefRefPtr<Callbac
 		}
 
 		EMMessage::EMChatType chatType = EMMessage::SINGLE;
-		if (isGoupChat.compare("groupchat") == 0)
+		if (sChatType.compare("chatRoom") == 0)
 		{
-			if (roomType.compare("true") == 0)
-			{
-				chatType = EMMessage::CHATROOM;
-			}
-			else
-			{
-				chatType = EMMessage::GROUP;
-			}
+			chatType = EMMessage::CHATROOM;
 		}
+		else if (sChatType.compare("groupChat") == 0)
+		{
+			chatType = EMMessage::GROUP;
+		}
+
 		EMMessagePtr msg = EMMessage::createSendMessage(g_client->getLoginInfo().loginUser(), to,
 			body, chatType);
 

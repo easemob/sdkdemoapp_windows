@@ -12,20 +12,13 @@ string GetPathForWebPage(const string& localPath)
 	return url;
 }
 
-void ChatListener::onReceiveMessages(const EMMessageList &messages) {
-	while (true)
-	{
-		lock_guard<std::mutex> roster_guard(Utils::roster_mutex);
-		lock_guard<std::mutex> group_guard(Utils::group_mutex);
-		if (!Utils::g_bRosterDownloaded || !Utils::g_bGroupListDownloaded)
-		{
-			Sleep(100);
-		}
-		else
-		{
-			break;
-		}
-	}
+void ChatListener::onReceiveMessages(const EMMessageList &messages) 
+{
+	HANDLE hObject[2];
+	hObject[0] = Utils::g_RosterDownloaded;
+	hObject[1] = Utils::g_GroupListDownloaded;
+	WaitForMultipleObjects(2, hObject, TRUE, INFINITE);
+
 
 	for (EMMessagePtr msg : messages)
 	{
@@ -81,12 +74,25 @@ void ChatListener::onReceiveMessages(const EMMessageList &messages) {
 
 void ChatListener::onTextMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType)
 {
+	string sRoomType = "undefined";
+	if (sChatType.compare("groupchat") == 0)
+	{
+		sRoomType = "groups";
+	}
+	else if (sChatType.compare("chatroom") == 0)
+	{
+		sChatType = "groupchat";
+		sRoomType = "chatrooms";
+	}
+
 	EMTextMessageBodyPtr body = std::dynamic_pointer_cast<EMTextMessageBody, EMMessageBody>(_body);
 	std::stringstream stream;
 	stream << "Demo.conn.onTextMessage('{id: \"";
 	stream << msg->msgId();
 	stream << "\",type : \"";
 	stream << sChatType;
+	stream << "\", roomtype : \"";
+	stream << sRoomType;
 	stream << "\", from : \"";
 	stream << msg->from();
 	stream << "\",to : \"";
@@ -97,34 +103,92 @@ void ChatListener::onTextMessage(const EMMessagePtr msg, const EMMessageBodyPtr 
 	Utils::CallJS(stream);
 }
 
+string ChatListener::getJSHead(const EMMessagePtr msg, string sChatType, string JSFuncName)
+{
+	string sRoomType = "undefined";
+	if (sChatType.compare("groupchat") == 0)
+	{
+		sRoomType = "groups";
+	}
+	else if (sChatType.compare("chatroom") == 0)
+	{
+		sChatType = "groupchat";
+		sRoomType = "chatrooms";
+	}
+
+	std::stringstream streamHead;
+	streamHead << "Demo.conn.";
+	streamHead << JSFuncName;
+	streamHead << "('{ext : \"\",id: \"";
+	streamHead << msg->msgId();
+	streamHead << "\",type : \"";
+	streamHead << sChatType;
+	streamHead << "\", roomtype : \"";
+	streamHead << sRoomType;
+	streamHead << "\", from : \"";
+	streamHead << msg->from();
+	streamHead << "\",to : \"";
+	streamHead << msg->to();
+	streamHead << "\",url : \"";
+	string sRet = streamHead.str();
+	streamHead.clear();
+	streamHead.str("");
+	return sRet;
+}
+
+string ChatListener::getJSTail(const EMMessageBodyPtr _body, string type)
+{
+	EMFileMessageBodyPtr body = std::dynamic_pointer_cast<EMFileMessageBody, EMMessageBody>(_body);
+	std::stringstream streamTail;
+	streamTail << "\",filename : \"";
+	streamTail << body->displayName();
+	streamTail << "\",file_length : \"";
+	streamTail << body->fileLength();
+	streamTail << "\",filetype : \"";
+	streamTail << type;
+	streamTail << "\"}');";
+	string sRet = streamTail.str();
+	streamTail.clear();
+	streamTail.str("");
+	return sRet;
+}
+
+void ChatListener::CallJSWithoutFilePath(string strJSHead, string strJSTail)
+{
+	std::stringstream stream;
+	stream << strJSHead;
+	stream << strJSTail;
+	Utils::CallJS(stream);
+	stream.clear();
+	stream.str("");
+}
+
+void ChatListener::CallJSWithFilePath(string strJSHead, string strJSTail, string strPath)
+{
+	std::stringstream streamAll;
+	streamAll << strJSHead;
+	streamAll << strPath;
+	streamAll << strJSTail;
+	Utils::CallJS(streamAll);
+	streamAll.clear();
+	streamAll.str("");
+}
+
 void ChatListener::onFileMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType)
 {
 	EMFileMessageBodyPtr body = std::dynamic_pointer_cast<EMFileMessageBody, EMMessageBody>(_body);
+
+	string strJSHead = getJSHead(msg, sChatType,"onFileMessage");
+	string strJSTail = getJSTail(_body, "file");
+
+	CallJSWithoutFilePath(strJSHead, strJSTail);
 
 	EMCallbackPtr msgCallback(new EMCallback(m_coh,
 		[=](void)->bool
 	{
 		if (EMFileMessageBody::SUCCESSED == body->downloadStatus())
 		{
-			std::stringstream stream;
-			stream << "Demo.conn.onFileMessage('{id: \"";
-			stream << msg->msgId();
-			stream << "\",type : \"";
-			stream << sChatType;
-			stream << "\", from : \"";
-			stream << msg->from();
-			stream << "\",to : \"";
-			stream << msg->to();
-			stream << "\",url : \"";
-			stream << GetPathForWebPage(body->localPath());
-			stream << "\",filename : \"";
-			stream << body->displayName();
-			stream << "\",file_length : \"";
-			stream << body->fileLength();
-			stream << "\",filetype : \"";
-			stream << "file";
-			stream << "\",ext : \"\"}');";
-			Utils::CallJS(stream);
+			CallJSWithFilePath(strJSHead, strJSTail, GetPathForWebPage(body->localPath()));
 		}
 		return true;
 	},
@@ -142,30 +206,17 @@ void ChatListener::onImageMessage(const EMMessagePtr msg, const EMMessageBodyPtr
 {
 	EMImageMessageBodyPtr body = std::dynamic_pointer_cast<EMImageMessageBody, EMMessageBody>(_body);
 
+	string strJSHead = getJSHead(msg, sChatType,"onPictureMessage");
+	string strJSTail = getJSTail(_body, "img");
+
+	CallJSWithoutFilePath(strJSHead, strJSTail);
+
 	EMCallbackPtr msgCallback(new EMCallback(m_coh,
 		[=](void)->bool
 	{
 		if (EMFileMessageBody::SUCCESSED == body->downloadStatus() && EMFileMessageBody::SUCCESSED == body->thumbnailDownloadStatus())
 		{
-			std::stringstream stream;
-			stream << "Demo.conn.onPictureMessage('{id: \"";
-			stream << msg->msgId();
-			stream << "\",type : \"";
-			stream << sChatType;
-			stream << "\", from : \"";
-			stream << msg->from();
-			stream << "\",to : \"";
-			stream << msg->to();
-			stream << "\",url : \"";
-			stream << GetPathForWebPage(body->localPath());
-			stream << "\",filename : \"";
-			stream << body->displayName();
-			stream << "\",file_length : \"";
-			stream << body->fileLength();
-			stream << "\",filetype : \"";
-			stream << "img";
-			stream << "\",ext : \"\"}');";
-			Utils::CallJS(stream);
+			CallJSWithFilePath(strJSHead, strJSTail, GetPathForWebPage(body->localPath()));
 		}
 		return true;
 	},
@@ -183,30 +234,17 @@ void ChatListener::onVoiceMessage(const EMMessagePtr msg, const EMMessageBodyPtr
 {
 	EMVoiceMessageBodyPtr body = std::dynamic_pointer_cast<EMVoiceMessageBody, EMMessageBody>(_body);
 
+	string strJSHead = getJSHead(msg, sChatType,"onAudioMessage");
+	string strJSTail = getJSTail(_body, "audio");
+
+	CallJSWithoutFilePath(strJSHead, strJSTail);
+
 	EMCallbackPtr msgCallback(new EMCallback(m_coh,
 		[=](void)->bool
 	{
 		if (EMFileMessageBody::SUCCESSED == body->downloadStatus())
 		{
-			std::stringstream stream;
-			stream << "Demo.conn.onAudioMessage('{id: \"";
-			stream << msg->msgId();
-			stream << "\",type : \"";
-			stream << sChatType;
-			stream << "\", from : \"";
-			stream << msg->from();
-			stream << "\",to : \"";
-			stream << msg->to();
-			stream << "\",url : \"";
-			stream << GetPathForWebPage(body->localPath());
-			stream << "\",filename : \"";
-			stream << body->displayName();
-			stream << "\",file_length : \"";
-			stream << body->fileLength();
-			stream << "\",filetype : \"";
-			stream << "audio";
-			stream << "\",ext : \"\"}');";
-			Utils::CallJS(stream);
+			CallJSWithFilePath(strJSHead, strJSTail, GetPathForWebPage(body->localPath()));
 		}
 		return true;
 	},
@@ -222,30 +260,17 @@ void ChatListener::onVideoMessage(const EMMessagePtr msg, const EMMessageBodyPtr
 {
 	EMVideoMessageBodyPtr body = std::dynamic_pointer_cast<EMVideoMessageBody, EMMessageBody>(_body);
 
+	string strJSHead = getJSHead(msg, sChatType,"onVideoMessage");
+	string strJSTail = getJSTail(_body, "video");
+
+	CallJSWithoutFilePath(strJSHead, strJSTail);
+
 	EMCallbackPtr msgCallback(new EMCallback(m_coh,
 		[=](void)->bool
 	{
 		if (EMFileMessageBody::SUCCESSED == body->downloadStatus() && EMFileMessageBody::SUCCESSED == body->thumbnailDownloadStatus())
 		{
-			std::stringstream stream;
-			stream << "Demo.conn.onVideoMessage('{id: \"";
-			stream << msg->msgId();
-			stream << "\",type : \"";
-			stream << sChatType;
-			stream << "\", from : \"";
-			stream << msg->from();
-			stream << "\",to : \"";
-			stream << msg->to();
-			stream << "\",url : \"";
-			stream << GetPathForWebPage(body->localPath());
-			stream << "\",filename : \"";
-			stream << body->displayName();
-			stream << "\",file_length : \"";
-			stream << body->fileLength();
-			stream << "\",filetype : \"";
-			stream << "video";
-			stream << "\",ext : \"\"}');";
-			Utils::CallJS(stream);
+			CallJSWithFilePath(strJSHead, strJSTail, GetPathForWebPage(body->localPath()));
 		}
 		return true;
 	},
