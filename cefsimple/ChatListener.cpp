@@ -250,10 +250,17 @@ void ChatListener::onVoiceMessage(const EMMessagePtr msg, const EMMessageBodyPtr
 	},
 		[=](const easemob::EMErrorPtr)->bool
 	{
-		return false;
+		return true;
 	},
 		[](int){}));
-	msg->setCallback(msgCallback);
+	if (EMFileMessageBody::SUCCESSED == body->downloadStatus())
+	{
+		CallJSWithFilePath(strJSHead, strJSTail, GetPathForWebPage(body->localPath()));
+	}
+	else
+	{
+		msg->setCallback(msgCallback);
+	}
 }
 
 void ChatListener::onVideoMessage(const EMMessagePtr msg, const EMMessageBodyPtr _body, string sChatType)
