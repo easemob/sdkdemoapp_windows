@@ -74,6 +74,15 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 	m_mapSDKCall["declineInvitation"] = &EasemobCefQueryHandler::declineInvitation;
 	m_mapSDKCall["sendMessage"] = &EasemobCefQueryHandler::sendMessage;
 	m_mapSDKCall["sendFileMessage"] = &EasemobCefQueryHandler::sendFileMessage;
+
+	m_mapSDKCallInWorkThread["groupMembers"] = true;
+	m_mapSDKCallInWorkThread["createGroup"] = true;
+	m_mapSDKCallInWorkThread["addFriend"] = true;
+	m_mapSDKCallInWorkThread["delFriend"] = true;
+	m_mapSDKCallInWorkThread["changeGroupSubject"] = true;
+	m_mapSDKCallInWorkThread["changeGroupDescription"] = true;
+	m_mapSDKCallInWorkThread["addGroupMembers"] = true;
+	m_mapSDKCallInWorkThread["removeGroupMembers"] = true;
 }
 
 EasemobCefQueryHandler::EasemobCefQueryHandler()
@@ -99,7 +108,7 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 		{
 			if (m_mapSDKCall[type] != nullptr)
 			{
-				if (type.compare("groupMembers") == 0)
+				if (m_mapSDKCallInWorkThread[type])
 				{
 					std::thread t = thread([=]{
 						(this->*m_mapSDKCall[type])(json, callback);

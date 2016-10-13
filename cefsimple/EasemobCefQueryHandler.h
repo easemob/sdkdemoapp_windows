@@ -61,6 +61,7 @@ private:
 	EMCallbackObserverHandle m_coh;
 	typedef void (EasemobCefQueryHandler::*fnSDKCall)(Json::Value, CefRefPtr<Callback>);
 	map<string, fnSDKCall> m_mapSDKCall;
+	map<string, bool> m_mapSDKCallInWorkThread;
 	ChatListener *mChatListener;
 	ContactListener * mContactListener;
 	ConnectionListener *mConnectionListener;
