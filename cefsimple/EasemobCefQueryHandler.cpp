@@ -83,6 +83,7 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 	m_mapSDKCallInWorkThread["changeGroupDescription"] = true;
 	m_mapSDKCallInWorkThread["addGroupMembers"] = true;
 	m_mapSDKCallInWorkThread["removeGroupMembers"] = true;
+	m_mapSDKCallInWorkThread["destroyGroup"] = true;
 }
 
 EasemobCefQueryHandler::EasemobCefQueryHandler()
@@ -925,7 +926,13 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value json, CefRefPtr<Callbac
 			[=](void)->bool
 		{
 			string enc = Utils::URLEncode(utf8);
-			callback->Success(enc.c_str());
+
+			string ret = "{\"id\":\"";
+			ret += msg->msgId();
+			ret += "\",\"url\":\"";
+			ret += enc;
+			ret += "\"}";
+			callback->Success(ret.c_str());
 			return true;
 		},
 			[=](const easemob::EMErrorPtr error)->bool
