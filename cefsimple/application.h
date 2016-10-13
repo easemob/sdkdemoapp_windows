@@ -63,10 +63,10 @@ public:
 				ch |= fromHex(sIn[ix + 2]);
 				ix += 2;
 			}
-			else if (sIn[ix] == '+')
-			{
-				ch = ' ';
-			}
+			//else if (sIn[ix] == '+')
+			//{
+			//	ch = ' ';
+			//}
 			else
 			{
 				ch = sIn[ix];

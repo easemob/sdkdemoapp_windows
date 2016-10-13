@@ -87,7 +87,6 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 
 EasemobCefQueryHandler::EasemobCefQueryHandler()
 {
-	CreateEMClient();
 	InitSDKFunctionMap();
 }
 #include <thread>
@@ -152,21 +151,12 @@ void EasemobCefQueryHandler::CreateEMClient()
 
 EasemobCefQueryHandler::~EasemobCefQueryHandler()
 {
-	g_client->getChatManager().removeListener(mChatListener);
-	g_client->getContactManager().removeContactListener(mContactListener);
-	g_client->removeConnectionListener(mConnectionListener);
-	g_client->getGroupManager().removeListener(mGroupManagerListener);
-	g_client->logout();
-
-	delete mConnectionListener;
-	delete mContactListener;
-	delete mChatListener;
-	delete mGroupManagerListener;
-	delete g_client;
 }
 
 void EasemobCefQueryHandler::Login(Json::Value json, CefRefPtr<Callback> callback)
 {
+	CreateEMClient();
+
 	string id = getStringAttrFromJson(json, "id");
 	string password = getStringAttrFromJson(json, "password");
 	if (!id.empty() && !password.empty())
@@ -250,6 +240,17 @@ void EasemobCefQueryHandler::Logout(Json::Value json, CefRefPtr<Callback> callba
 {
 	g_client->logout();
 	callback->Success("Logout Ok");
+	g_client->getChatManager().removeListener(mChatListener);
+	g_client->getContactManager().removeContactListener(mContactListener);
+	g_client->removeConnectionListener(mConnectionListener);
+	g_client->getGroupManager().removeListener(mGroupManagerListener);
+	g_client->logout();
+
+	delete mConnectionListener;
+	delete mContactListener;
+	delete mChatListener;
+	delete mGroupManagerListener;
+	delete g_client;
 }
 
 void EasemobCefQueryHandler::getRoster(Json::Value json, CefRefPtr<Callback> callback)
