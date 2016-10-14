@@ -89,7 +89,9 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 
 EasemobCefQueryHandler::EasemobCefQueryHandler()
 {
+	g_client == NULL;
 	InitSDKFunctionMap();
+	CreateEMClient();
 }
 #include <thread>
 bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
@@ -129,26 +131,29 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 
 void EasemobCefQueryHandler::CreateEMClient()
 {
-	CString strAppDir = GetAppDataPath() + L"\\EasemobDemo";
-	CefString sAppDir(strAppDir);
-	CreateDirectory(strAppDir, NULL);
-	easemob::EMChatConfigsPtr configs(new easemob::EMChatConfigs(sAppDir, sAppDir, "easemob-demo#chatdemoui"));
-	configs->setOs(EMChatConfigs::OS_MSWIN);
-	configs->setEnableConsoleLog(true);
-	configs->setAutoAcceptGroup(false);
-	configs->setClientResource("windows");
-	configs->setLogLevel(EMChatConfigs::DEBUG_LEVEL);
-	EMClient *client = EMClient::create(configs);
-	g_client = client;
+	if (g_client == NULL)
+	{
+		CString strAppDir = GetAppDataPath() + L"\\EasemobDemo";
+		CefString sAppDir(strAppDir);
+		CreateDirectory(strAppDir, NULL);
+		easemob::EMChatConfigsPtr configs(new easemob::EMChatConfigs(sAppDir, sAppDir, "easemob-demo#chatdemoui"));
+		configs->setOs(EMChatConfigs::OS_MSWIN);
+		configs->setEnableConsoleLog(true);
+		configs->setAutoAcceptGroup(false);
+		configs->setClientResource("windows");
+		configs->setLogLevel(EMChatConfigs::DEBUG_LEVEL);
+		EMClient *client = EMClient::create(configs);
+		g_client = client;
 
-	mChatListener = new ChatListener();
-	g_client->getChatManager().addListener(mChatListener);
-	mContactListener = new ContactListener();
-	g_client->getContactManager().registerContactListener(mContactListener);
-	mConnectionListener = new ConnectionListener();
-	g_client->addConnectionListener(mConnectionListener);
-	mGroupManagerListener = new GroupManagerListener();
-	g_client->getGroupManager().addListener(mGroupManagerListener);
+		mChatListener = new ChatListener();
+		g_client->getChatManager().addListener(mChatListener);
+		mContactListener = new ContactListener();
+		g_client->getContactManager().registerContactListener(mContactListener);
+		mConnectionListener = new ConnectionListener();
+		g_client->addConnectionListener(mConnectionListener);
+		mGroupManagerListener = new GroupManagerListener();
+		g_client->getGroupManager().addListener(mGroupManagerListener);
+	}
 }
 
 EasemobCefQueryHandler::~EasemobCefQueryHandler()
@@ -249,10 +254,15 @@ void EasemobCefQueryHandler::Logout(Json::Value json, CefRefPtr<Callback> callba
 	g_client->logout();
 
 	delete mConnectionListener;
+	mConnectionListener = NULL;
 	delete mContactListener;
+	mContactListener = NULL;
 	delete mChatListener;
+	mChatListener = NULL;
 	delete mGroupManagerListener;
+	mGroupManagerListener = NULL;
 	delete g_client;
+	g_client = NULL;
 }
 
 void EasemobCefQueryHandler::getRoster(Json::Value json, CefRefPtr<Callback> callback)
