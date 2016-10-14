@@ -37,4 +37,4 @@
 
 ### 运行
 编译完成后运行post-build.bat。运行build\cefsimple\Debug\cefsimple.exe或者build\cefsimple\Release\cefsimple.exe
-
+注：在无VS2013开发环境的系统下运行时，需要下载并安装Visual C++ Redistributable Packages for Visual Studio 2013。下载地址：https://www.microsoft.com/en-gb/download/details.aspx?id=40784，选择x86平台版本的，文件名为：rtools_setup_x86.exe。
