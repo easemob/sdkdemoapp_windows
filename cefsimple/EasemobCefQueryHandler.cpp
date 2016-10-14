@@ -64,6 +64,7 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 	m_mapSDKCall["groupMembers"] = &EasemobCefQueryHandler::groupMembers;
 	m_mapSDKCall["groupOwner"] = &EasemobCefQueryHandler::groupOwner;
 	m_mapSDKCall["groupStyle"] = &EasemobCefQueryHandler::groupStyle;
+	m_mapSDKCall["groupSpecification"] = &EasemobCefQueryHandler::groupSpecification;
 	m_mapSDKCall["leaveGroup"] = &EasemobCefQueryHandler::leaveGroup;
 	m_mapSDKCall["destroyGroup"] = &EasemobCefQueryHandler::destroyGroup;
 	m_mapSDKCall["joinPublicGroup"] = &EasemobCefQueryHandler::joinPublicGroup;
@@ -613,7 +614,6 @@ void EasemobCefQueryHandler::groupOwner(Json::Value json, CefRefPtr<Callback> ca
 	if (!id.empty())
 	{
 		string ret = g_client->getGroupManager().fetchGroupSpecification(id, error)->groupOwner();
-		const EMGroupSetting *setting = g_client->getGroupManager().fetchGroupSpecification(id, error)->groupSetting();
 		if (error.mErrorCode != EMError::EM_NO_ERROR)
 		{
 			callback->Failure(error.mErrorCode, error.mDescription);
@@ -657,6 +657,77 @@ void EasemobCefQueryHandler::groupStyle(Json::Value json, CefRefPtr<Callback> ca
 				break;
 			}
 			callback->Success(ret);
+		}
+	}
+}
+
+void EasemobCefQueryHandler::groupSpecification(Json::Value json, CefRefPtr<Callback> callback)
+{
+	EMError error;
+	string id = getStringAttrFromJson(json, "id");
+	if (!id.empty())
+	{
+		EMGroupPtr group = g_client->getGroupManager().fetchGroupSpecification(id, error);
+		if (error.mErrorCode != EMError::EM_NO_ERROR)
+		{
+			callback->Failure(error.mErrorCode, error.mDescription);
+		}
+		else
+		{
+			string style = "PRIVATE_MEMBER_INVITE";
+			switch (group->groupSetting()->style())
+			{
+			case EMGroupSetting::PRIVATE_MEMBER_INVITE:
+				style = "PRIVATE_MEMBER_INVITE";
+				break;
+			case EMGroupSetting::PRIVATE_OWNER_INVITE:
+				style = "PRIVATE_OWNER_INVITE";
+				break;
+			case EMGroupSetting::PUBLIC_JOIN_OPEN:
+				style = "PUBLIC_JOIN_OPEN";
+				break;
+			case EMGroupSetting::PUBLIC_JOIN_APPROVAL:
+				style = "PUBLIC_JOIN_APPROVAL";
+				break;
+			default:
+				break;
+			}
+			string members;
+			const EMGroupMemberList *gml = group->groupMembers();
+			if (gml == NULL)
+			{
+				return;
+			}
+			for (string member : *gml)
+			{
+				members += "{\"jid\":\"";
+				members += member;
+				members += "\",\"affiliation\":\"";
+				members += "member";
+				members += "\"},";
+			}
+			if (!members.empty())
+			{
+				string tmp = members.substr(0, members.length() - 1);
+				members = "[" + tmp + "]";
+			}
+			else
+			{
+				members = "[]";
+			}
+
+			std::stringstream stream;
+			stream << "{\"owner\":\"";
+			stream << group->groupOwner();
+			stream << "\",\"style\":\"";
+			stream << style;
+			stream << "\",\"maxUserCount\":\"";
+			stream << group->groupSetting()->maxUserCount();
+			stream << "\",\"members\":";
+			stream << members;
+			stream << "}";
+
+			callback->Success(stream.str());
 		}
 	}
 }
