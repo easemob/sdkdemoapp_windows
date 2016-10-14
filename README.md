@@ -7,10 +7,17 @@
 
 ### 流程
 1. 解压缩Debug\libcef.zip到Debug下，生成libcef.dll文件。
-2. 编译CEF cefsimple项目
+2. 引用Windows SDK。
+3. 编译CEF cefsimple项目。
 
 # 详细步骤
-
+## 引用Windows SDK
+- 从http://www.easemob.com/download/im下载Windows SDK。
+- 解压缩Windows SDK。
+- 复制bin\easemob_d.dll到sdkdemoapp_windows\Debug\，复制bin\easemob.dll到sdkdemoapp_windows\Release\。
+- 复制lib\easemob_d.lib到sdkdemoapp_windows\Debug\，复制bin\easemob.lib到sdkdemoapp_windows\Release\。
+- 复制include目录到sdkdemoapp_windows\easemobsdk_include\。
+- 
 ## 编译CEF cefsimple
 ### 生成VS项目
 - 在https://cmake.org上下载cmake的windows安装版本，比如这个https://cmake.org/files/v3.5/cmake3.5.0rc3win32x86.msi 。

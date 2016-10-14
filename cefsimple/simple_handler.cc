@@ -12,7 +12,7 @@
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "DevtoolClient.h"
-
+#include "application.h"
 #include <shellapi.h>
 #pragma comment(lib, "shell32.lib")
 
@@ -84,36 +84,6 @@ bool SimpleHandler::OnProcessMessageReceived(
 	return false;
 }
 
-inline BYTE fromHex(const BYTE &x)
-{
-	return isdigit(x) ? x - '0' : x - 'A' + 10;
-}
-
-inline std::string URLDecode(const std::string &sIn)
-{
-	std::string sOut;
-	for (size_t ix = 0; ix < sIn.size(); ix++)
-	{
-		BYTE ch = 0;
-		if (sIn[ix] == '%')
-		{
-			ch = (fromHex(sIn[ix + 1]) << 4);
-			ch |= fromHex(sIn[ix + 2]);
-			ix += 2;
-		}
-		else if (sIn[ix] == '+')
-		{
-			ch = ' ';
-		}
-		else
-		{
-			ch = sIn[ix];
-		}
-		sOut += (char)ch;
-	}
-	return sOut;
-}
-
 bool SimpleHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 	CefRefPtr<CefFrame> frame,
 	const CefString& target_url,
@@ -126,7 +96,7 @@ bool SimpleHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 	CefBrowserSettings& settings,
 	bool* no_javascript_access)
 {
-	CefString dec = URLDecode(target_url);
+	CefString dec = Utils::URLDecode(target_url);
 	std::wstring url = dec.ToWString();
 	std::wstring param = url;
 	std::wstring file_tag = L"file:///";
@@ -140,8 +110,12 @@ bool SimpleHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 	if (location_pos == 0)
 	{
 		param = L"/select, file:///" + url.substr(location_tag.length());
+		ShellExecuteW(NULL, L"open", L"explorer.exe", param.c_str(), NULL, SW_SHOWNORMAL);
 	}
-	ShellExecuteW(NULL, L"open", L"explorer.exe", param.c_str(), NULL, SW_SHOWNORMAL);
+	else
+	{
+		ShellExecuteW(NULL, L"open", param.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	}
 	return true;
 }
 

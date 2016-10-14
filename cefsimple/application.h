@@ -5,16 +5,15 @@
 #include <sstream>
 #include "simple_handler.h"
 #include <mutex>
+#include <atomic>
 using namespace std;
 extern easemob::EMClient *g_client;
 
 class Utils{
 public:
 	static void CallJS(const std::stringstream & stream);
-	static bool g_bRosterDownloaded;
-	static std::mutex roster_mutex; //lock of g_bRosterDownloaded
-	static bool g_bGroupListDownloaded;
-	static std::mutex group_mutex; //lock of g_bGroupListDownloaded
+	static HANDLE g_RosterDownloaded;
+	static HANDLE g_GroupListDownloaded;
 
 	static inline BYTE toHex(const BYTE &x)
 	{
@@ -43,6 +42,36 @@ public:
 				buf[2] = toHex((BYTE)sIn[ix] % 16);
 			}
 			sOut += (char *)buf;
+		}
+		return sOut;
+	}
+
+	static inline BYTE fromHex(const BYTE &x)
+	{
+		return isdigit(x) ? x - '0' : x - 'A' + 10;
+	}
+
+	inline static std::string URLDecode(const std::string &sIn)
+	{
+		std::string sOut;
+		for (size_t ix = 0; ix < sIn.size(); ix++)
+		{
+			BYTE ch = 0;
+			if (sIn[ix] == '%')
+			{
+				ch = (fromHex(sIn[ix + 1]) << 4);
+				ch |= fromHex(sIn[ix + 2]);
+				ix += 2;
+			}
+			//else if (sIn[ix] == '+')
+			//{
+			//	ch = ' ';
+			//}
+			else
+			{
+				ch = sIn[ix];
+			}
+			sOut += (char)ch;
 		}
 		return sOut;
 	}
