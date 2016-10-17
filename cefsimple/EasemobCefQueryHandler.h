@@ -56,7 +56,7 @@ public:
 	void acceptInvitation(Json::Value json, CefRefPtr<Callback> callback);
 	void declineInvitation(Json::Value json, CefRefPtr<Callback> callback);
 	void sendMessage(Json::Value json, CefRefPtr<Callback> callback);
-	void sendFileMessage(Json::Value json, CefRefPtr<Callback> callback);
+	void sendFileMessage(Json::Value json, CefRefPtr<Callback> callback, HWND hwnd);
 
 private:
 	EMCallbackObserverHandle m_coh;
