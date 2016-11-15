@@ -412,7 +412,7 @@ if(OS_WINDOWS)
   set(CEF_LINKER_FLAGS_DEBUG      "/DEBUG")
   set(CEF_LINKER_FLAGS_RELEASE      "/DEBUG")
   # /MANIFEST:NO          = No default manifest (see ADD_WINDOWS_MANIFEST macro usage)
-  set(CEF_EXE_LINKER_FLAGS        "/MANIFEST:NO")
+  set(CEF_EXE_LINKER_FLAGS        "/MANIFEST:NO /SUBSYSTEM:WINDOWS")
 
   # Standard definitions
   # -DWIN32 -D_WIN32 -D_WINDOWS           = Windows platform
@@ -443,6 +443,8 @@ if(OS_WINDOWS)
     d3dcompiler_47.dll
     libcef.dll
 	libcurl.dll
+	dbghelp.dll
+	vcredist_x86.exe
     libEGL.dll
     libGLESv2.dll
     natives_blob.bin

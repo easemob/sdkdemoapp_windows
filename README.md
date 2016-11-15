@@ -1,5 +1,18 @@
 # sdkdemoapp_windows
 ## Windows demo 构建及运行说明
+本程序主要基于环信IM SDK和CEF(Chromium Embedded Framework)实现。界面层是CEF的WEB UI，前端主要框架是ReactJS。程序是在CEF官方代码Demo cefsimple的基础上，增加了右键菜单和开发者工具，增加了基于环信IM SDK的即时通讯功能。
+
+主要源文件介绍：
+cefsimple_win.cc	程序入口，包括了CEF程序的初始化，消息循环和终止。
+simple_app.cc	CefApp、CefBrowserProcessHandler、CefRenderProcessHandler三个类的实现，主要用在OnContextInitialized中创建浏览器实例。
+simple_handler.cc	CefClient和CefContextMenuHandler的实现。主要功能：OnBeforePopup中处理自定义协议浏览请求；OnBeforeContextMenu中实现右键菜单。
+EasemobCefMessageRouterBrowserSideDelegate.cpp	浏览器事件代理。处理浏览器事件。在本程序主要用来注册网页调用处理器EasemobCefQueryHandler。
+EasemobCefQueryHandler.cpp	网页调用处理器。处理从网页中JS代码发起的调用请求。
+ChatListener.cpp	消息监听器。接收聊天消息（单聊、群聊、聊天室三种类型）。
+ConnectionListener.cpp	网络连接监听器。接收网络连接变化通知。
+ContactListener.cpp	好友消息监听器。接收添加或删除好友请求的发送和接收消息、接收好友列表变化消息。
+GroupManagerListener.cpp	群组消息监听器。接收群组配置消息（非群聊消息），包括群成员变化、加入群请求收发、邀请加入群请求收发等。
+
 ---
 ### 依赖工具
 - VS2013
@@ -33,7 +46,9 @@
 - Generate完成后关闭CMake。
 
 ### 编译CEF
-用VS2013运行cef\build\cef.sln，编译cefsimple Debug和Release两个版本。
+- 用VS2013运行cef\build\cef.sln
+- 修改cefsimple Debug版和Release版项目属性-配置属性中以下三项:常规-平台工具集：v120_xp,链接器-系统-子系统:/subsystem:windows,链接器-系统-所需的最低版本:5.01。
+- 编译cefsimple Debug和Release两个版本。
 
 ### 运行
 编译完成后运行post-build.bat。运行build\cefsimple\Debug\cefsimple.exe或者build\cefsimple\Release\cefsimple.exe
