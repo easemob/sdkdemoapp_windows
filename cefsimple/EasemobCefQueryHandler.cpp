@@ -74,7 +74,6 @@ void EasemobCefQueryHandler::InitSDKFunctionMap()
 	m_mapSDKCall["acceptInvitation"] = &EasemobCefQueryHandler::acceptInvitation;
 	m_mapSDKCall["declineInvitation"] = &EasemobCefQueryHandler::declineInvitation;
 	m_mapSDKCall["sendMessage"] = &EasemobCefQueryHandler::sendMessage;
-	m_mapSDKCall["sendFileMessage"] = &EasemobCefQueryHandler::sendFileMessage;
 
 	m_mapSDKCallInWorkThread["groupMembers"] = true;
 	m_mapSDKCallInWorkThread["createGroup"] = true;
@@ -102,6 +101,8 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 	CefRefPtr<Callback> callback){
 	std::string json_document = request.ToString();
 
+	CefWindowHandle hwnd = browser->GetHost()->GetWindowHandle();
+
 	Json::Value json;
 	Json::Reader reader;
 	if (reader.parse(json_document, json))
@@ -109,7 +110,11 @@ bool EasemobCefQueryHandler::OnQuery(CefRefPtr<CefBrowser> browser,
 		string type = getStringAttrFromJson(json, "type");
 		if (!type.empty())
 		{
-			if (m_mapSDKCall[type] != nullptr)
+			if (type.compare("sendFileMessage") == 0)
+			{
+				sendFileMessage(json, callback, hwnd);
+			}
+			else if (m_mapSDKCall[type] != nullptr)
 			{
 				if (m_mapSDKCallInWorkThread[type])
 				{
@@ -931,7 +936,7 @@ void EasemobCefQueryHandler::sendMessage(Json::Value json, CefRefPtr<Callback> c
 	g_client->getChatManager().sendMessage(msg);
 }
 
-void EasemobCefQueryHandler::sendFileMessage(Json::Value json, CefRefPtr<Callback> callback)
+void EasemobCefQueryHandler::sendFileMessage(Json::Value json, CefRefPtr<Callback> callback, HWND hwnd)
 {
 	string to = getStringAttrFromJson(json, "to");
 	string content = getStringAttrFromJson(json, "msg");
@@ -943,7 +948,7 @@ void EasemobCefQueryHandler::sendFileMessage(Json::Value json, CefRefPtr<Callbac
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = ::GetDesktopWindow();
+	ofn.hwndOwner = hwnd;
 	ofn.lpstrFile = szFile;
 	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(szFile);
