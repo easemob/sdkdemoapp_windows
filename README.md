@@ -48,7 +48,7 @@ GroupManagerListener.cpp	群组消息监听器。接收群组配置消息（非�
 ### 编译CEF
 - 用VS2013运行cef\build\cef.sln
 - 修改cefsimple Debug版和Release版项目属性-配置属性中以下三项:常规-平台工具集：v120_xp,链接器-系统-子系统:/subsystem:windows,链接器-系统-所需的最低版本:5.01。
-- 编译cefsimple Debug和Release两个版本。
+- 编译cefsimple Debug和Release两个版本（CMake生成的VS2013项目文件已经修改Release版为可调试模式，建议使用Release版进行开发和调试，Debug版尚有未知的异常）。
 
 ### 运行
 编译完成后运行post-build.bat。运行build\cefsimple\Debug\cefsimple.exe或者build\cefsimple\Release\cefsimple.exe
