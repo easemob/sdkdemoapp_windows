@@ -41,7 +41,10 @@ GroupManagerListener.cpp	群组消息监听器。接收群组配置消息（非�
 - 输入框<where to build the binaries>内输入待生成的VS项目路径，比如：E:/work/cef/build。
 - 设置CMAKE_INSTALL_PREFIX的值为CMake安装路径，比如：C:\Program Files\CMake\bin。
 - 设置USE_SANDBOX为未选中。
-- 点击Confiure按钮。
+- 点击Confiure按钮，并选择编译器的版本。
+  - Specify the generator for this project，比如VS2013：Visual Studio 12 2013。
+  - Optional toolset to use (-T parameter)，可以不填。
+  - Use default native compilers。 
 - Confiure完成后点击Generate按钮。
 - Generate完成后关闭CMake。
 
