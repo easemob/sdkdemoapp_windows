@@ -1,0 +1,29 @@
+matrix:
+  include:
+  - os: osx
+    osx_image: xcode9.4
+    language: node_js
+    node_js: '8'
+    env:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+cache:
+  directories:
+  - node_modules
+  - "$HOME/.cache/electron"
+  - "$HOME/.cache/electron-builder"
+script: npm run prod-mac
+
+notifications:
+    slack: easemob:tYWZJo2ydkdNkexGpLSVFac5
+
+deploy:
+  provider: releases
+  file_glob: true
+  api_key:
+    secure: QHNaqweunLxtnq80w7ddQQb5v91Q+QniUd3aSmKrHq3ywNIsA344eubtELBPuNsgH7Yo4uVZHN0wjElcKniX46WN9bLMnUB1ueqm85YwKTrVpEy8fnuPI9/XmIAV/AIkukS7JoZPVC2HP29CxptS0lN6u+RWhqWnY3I2k4gO1y8yJRiDuiK3Smi0zrdxnoRFsWznab0qHl3RDVND0PXylZyRV90XgsUy34LUiiHbc65JhQHAo3HXccRGVtDpO3Huh1JC5MoVxGhSepJWNCX8mnbtm4wzWfbcVbsvomDw0DBM1MLk0afEr+0M6CTJy/GzWM6EbML7yJo0erUSyD8fIS0LW+h74De0D4YGfMcWMymjA8D9JUOQ7mX5yaSyLpTx9bG30a1Mp8yITDsOB6IUl5bPvu/pjndst1WTDsQyhteJ8j1AWRRj2wI4DrslJ/PGh2jrpfQIz5bt4VqENJbN5r5reIL47vMCOsmClhzRmUdzkWxWf3cUBegIwjCZyX1iIQdLPQfU55BbI8wVs7vYveBB2JUzAZ7Bl3NXQi+aivAWugIcxi0N/wQwdXIeNjg3TBHrQUB2vSmElPAlx1sB7mPbKFx1ohrrenpstpWEHaGpzCGU/CkezKM1WbC2sSzftwJQKI1QIotGWEeMZfP+NWm81gvOokiyvislVkoO8nA=
+  file: "release/*.*"
+  skip_cleanup: true
+  on:
+    repo: easemob/oa-pc
+    all_branches: true

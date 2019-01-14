@@ -1,0 +1,31 @@
+platform:
+  - x64
+cache:
+  - node_modules
+  - '%APPDATA%\npm-cache'
+  - '%USERPROFILE%\.electron'
+
+version: 1.0.{build}
+clone_depth: 2
+
+
+install:
+  - ps: Install-Product node 8 x64
+  - npm install
+build_script:
+  - npm run prod-win
+artifacts:
+  - path: release\*.*
+
+
+test: off
+
+deploy:
+  description: 'MobilePortal-v$(appveyor_build_version)'
+  provider: GitHub
+  auth_token:
+    secure: BTTXKYx5y+s14Q1FVFeh5XqQU1BD7s4LKPQt3uU42iIyQ1quGUdPPAvwKn9bsCMc
+  draft: true
+  prerelease: false
+  force_update: true             # release from master branch only
+    #appveyor_repo_tag: true        # deploy on tag push only

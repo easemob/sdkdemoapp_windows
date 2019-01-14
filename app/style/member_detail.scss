@@ -1,0 +1,55 @@
+.font-big {
+	font-size: 25px;
+}
+.ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.oa-member-detail{
+	width: calc(100% - 300px);
+	background: #F8FAFC;
+	display: flex;
+	justify-content: center;
+	.member-detail-box{
+		background: #fff;
+		border-radius: 5px;
+		border: 1px solid #E4E9EC;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		margin-top: 60px;
+		width: calc(100% - 120px);
+		height: 330px;
+		padding: 40px 25px;
+		.member-detail{
+			width: 100%;
+			padding-bottom: 25px;
+			border-bottom: 1px solid #ececec;
+			display: flex;
+			justify-content: space-between;
+			.member-title{
+				display: flex;
+				justify-content: space-between;
+				line-height: 40px;
+				.member-name {
+					max-width: 200px;
+					padding-right: 5px;
+				}
+			}
+			.member-img{
+				width: 70px;
+				height: 70px;
+			}
+		}
+		.member-detail-list{
+			margin: 40px 0;
+			width: 100%;
+			.detail-label{
+				padding-right: 10px;
+			}
+		}
+	}
+
+}

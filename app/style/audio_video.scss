@@ -1,0 +1,258 @@
+#videoContainer {
+	.block{
+		display: block;
+	}
+	.none{
+		display: none;
+	}
+	-webkit-app-region: drag;
+	height: 100%;
+	color: #fff;
+	background: #475e78;
+	>div{
+		height: 100%;
+	}
+	.audio-video-bg{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+		filter: blur(20px);
+		&.audio-video-noImage{
+			background: #475e78;
+		}
+	}
+	.audio-video-box{
+		width: 100%;
+		height: calc(100% - 170px);
+		overflow: hidden;
+		display: flex;
+		.member-box{
+			margin: 10px;
+			z-index: 100;
+			video{
+				object-fit: cover;
+				width: 100%;
+				height: 100%;
+				left: auto;
+				top: auto;
+			}
+			&.currentVideo{
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 99;
+				margin: 0;
+				width: auto;
+				video{
+					width: 100%;
+					height: 100%;
+				}
+			}
+		}
+		.audio-video-tips{
+			text-align: center;
+			padding: 10px;
+		}
+
+	}
+	.audio-video-box.single{
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: 0;
+		height: 100%;
+		justify-content: flex-end;
+		.member-box{
+			width: 100px;
+			&.currentVideo{
+				width: 100%;
+				height: 100%;
+				>div{
+					width: 100%;
+					height: 100%;
+					video{
+						object-fit: cover;
+					}
+				}
+			}
+		}
+		.member-img{
+			width: 100px;
+			height: 100px;
+		}
+		.audio-video-info{
+			bottom: 75px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			z-index: 105;
+		}
+	}
+	.audio-video-box.group{
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-end;
+		height: calc(100% - 60px);
+		.audio-video-info{
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 105;
+		}
+		.member-box{
+			width: 90px;
+			height: 90px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			box-sizing: content-box;
+			padding: 10px;
+			margin: 0;
+			.member-img{
+				width: 70px;
+				height: 70px;
+			}
+			>div{
+				video{
+					border-radius: 50%;
+					width: 70px;
+					height: 70px;
+					object-fit: cover;
+				}
+			}
+			&.currentVideo{
+				width: 100%;
+				height: calc(100% - 60px);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				position: fixed;
+				padding: 0;
+				>div{
+					width: 100%;
+					height: 100%;
+					video{
+						border-radius: 0;
+						width: 100%;
+						height: 100%;
+						object-fit: cover;
+					}
+				}
+				>span{
+					position: absolute;
+					right: 10px;
+					top: 10px;
+				}
+				.member-img{
+					width: 100px;
+					height: 100px;
+				}
+			}
+		}
+
+		>span{
+			position: absolute;
+			top: 20px;
+			right: 20px;
+		}
+		&.video{
+			overflow-x: auto;
+		}
+	}
+	.audio{
+		.member-box{
+			display: none;
+		}
+	}
+}
+.response-button {
+	width: 45px;
+	height: 45px;
+	border-radius: 50%;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+	font-size: 22px;
+	cursor: pointer;
+}
+.audio-video-hangup{
+	background-color: #cc5352;
+	>i{
+		transform: rotateZ(224deg);
+	}
+}
+.audio-video-answer{
+	background-color: #55b838;
+	>i{
+		transform: rotateZ(90deg);
+	}
+}
+
+.audio-video-time{
+	text-align: center;
+	width: 100%;
+	top: 10px;
+	position: absolute;
+	z-index: 105;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.audio-video-info{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 15px;
+	.member-img{
+		width: 90px;
+		height: 90px;
+	}
+	>span {
+		font-size: 20px;
+		&.tips{
+			font-size: 12px;
+		}
+	}
+}
+.audio-video-operation{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	.audio-video-sound{
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		margin: 0 30px;
+		>i{
+			font-size: 25px;
+			cursor: pointer;
+		}
+	}
+	.response-button{
+		margin: 0 15px;
+	}
+
+	&.single{
+		position: absolute;
+		bottom: 20px;
+		left: 40px;
+		right: 40px;
+		z-index: 101;
+	}
+	&.group{
+		position: relative;
+		background: #475e78;
+		height: 60px;
+		z-index: 200;
+	}
+
+}

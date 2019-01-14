@@ -1,0 +1,379 @@
+import React, { PureComponent } from "react";
+import * as actionCreators from "@/stores/actions";
+import * as selectors from "@/stores/selectors";
+import { connect } from "react-redux";
+import { Icon, Modal, Input, Button, Form, Upload, Switch } from "antd";
+import HeadImageView from "@/views/common/head_image";
+import MenuList from "../contacts/contact_all_list";
+import _ from "underscore";
+var _const = require("@/views/common/domain");
+var inviteGroupMember = false;
+
+
+class HorizontalLoginForm extends PureComponent {
+	constructor(props){
+		super(props);
+		this.state = {
+			groupName: "",
+			description: "",
+			createGroupButtonState: false,
+		};
+		this.handleChangeGroupName = this.handleChangeGroupName.bind(this);
+		this.handleChangeDesc = this.handleChangeDesc.bind(this);
+		this.handleChangeInvite = this.handleChangeInvite.bind(this);
+	}
+
+	handleChangeGroupName(e){
+		this.setState({
+			groupName: e.target.value
+		});
+	}
+
+	handleChangeDesc(e){
+		this.setState({
+			description: e.target.value
+		});
+	}
+
+	// 允许群成员邀请成员开关
+	handleChangeInvite(checked){
+		inviteGroupMember = checked;
+	}
+
+	render(){
+		const { getFieldDecorator } = this.props.form;
+		const { createGroup } = this.props;
+		const { membersIdOfCreateGroup } = this.props.reduxProps;
+		return (
+			<Form
+				onSubmit={
+					(e) => {
+						e.preventDefault();
+						createGroup(this.state.groupName, this.state.description);
+					}
+				}
+				className="login-form"
+			>
+				<FormItem>
+					{/* <span>群名称</span> */}
+					{getFieldDecorator("groupName", {
+						rules: [{ max: 20, message: "群名称最多为 20 个字" } ],
+					})(
+						<Input
+							// prefix={ <Icon type="user"style={ { color: "rgba(0,0,0,.25)" } } /> }
+							placeholder="群名称"
+							onChange={ this.handleChangeGroupName }
+						/>
+					)}
+				</FormItem>
+				<FormItem>
+					{/* <span>群描述</span> */}
+					<Input
+						// prefix={ <Icon type="lock" style={ { color: "rgba(0,0,0,.25)" } } /> }
+						placeholder="群描述"
+						onChange={ this.handleChangeDesc }
+					/>
+				</FormItem>
+
+				<FormItem>
+					<span>允许群成员邀请</span>
+					<Switch
+						checkedChildren="开"
+						unCheckedChildren="关"
+						onChange={ this.handleChangeInvite }
+					/>
+				</FormItem>
+				<FormItem>
+					<Button
+						type="primary"
+						htmlType="submit"
+						className="login-form-button"
+						disabled={ !(membersIdOfCreateGroup.length > 0) }
+					>
+						确定
+					</Button>
+				</FormItem>
+			</Form>
+		);
+	}
+}
+const FormItem = Form.Item;
+const WrappedHorizontalLoginForm = Form.create()(HorizontalLoginForm);
+class CreateGroupView extends PureComponent {
+	constructor(props){
+		super(props);
+		this.state = {
+			visible: false,
+			groupName: "",
+			description: "",
+			previewVisible: false,
+			previewImage: "",
+			fileList: [],
+			avatarUrl: ""
+		};
+		this.handleCreatGroup = this.handleCreatGroup.bind(this);
+		this.handleCancel = this.handleCancel.bind(this);
+		this.createGroup = this.createGroup.bind(this);
+		this.handlePreviewAvatar = this.handlePreviewAvatar.bind(this);
+		this.handleChangeAvatar = this.handleChangeAvatar.bind(this);
+		this.handleCancelAvatar = this.handleCancelAvatar.bind(this);
+		this.handleCancleSelectMember = this.handleCancleSelectMember.bind(this);
+		this.handleRemoveAvatar = this.handleRemoveAvatar.bind(this);
+	}
+
+	handleCancelAvatar(){
+		this.setState({ previewVisible: false });
+	}
+
+	handleRemoveAvatar(){
+		this.setState({ avatarUrl: "", fileList: [] });
+	}
+
+	handlePreviewAvatar(file){
+		this.setState({
+			previewImage: file.url || file.thumbUrl,
+			previewVisible: true,
+		});
+	}
+
+	handleChangeAvatar({ fileList, file }){
+		const { setNotice, selectConversationId, groupChats } = this.props;
+		this.setState({ fileList });
+		if(file.status == "done"){
+			this.setState({ avatarUrl: file.response.url });
+		}
+		else if(file.status == "error"){
+			if(file.error.status == 413){
+				setNotice("上传失败，上传头像过大", "fail");
+				this.setState({ fileList: [
+					{
+						uid: -1,
+						name: "",
+						status: "done",
+						url: groupChats[selectConversationId].avatar ? `${_const.domain}${groupChats[selectConversationId].avatar}` : `${require("@/views/config/img/default_avatar.png")}`,
+					}
+				] });
+			}
+		}
+	}
+
+	handleCreatGroup(){
+		const {
+			selectMembersAction,
+			selectMember
+		} = this.props;
+		this.setState({
+			visible: true,
+			fileList: [],
+			avatarUrl: ""
+		});
+		//
+		selectMember && selectMembersAction(selectMember);
+
+	}
+
+	// 取消创建
+	handleCancel(){
+		const { cancelCreateGroupAction } = this.props;
+		this.setState({
+			visible: false,
+			fileList: [],
+			avatarUrl: ""
+		});
+		cancelCreateGroupAction();
+	}
+
+	// 创建群组时除了自己应该至少选 2 人，否则去单聊
+	createGroup(groupName, description){
+		const {
+			requestCreateGroup,
+			membersId,
+			membersIdArray,
+			userInfo,
+			membersName,
+			globals,
+			conversationOfSelect,
+			msgsOfConversation,
+			allMembersInfo,
+			cancelCreateGroupAction,
+			setNotice
+		} = this.props;
+		var conversation;
+		var messages;
+		var extInfo;
+		var selectMember;
+		var username;
+
+		// var conversation = globals.chatManager.conversationWithType(selectMember.easemobName, 1);
+		// // var messages = conversation.loadMoreMessages(0, "", 20);
+		// // var extInfo = {
+		// // 	avatar: selectMember.image,
+		// // 	nick: selectMember.realName,
+		// // 	userid: selectMember.id
+		// // };
+		// // // 设置扩展消息
+		// // conversation.setExtField(JSON.stringify(extInfo));
+		// conversationOfSelect(selectMember.easemobName);
+		// msgsOfConversation({ id: selectMember.easemobName, msgs: messages, conversation });
+		if(membersIdArray.length == 1){
+			selectMember = allMembersInfo[membersIdArray[0]];
+			conversation = globals.chatManager.conversationWithType(membersIdArray[0], 0);
+			messages = conversation.loadMoreMessagesByMsgId("", 20,0);
+			extInfo = {
+				avatar: selectMember.image,
+				nick: selectMember.realName,
+				userid: selectMember.id
+			};
+			// // 设置扩展消息
+			conversation.setExtField(JSON.stringify(extInfo));
+			conversationOfSelect(membersIdArray[0]);
+			msgsOfConversation({ id: membersIdArray[0], msgs: messages, conversation });
+			cancelCreateGroupAction();
+			this.setState({
+				visible: false,
+			});
+		}
+		else if(membersIdArray.length >= 500){
+			setNotice("当前选择的群成员已超过 500 人", "fail");
+		}
+		else{
+			username = userInfo.user.realName || userInfo.user.username || userInfo.user.easemobName;
+			groupName = groupName ? groupName.substring(0, 20) : `${username},${membersName}`.substring(0, 20);
+			description = description ? description.substring(0, 100) : "";
+			requestCreateGroup(
+				userInfo.user.tenantId,
+				groupName,
+				this.state.avatarUrl,
+				membersId,
+				description,
+				userInfo.user.easemobName,
+				userInfo.user.id,
+				globals.chatManager,
+				inviteGroupMember
+			);
+			cancelCreateGroupAction();
+			this.setState({
+				visible: false,
+			});
+		}
+
+
+	}
+
+	handleCancleSelectMember(item){
+		const { cancelMembersAction } = this.props;
+		cancelMembersAction(item);
+	}
+
+	render(){
+		const {
+			userInfo,
+			selectConversationId,
+			selectMember,
+			membersIdOfCreateGroup,
+			allMembersInfo
+		} = this.props;
+		const { previewVisible, previewImage, fileList } = this.state;
+		var groupMemberInfoData = selectMember ? [userInfo.user].concat(selectMember) : [userInfo.user];
+		var groupMemberIds = _.pluck(groupMemberInfoData, "easemobName");
+		var memberInfoOfGroup;
+		return (
+			<div>
+				<div className="add-members" onClick={ this.handleCreatGroup }>
+					<Icon type="plus-square-o" />
+				</div>
+				<Modal
+					title="新建群"
+					visible={ this.state.visible }
+					onCancel={ this.handleCancel }
+					mask={ false }
+					footer={ null }
+					style={ { top: 0 } }
+					width={ 700 }
+				>
+					<div className="oa-group">
+						<div className="oa-group-setting oa-group-create-setting">
+							<div>当前已选择{ membersIdOfCreateGroup.length + 1}人</div>
+							<div className="selected-members-container">
+								<div className="select-member" key={ userInfo.user.id }>
+									<HeadImageView imgUrl={ userInfo.user.image }></HeadImageView>
+									<div className="member-name">{ userInfo.user.realName || userInfo.user.username || userInfo.user.easemobName }</div>
+								</div>
+								{
+									_.map(membersIdOfCreateGroup, (member) => {
+										memberInfoOfGroup = allMembersInfo[member];
+										return (
+											<div className="select-member" key={ member }>
+												<HeadImageView imgUrl={ memberInfoOfGroup ? memberInfoOfGroup.image : "" }></HeadImageView>
+												<div className="member-name">
+													{
+														memberInfoOfGroup
+															? memberInfoOfGroup.realName || memberInfoOfGroup.username || memberInfoOfGroup.easemobName
+															: member
+													}
+												</div>
+												{
+													member == selectConversationId
+														? null
+														: <div className="cancel-member" onClick={ () => { this.handleCancleSelectMember(member);  } }>
+															<Icon type="close" />
+														</div>
+												}
+
+											</div>
+										);
+									})
+								}
+							</div>
+							<div className="group-info">
+								<div className="group-avatar">群头像</div>
+								<Upload
+									action={ `${_const.domain}/v1/tenants/${userInfo.user.tenantId}/mediafile` }
+									listType="picture-card"
+									fileList={ fileList }
+									accept="image/*"
+									onPreview={ this.handlePreviewAvatar }
+									onChange={ this.handleChangeAvatar }
+									onRemove={ this.handleRemoveAvatar }
+								>
+									{fileList.length >= 1
+										? null
+										: <div>
+											<Icon type="plus" />
+											<div className="ant-upload-text">上传</div>
+										</div>
+									}
+								</Upload>
+								<Modal visible={ previewVisible } footer={ null } onCancel={ this.handleCancelAvatar }>
+									<img alt="example" style={ { width: "100%" } } src={ previewImage } />
+								</Modal>
+							</div>
+							<WrappedHorizontalLoginForm reduxProps={ this.props } createGroup={ this.createGroup } />
+						</div>
+						<div className="oa-group-member">
+							<MenuList
+								selectMemberData={ membersIdOfCreateGroup }
+								groupMemberData={ groupMemberIds }
+							/>
+						</div>
+					</div>
+				</Modal>
+			</div>
+		);
+
+	}
+}
+
+const mapStateToProps = state => ({
+	globals: state.globals,
+	allMembersInfo: state.allMembersInfo,
+	selectConversationId: state.selectConversationId,
+	membersId: selectors.membersIdOfGroup(state),
+	membersName: selectors.membersNameOfGroup(state),
+	userInfo: state.userInfo,
+	groupChats: state.groupChats,
+	// membersOfCreateGroup: state.membersOfCreateGroup,
+	membersIdArray: selectors.membersIdArray(state),
+	membersIdOfCreateGroup: selectors.createGroupMembersIdArray(state),
+});
+export default connect(mapStateToProps, actionCreators)(CreateGroupView);

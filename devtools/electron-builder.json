@@ -1,0 +1,82 @@
+{
+	"productName": "环信移动门户",
+	"appId": "com.easemob.oa",
+	"compression": "maximum",
+	"artifactName": "MobilePortal.${version}.${os}.${arch}.${ext}",
+	"publish": [
+		{
+			"provider": "generic",
+			"url": "https://download-sdk.oss-cn-beijing.aliyuncs.com/"
+		}
+	],
+	"dmg": {
+		"contents": [
+			{
+				"x": 130,
+				"y": 220
+			},
+			{
+				"x": 410,
+				"y": 220,
+				"type": "link",
+				"path": "/Applications"
+			}
+		],
+		"title": "环信 ${version}"
+	},
+	/* 相对 directory.app 的路径 */
+	/* 要求所有文件定义必须在 directory.app 下 */
+	"files": [
+		"__build__/",
+		"assets/",
+		"media/",
+		"index.html",
+		"video.html",
+		"main.js",
+		"package.json"
+	],
+	"directories": {
+		"buildResources": "resources",
+		"output": "release",
+		"app": "./app/"
+	},
+	/* 文档可不是这么写的 */
+	"asar": true,
+	"asarUnpack": [
+		"./__build__/addon",
+	],
+	"win": {
+		"target": [
+			"nsis"
+		],
+		"verifyUpdateCodeSignature": false
+	},
+	"linux": {
+		"publish": null,
+		"category": "Utility",
+		"target": [
+			"deb",
+			"rpm",
+			"AppImage",
+			"tar.gz"
+		],
+		"icon": "./resources/icons/"
+	},
+	"mac": {
+		"category": "public.app-category.productivity",
+		"icon": "./resources/icon.icns",
+		"artifactName": "MobilePortal.${version}.${os}.${ext}"
+	},
+	"nsis": {
+		"oneClick": false,
+		"perMachine": true,
+      	"allowElevation": true,
+      	"allowToChangeInstallationDirectory": true,
+      	"createDesktopShortcut": true,
+      	"runAfterFinish": true,
+		"artifactName": "MobilePortal.${version}.${os}.setup.${ext}",
+		"deleteAppDataOnUninstall": false,
+		"installerIcon": "./resources/icons/icon.ico",
+		"uninstallerIcon": "./resources/icons/icon.ico"
+	}
+  }

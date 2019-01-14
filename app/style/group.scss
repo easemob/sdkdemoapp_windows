@@ -1,0 +1,95 @@
+
+.oa-group{
+	display: flex;
+	.oa-group-setting{
+		width: 450px;
+		padding-right: 15px;
+		box-sizing: border-box;
+		border-right: 1px solid #dfe3e9;
+		.group-info{
+			overflow: hidden;
+			.group-avatar{
+				margin-bottom: 5px;
+			}
+		}
+		.selected-members-container{
+			overflow-y: auto;
+			flex-wrap: wrap;
+			.select-member{
+				display: flex;
+				align-items: center;
+				margin: 5px 0;
+			}
+			.cancel-member{
+				cursor: pointer;
+				flex: 0 0 30px;
+			}
+			.member-img{
+				width: 40px;
+				height: 40px;
+				margin-right: 10px;
+			}
+			.member-name{
+				flex: auto;
+			}
+		}
+	}
+	.oa-group-member{
+		.member-list{
+			width: 250px;
+			height: 540px;
+			overflow-y: auto;
+			li{
+				height: 50px;
+				line-height: 50px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				.avatar-name {
+					height: 40px;
+					display: flex;
+					.member-img{
+						width: 40px;
+						height: 40px;
+						margin-right: 10px;
+					}
+				}
+			}
+		}
+	}
+
+	.oa-group-create-setting{
+		.selected-members-container{
+			height: 220px;
+		}
+		.ant-switch{
+			margin-left: 20px;
+		}
+		.ant-form-item {
+			margin-bottom: 10px;
+		}
+	}
+	.oa-group-delete-setting,
+	.oa-group-add-setting{
+		.selected-members-container{
+			height: 500px;
+		}
+	}
+}
+
+// 群列表详情
+.oa-group-detail {
+	width: calc(100% - 301px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 100px;
+	.member-img{
+		width: 100px;
+		height: 100px;
+	}
+	.group-name{
+		font-size: 18px;
+		margin: 10px 0 100px;
+	}
+}

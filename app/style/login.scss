@@ -1,0 +1,54 @@
+.oa-login{
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 70px;
+}
+.login-drag{
+	height: 60px;
+	background: #465d78;
+	-webkit-app-region: drag; // 可拖动
+}
+.login-logo{
+	width: 80px;
+	height: 80px;
+	background: #24BDB9;
+	border-radius: 50%;
+	margin-bottom: 30px;
+	img {
+		width: 80px;
+		height: 80px;
+	}
+}
+.app-login {
+	background: #fff;
+	display: flex;
+	justify-content: center;
+	width: 400px;
+	border-radius: 8px;
+	> section{
+		width: calc(100% - 60px);
+		display: flex;
+		flex-direction: column;
+		margin: 15px 0;
+	 	> header{
+			text-align: center;
+			> img {
+				max-width: 180px;
+			}
+		}
+	}
+	.app-login-form{
+		margin-top: 30px;
+	}
+	.login-form-button {
+		width: 100%;
+	}
+}
+.block{
+	display: block;
+}
+.none{
+	display: none;
+}

@@ -1,0 +1,68 @@
+
+# language: node_js
+#
+# node_js:
+#   - "stable"
+#
+# dist: trusty
+#
+# git:
+#   submodules: false
+#
+# #跳过安装步骤
+# install: true
+#
+# script:
+#     - chmod 755 ./travis.sh
+#     - ./travis.sh
+
+osx_image: xcode9.4
+os:
+  - osx
+
+dist: trusty
+sudo: false
+
+language: node_js
+node_js: "stable"
+
+env:
+  global:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
+cache:
+  directories:
+  - node_modules
+  - $HOME/.cache/electron
+  - $HOME/.cache/electron-builder
+  - $HOME/.npm/_prebuilds
+
+script:
+  - chmod 755 ./travis.sh
+  - ./travis.sh
+
+
+
+# matrix:
+#   include:
+#     - os: osx
+#       osx_image: xcode9.4
+#       language: node_js
+#       node_js: "10"
+#       python: "2.7"
+#       env:
+#         - ELECTRON_CACHE=$HOME/.cache/electron
+#         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+#
+# cache:
+#   directories:
+#     - node_modules
+#     - $HOME/.cache/electron
+#     - $HOME/.cache/electron-builder
+#
+# script:
+#   - chmod 755 ./travis.sh
+#   - ./travis.sh
+# before_cache:
+#   - rm -rf $HOME/.cache/electron-builder/wine
