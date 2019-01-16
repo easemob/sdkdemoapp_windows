@@ -11,6 +11,7 @@ Windows sdk目录结构如下
       index.js
       load.js
     |-easemob
+	  easemobMac.node
       easemobWin.node
       libcurl.dll
       libcurl.lib
@@ -44,6 +45,12 @@ Windows sdk目录结构如下
       console.log("login success");
       
 登录接口返回值ret为EMError对象，登录成功则ret的errorCode为0，否则可以用description获取错误信息
+登录后获取用户信息方法如下：
+
+	var loginInfo = emclient.getLoginInfo();
+    console.log("loginInfo.loginUser = " + loginInfo.loginUser());
+    console.log("loginInfo.loginPassword = " + loginInfo.loginPassword());
+    console.log("loginInfo.loginToken = " + loginInfo.loginToken());
 ### 用户退出
 
 用户退出代码如下：
@@ -127,7 +134,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 从黑名单移除
 
 	contactManager.removeFromBlackList('jwfan2', error);
-#### 监听联系人
+#### 监听联系人变更
 通过注册回调函数，监听联系人的变动，代码如下
 
 	var listener = new easemob.EMContactListener();
@@ -160,7 +167,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
 	contactManager.removeContactListener(listener);
 ### 群组管理
-群组操作包括组的创建、销毁，根据ID获取组，组成员的邀请、移除、退出，获取用户所在的所有组、公开组，公开组的加入、退出，成员的禁言、解禁，修改组信息（组名、描述），屏蔽群组消息、取消屏蔽群组消息，接受群邀请，拒绝群邀请，接受加入群邀请，拒绝加入群邀请，群主变更，群管理员的添加与移除，群组文件的上传、下载、列表获取、删除，群组公告的获取、设置，以及组设置变更的监听。
+群组操作包括组的创建、销毁，根据ID获取组，组成员的邀请、移除、退出，获取用户所在的所有组、公开组，公开组的加入，成员的禁言、解禁，修改组信息（组名、描述），屏蔽群组消息、取消屏蔽群组消息，接受群邀请，拒绝群邀请，接受加入群邀请，拒绝加入群邀请，群主变更，群管理员的添加与移除，群组文件的上传、下载、列表获取、删除，群组公告的获取、设置，以及组设置变更的监听。
 #### 创建群组
 
 	var groupManager = emclient.getGroupManager();
@@ -173,10 +180,24 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	groupManager.destroyGroup("55139673112577", error);
 #### 根据ID获取组
 
-	var group = groupManager.groupWithId(groupId);
+	console.log("group.groupId" + group.groupId());
+    console.log("group.groupSubject" + group.groupSubject());
+    console.log("group.groupDescription" + group.groupDescription());
+    console.log("group.groupOwner" + group.groupOwner());
+    console.log("group.groupMembersCount" + group.groupMembersCount());
+    console.log("group.groupMemberType" + group.groupMemberType());
+    console.log("members:"+group.groupMembers().join(' || '));
+    var set = group.groupSetting();
+    console.log("set.style() = " + set.style());
+    console.log("set.maxUserCount() = " + set.maxUserCount());
+    console.log("set.extension() = " + set.extension());
+#### 获取群组信息
+
+	var groupId = group.groupId();
 #### 群组成员的邀请、移除
 
 	// 邀请成员入群，一次可邀请多个成员
+	var groupId = group.groupId();
 	groupManager.addGroupMembers(groupId, ["jwfan3", "jwfan4"], "hahaha", error);
 	// 将成员踢出群，同样可踢出多人
 	groupManager.removeGroupMembers(groupId, ["jwfan3", "jwfan4"], error);
@@ -186,6 +207,18 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 获取用户所在的所有组
 
 	var groupList = groupManager.fetchAllMyGroups(error);
+#### 获取公开群组
+	
+	var publicGroupList = groupManager.fetchPublicGroupsWithPage(1,20,error).result();
+    console("publicgroup lenth:"+ publicGroupList.length + " publicgroup:" + publicGroupList);
+#### 加入公开群组
+
+	groupManager.joinPublicGroup(groupId,error);
+#### 获取群组中的成员列表
+
+	// 使用 || 间隔输出成员列表
+	var members = group.groupMembers();
+    console.log(members.join(' || '));
 #### 接受群邀请
 
 	groupManager.acceptInvitationFromGroup(groupId,inviter,error);
@@ -234,7 +267,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 上传群文件
 
 	// 设置回调函数显示上传进度和结果
-	var emUploadCallback = new easemob.EMCallback(handle);
+	var emUploadCallback = new easemob.EMCallback();
     console.log("create upload emCallback success");
 
     emUploadCallback.onSuccess(() => {
@@ -259,7 +292,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	var filelist = groupManager.fetchGroupSharedFiles(groupId, 1, 20, error);
 #### 下载群文件
 
-	var emDownloadCallback = new easemob.EMCallback(handle);
+	var emDownloadCallback = new easemob.EMCallback();
     console.log("create download emCallback success");
 
     emDownloadCallback.onSuccess(() => {
@@ -288,7 +321,254 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	groupManager.updateGroupAnnouncement(groupId, "new announcement",error);
 	// 获取群公告
 	var announcement = groupManager.fetchGroupAnnouncement(groupId, error);
+#### 组变更的监听
+
+	groupManager = emclient.getGroupManager();
+	groupListener = new easemob.EMGroupManagerListener(groupManager);
+	// 添加群管理员时触发(只有是自己时才能收到通知)
+	// group : 发生操作的群组
+	// admin : 被提升的群管理员
+	groupListener.onAddAdminFromGroup((groupId, admin) => {
+		console.log("onAddAdminFromGroup:"+groupId+" admin:"+admin);
+	});
+
+	// 删除群管理员时触发(只有是自己时才能收到通知)
+	// group : 发生操作的群组
+	// admin : 被删除的群管理员（群管理员变成普通群成员）
+	groupListener.onRemoveAdminFromGroup((groupId, admin) => {
+		console.log("onRemoveAdminFromGroup:"+groupId+" admin:"+admin);
+	});
+
+	// 转让群主的时候触发
+	// group : 发生操作的群组
+	// newOwner : 新群主
+	// oldOwner : 原群主
+	groupListener.onAssignOwnerFromGroup((groupId, newOwner, oldOwner) => {
+		console.log("onAssignOwnerFromGroup:"+groupId+" newOwner:"+newOwner + " oldOwner:" + oldOwner);
+	});
+
+	// 我接收到自动进群时被触发
+	// group : 发生操作的群组
+	// inviter : 邀请人
+	// inviteMessage : 邀请信息
+	groupListener.onAutoAcceptInvitationFromGroup((groupId, inviter, inviteMessage)=>{
+		console.log("onAutoAcceptInvitationFromGroup:"+groupId+" inviter:"+inviter + " inviteMessage:" + inviteMessage);
+		});
+
+	// 成员加入群组时触发
+	// group : 发生操作的群组
+	// member : 加入群组的成员名称
+	groupListener.onMemberJoinedGroup((groupId, member)=>{
+		console.log("onMemberJoinedGroup:"+groupId+" member:"+member);
+	});
+
+	// 成员离开群组时触发
+	// group : 发生操作的群组
+	// member : 离开群组的成员名称
+	groupListener.onMemberLeftGroup((groupId, member)=>{
+		console.log("onMemberLeftGroup:"+groupId+" member:"+member);
+	});
+
+	// 离开群组时触发
+	// group : 发生操作的群组
+	// reason : 离开群组的原因（0: 被踢出 1:群组解散 2:被服务器下线）
+	groupListener.onLeaveGroup((groupId, reason)=>{
+		console.log("onLeaveGroup:"+groupId+" reason:"+reason);
+	});
+	groupManager.addListener(groupListener);
 ### 发送消息
 
-发送文本、文件、语音、图片、位置等消息（单聊/群聊通用）。
-####发送文本消息
+发送文本、文件、图片等消息（单聊/群聊通用）。
+#### 发送文本消息
+
+    //创建消息体
+	var textMsgBody = new easemob.EMTextMessageBody("wahhahahaha");
+	var textSendMsg = easemob.createSendMessage("jwfan", "jwfan1", textMsgBody);
+	// 消息可以设置扩展属性，用户界面可通过自定义属性，实现“@”等功能
+	textSendMsg.setAttribute("data", 120);
+    data = textSendMsg.getAttribute("data");
+	// 设置消息类型,0为单聊，1为群聊，2为聊天室
+	textSendMsg.setChatType(0);
+	// 设置回调
+	var emCallback = new easemob.EMCallback();
+	emCallback.onSuccess(() => {
+		console.log("emCallback call back success");
+		if(me.cfr){
+			console.log(sendMessage);
+			console.log(sendMessage.msgId());
+			return true;
+		});
+		emCallback.onFail((error) => {
+			console.log("emCallback call back fail");
+			console.log(error.description);
+			console.log(error.errorCode);
+			return true;
+		});
+		emCallback.onProgress((progress) => {
+			console.log(progress);
+			console.log("call back progress");
+		});
+	sendMessage.setCallback(emCallback);
+	// 发送消息
+	chatManager.sendMessage(textMsg);
+#### 发送文件
+
+	//创建消息体
+	var fileMsgBody = new easemob.EMFileMessageBody("/Users/jiangwei/Code/fanjiangwei7/emclient-linux/testapp/file.txt", 5);
+    var fileMsg = easemob.createSendMessage("jwfan", "jwfan1", fileMsgBody);
+    //setCallback(callback) 设置消息回调函数，通过回调函数显示消息发送成功失败，以及附件上传百分比
+    //callback easemob.EMCallback的实例，设置onSuccess、onFail和onProgress三个回调函数。
+    fileMsg.setCallback(emCallback);
+    chatManager.sendMessage(fileMsg);
+#### 发送图片
+
+    var imageMsgBody = new easemob.EMImageMessageBody('/Users/jiangwei/Code/fanjiangwei7/emclient-linux/testapp/image_960x718.jpg', '/Users/jiangwei/Code/fanjiangwei7/emclient-linux/testapp/thumb_image.jpg');
+    var imageMsg = easemob.createSendMessage("jwfan", "jwfan1", imageMsgBody);
+    imageMsg.setCallback(emCallback);
+    chatManager.sendMessage(imageMsg);
+
+#### 发送CMD消息
+
+    var cmdMsgBody = new easemob.EMCmdMessageBody("action");
+    console.log("cmdMsgBody.type() = " + cmdMsgBody.type());
+
+    console.log("cmdMsgBody.action() = " + cmdMsgBody.action());
+    cmdMsgBody.setAction("displayName");
+    console.log("cmdMsgBody.action() = " + cmdMsgBody.action());
+
+    var obj1 = {"key" : "1", "value" : "1"};
+    var obj2 = {"key" : "2", "value" : "2"};
+    console.log("cmdMsgBody.params() = " + cmdMsgBody.params());
+    cmdMsgBody.setParams([obj1, obj2]);
+	var cmdMsg = easemob.createSendMessage("jwfan", "jwfan1", cmdMsgBody);
+    chatManager.sendMessage(cmdMsg);
+
+#### 位置消息
+	
+	var locationMsgBody = new easemob.EMLocationMessageBody(123.45, 35.67, 'USA');
+    console.log("locationMsgBody.type() = " + locationMsgBody.type());
+    console.log("locationMsgBody.latitude() = " + locationMsgBody.latitude());
+    console.log("locationMsgBody.longitude() = " + locationMsgBody.longitude());
+    console.log("locationMsgBody.address() = " + locationMsgBody.address());
+    locationMsgBody.setLatitude(87.87);
+    locationMsgBody.setLongitude(45.45);
+    locationMsgBody.setAddress('china');
+	var locationMsg = easemob.createSendMessage("jwfan", "jwfan1", locationMsgBody);
+    chatManager.sendMessage(locationMsg);
+### 接收消息
+接收消息在会话管理中通过设置回调函数实现，在回调函数中处理
+
+	chatManager = emclient.getChatManager();
+	// chatManager.loadAllConversationsFromDB(); // 每一条会话加载 20 条消息到缓存中
+	listener = new easemob.EMChatManagerListener();
+	// 收到会话消息
+	listener.onReceiveMessages((messages) => {
+		console.log("onReceiveMessages messages.length = " + messages.length);
+        for (var index = 0, len = messages.length; index < len; index++) {
+        var msg = messages[index];
+        var bodies = msg.bodies();
+        console.log("bodies.length = " + bodies.length);
+        var body = bodies[0];
+        var type = body.type();
+        console.log("msg.from() = " + msg.from());
+        console.log("msg.to() = " + msg.to());
+        console.log("body.type() = " + type);
+        if (type == 0) {    //text message
+          console.log("body.text() = " + body.text());
+        } else if (type == 1) {     //image message
+          console.log("body.displayName() = " + body.displayName());
+          console.log("body.localPath() = " + body.localPath());
+          chatManager.downloadMessageAttachments(msg);
+          chatManager.downloadMessageThumbnail(msg);
+        } else if (type == 5) {     //file message
+          console.log("body.displayName() = " + body.displayName());
+          console.log("body.localPath() = " + body.localPath());
+          chatManager.downloadMessageAttachments(msg);
+        }
+	});
+	// 收到命令消息
+	listener.onReceiveCmdMessages ((messages) => {
+	  for (var index = 0, len = messages.length; index < len; index++) {
+      var msg = messages[index];
+      var bodies = msg.bodies();
+      console.log("bodies.length = " + bodies.length);
+      var body = bodies[0];
+      var type = body.type();
+      console.log("msg.from() = " + msg.from());
+      console.log("msg.to() = " + msg.to());
+      console.log("msg.type() = " + type);
+      console.log("body.action() = " + body.action());
+      var params = cmdMsgBody.params()
+      console.log("cmdMsgBody.params().length = " + params.length);
+      if (params.length > 0) {
+        console.log("cmdMsgBody.params()[0] = " + JSON.stringify(params[0]));
+      }
+    }
+	});
+
+	// 收到消息撤回
+	listener.onReceiveRecallMessages ((message) => {
+	  console.log("onReceiveRecallMessages messages.length = " + messages.length);
+	  for (var index = 0, len = messages.length; index < len; index++) {
+      var message = messages[index];
+      console.log("message.msgId() = " + message.msgId());
+      console.log("message.from() = " + message.from());
+      console.log("message.to() = " + message.to());
+    } 
+	});
+	// addListener(listener) 添加消息回调监听，从监听中获取接收消息。
+	chatManager.addListener(listener);
+### 聊天室管理
+聊天室只能有服务端创建，客户端只可以查询、加入和退出聊天室
+
+#### 查询聊天室信息
+	// 获取聊天室控制对象
+	var chatroomManager = emclient.getChatroomManager();
+	// 获取所有聊天室
+	var chatroomlist = chatroomManager.fetchAllChatrooms(error);
+	// 获取聊天室属性
+	chatroomlist.map((chatroom) => {
+	  console.log("chatroom id:"+chatroom.chatroomId());
+	  console.log("chatroom chatroomSubject:"+chatroom.chatroomSubject());
+	  console.log("chatroom chatroomDescription:"+chatroom.chatroomDescription());
+	  console.log("chatroom owner:"+chatroom.owner());
+	  console.log("chatroom chatroomMemberCount:"+chatroom.chatroomMemberCount());
+	  console.log("chatroom chatroomMemberMaxCount:"+chatroom.chatroomMemberMaxCount());
+	  console.log("chatroom chatroomAnnouncement:"+chatroom.chatroomAnnouncement());
+	  var adminlist = chatroom.chatroomAdmins();
+	  var memberlist = chatroom.chatroomMembers();
+	  var banslist = chatroom.chatroomBans();
+	});
+#### 加入聊天室
+
+	chatroomManager.joinChatroom(chatroomid,error);
+#### 退出聊天室
+	
+	chatroomManager.leaveChatroom(chatroomId, error);
+### 多设备管理监听
+	
+	var listener = new easemob.EMMultiDevicesListener();
+	listener.onContactMultiDevicesEvent((operation, target, ext) => {
+      console.log('operation = ' + operation);
+      console.log('target = ' + target);
+      console.log('ext = ' + ext);
+	});
+  
+	listener.onGroupMultiDevicesEvent((operation, target, usernames) => {
+      console.log('operation = ' + operation);
+      console.log('target = ' + target);
+      console.log('usernames = ' + usernames);
+	});
+
+	var ret = emclient.login("jwfan", "jwfan");
+	console.log(ret.errorCode);
+	console.log(ret.description);
+
+	emclient.addMultiDevicesListener(listener);
+
+	setTimeout(function() {
+      emclient.removeMultiDevicesListener(listener);
+      emclient.clearAllMultiDevicesListeners();
+      emclient.logout();
+      console.log("logout");
+	}, 1000 * 60 * 2);
