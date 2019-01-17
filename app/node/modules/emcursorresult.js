@@ -1,6 +1,8 @@
 'use strict';
 
 const EMMessage = require('./message/emmessage');
+const EMGroup = require('./emgroup');
+const EMChatroom = require('./emchatroom')
 /**
  * Easemob EMStringCursorResult implementation.
  */
@@ -56,9 +58,9 @@ EMCursorResult.prototype.result = function () {
   var list = new Array(result.length);
   for (var i = 0; i < result.length; i++) {
     if (this._type == 0) {
-
+      list[i] = new EMGroup(result[i]);
     } else if (this._type == 1) {
-  
+      list[i] = new EMChatroom(result[i]);
     } else if (this._type == 2) {
       list[i] = new EMMessage(result[i]);
     }
@@ -96,9 +98,9 @@ EMPageResult.prototype.result = function () {
   var list = new Array(result.length);
   for (var i = 0; i < result.length; i++) {
     if (this._type == 0) {
-
+      list[i] = new EMGroup(result[i]);
     } else {
-
+      list[i] = new EMChatroom(result[i]);
     }
   }
   return list;
