@@ -4,7 +4,7 @@ const EMGroup = require('./emgroup');
 const EMError = require('./emerror');
 const {EMCursorResult, EMPageResult, EMStringCursorResult} = require('./emcursorresult');
 const EMCallback = require('./emcallback');
-const EMMucSharedFile = require('./emmucsetting');
+const EMMucSharedFile = require('./emmucsharedfile');
 
 /**
  * Easemob EMGroupManager implementation.

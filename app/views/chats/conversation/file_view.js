@@ -23,23 +23,23 @@ class FileView extends PureComponent {
 		const { globals, item } = this.props;
 		var me = this;
 		var emCallback = globals.emCallback;
-		emCallback.onSuccess = function(){
+		emCallback.onSuccess(() => {
 			console.log("emCallback call back success");
 			me.setState({ downloadStatus: true });
 			return true;
-		};
-		emCallback.onFail = function(error){
+		});
+		emCallback.onFail((error) => {
 			console.log("emCallback call back fail");
 			console.log(error.description);
 			console.log(error.errorCode);
 			return true;
-		};
-		emCallback.onProgress = function(progress){
+		});
+		emCallback.onProgress((progress) => {
 			console.log(progress);
 			console.log("call back progress");
 			me.setState({ progress });
 			return true;
-		};
+		});
 		item.setCallback(emCallback);
 		globals.chatManager.downloadMessageAttachments(item);
 

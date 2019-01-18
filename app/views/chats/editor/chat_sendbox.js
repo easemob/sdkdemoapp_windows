@@ -279,7 +279,7 @@ class ChatSendBoxView extends PureComponent {
 			sendMessage.setTo(conversationId);
 		}
 
-		emCallback.onSuccess = function(){
+		emCallback.onSuccess(() => {
 			console.log("emCallback call back success");
 			if(me.cfr){
 				console.log(sendMessage);
@@ -288,17 +288,17 @@ class ChatSendBoxView extends PureComponent {
 				conversation.removeMessage(sendMessage.msgId());
 			}
 			return true;
-		};
-		emCallback.onFail = function(error){
+		});
+		emCallback.onFail((error) => {
 			console.log("emCallback call back fail");
 			console.log(error.description);
 			console.log(error.errorCode);
 			return true;
-		};
-		emCallback.onProgress = function(progress){
+		});
+		emCallback.onProgress((progress) => {
 			console.log(progress);
 			console.log("call back progress");
-		};
+		});
 
 
 		// textMsg.addBody(); 多条消息需要addBody();
