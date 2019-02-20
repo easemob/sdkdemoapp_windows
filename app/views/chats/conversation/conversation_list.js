@@ -2,18 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
-import { Menu, Badge, Input, AutoComplete, Icon } from "antd";
+import { Menu, Badge } from "antd";
 import { ipcRenderer } from "electron";
 import moment from "moment";
-import api from "@/api";
 import HeadImageView from "../../common/head_image";
 import _ from "underscore";
 import { msgParse } from "@/utils/msg_parse";
 import * as selectors from "@/stores/selectors";
 import CreateGroupView from "../groups/group_create";
-import SearchView from "./search";
-const Option = AutoComplete.Option;
-const OptGroup = AutoComplete.OptGroup;
 
 class ConversationListView extends Component {
 
@@ -41,8 +37,10 @@ class ConversationListView extends Component {
 	}
 
 	handleClick(e){
-		const key = e.key;
-		this.handleSelect(key);
+		const key = e.key.substr(0,e.key.length-1);
+		const isGroup = e.key.substr(key.length);
+		console.log(key + "  ||  " + isGroup);
+		this.handleSelect(key,isGroup);
 
 		// 取某一个的会话信息
 		// 0 单聊 1 群聊 2 聊天室
@@ -54,17 +52,15 @@ class ConversationListView extends Component {
 		// msgsOfConversation({ id: key, msgs: messages, conversation });
 	}
 
-	handleSelect(key){
+	handleSelect(key,isGroup){
 		const {
 			conversationOfSelect,
 			globals,
-			groupChats,
-			changeGroupInfoAction,
 			allMembersInfo,
 			setNotice,
 			userInfo,
-			requestMemberInfo,
-			getMemberInfoAction
+			getMemberInfoAction,
+			setSelectConvType
 		} = this.props;
 		var group;
 		var groupInfo;
@@ -73,7 +69,8 @@ class ConversationListView extends Component {
 		this.easemob = globals.easemob;
 		this.error = new this.easemob.EMError();
 		// 如果是群组，需要从 sdk 获取群信息跟新 reuducer，(除了头像、昵称、是否允许普通成员邀请群成员)
-		if(!!groupChats[key]){
+		console.log("isGroup:" + isGroup);
+		if(isGroup == "1"){
 			group = globals.groupManager.groupWithId(key);
 			if(group.groupMembers().length == 0){
 				group = globals.groupManager.fetchGroupSpecification(key, this.error);
@@ -84,30 +81,14 @@ class ConversationListView extends Component {
 				members: group.groupMembers(),
 				adminMembers: group.groupAdmins()
 			};
-			changeGroupInfoAction({ id: [key], groupInfo });
 			// 取某一个的会话信息
 			// 0 单聊 1 群聊 2 聊天室
 			me.handleSelectConversation(key, 1);
 
 			groupMembers = [group.groupOwner()].concat(group.groupMembers()).concat(group.groupAdmins());
-			// 群组成员不存的，去请求获取信息
-			_.map(groupMembers, (member) => {
-				!allMembersInfo[member] && requestMemberInfo(userInfo.user.tenantId, member);
-			});
-		}
-		else if(allMembersInfo[key]){
-			me.handleSelectConversation(key, 0);
 		}
 		else{
-			api.getMemberInfo(userInfo.user.tenantId, key)
-			.done(function(data){
-				getMemberInfoAction(data);
-				me.handleSelectConversation(key, 0);
-			})
-			.fail(function(){
-				conversationOfSelect("");
-				setNotice("会话不存在，你可能已被移除");
-			});
+			me.handleSelectConversation(key, 0);
 		}
 	}
 
@@ -118,11 +99,13 @@ class ConversationListView extends Component {
 			selectConversationOfList,
 			globals,
 			unReadMsgCountAction,
-			conversations
+			conversations,
+			setSelectConvType
 		} = this.props;
 		// var messages;
 		var conversation;
 		var isAllRead = false;
+		console.log("selecttId:" + key);
 		conversationOfSelect(key);
 		// 取某一个的会话信息
 		// // 0 单聊 1 群聊 2 聊天室
@@ -132,6 +115,7 @@ class ConversationListView extends Component {
 		isAllRead = conversation.markAllMessagesAsRead(); // 将这个会话的所有消息标记为已读
 		isAllRead && unReadMsgCountAction({ id: key, unReadMsg: [] });
 		selectConversationOfList({ id: key, msgs: messages[key], conversation });
+		setSelectConvType(type);
 	}
 
 	// 最后一条消息的时间，今天: 具体时间  其他时间：日期  没有最后一条消息则时间为空
@@ -149,7 +133,7 @@ class ConversationListView extends Component {
 	}
 
 	latestMessage(conversationId, isGroup){
-		const { messages, allMembersInfo } = this.props;
+		const { messages, allMembersInfo,globals } = this.props;
 		var latestMessage;
 		var latestMessageFrom = "";
 		var latestMessageFromRealName = "";
@@ -159,16 +143,20 @@ class ConversationListView extends Component {
 			// latestMessageFrom = isGroup ? `${allMembersInfo[msgs[msgs.length - 1].from()].realName}:` : "";
 			latestMessageFrom = allMembersInfo[msgs[msgs.length - 1].from()];
 			if(isGroup && latestMessageFrom){
-				latestMessageFromRealName = `${latestMessageFrom.realName || latestMessageFrom.username}:`;
+				let conversation = globals.chatManager.conversationWithType(conversationId,1);
+				latestMessageFromRealName = `${conversation.latestMessage().from()}`;
+			}else{
+				let conversation = globals.chatManager.conversationWithType(conversationId,0);
+				latestMessageFromRealName = `${conversation.latestMessage().from()}`;
 			}
 			switch(latestMessage.type){
 			case "TEXT":
 			case "IMAGE":
 			case "FILE":
 			case "OTHER":
-				return `${latestMessageFromRealName}${latestMessage.shortVal}`;
+				return `${latestMessageFromRealName}:${latestMessage.shortVal}`;
 			default:
-				return `${latestMessageFromRealName}${latestMessage.shortVal}`;
+				return `${latestMessageFromRealName}:${latestMessage.shortVal}`;
 			}
 		}
 		return "";
@@ -181,43 +169,43 @@ class ConversationListView extends Component {
 			conversations,
 			unReadMessageCount,
 			allMembersInfo,
-			groupChats,
-			groupAtMsgs
+			groupAtMsgs,
+			allContacts,
+			isSelectCovGroup,
+			globals
 		} = this.props;
+		var groupManager = globals.groupManager;
+		console.log("selectconvkey:" + selectConversationId + isSelectCovGroup);
 		return (
 			<Menu
 				mode="inline"
 				onOpenChange={ this.onOpenChange }
 				onClick={ this.handleClick }
 				style={ { border: "none", width: "240px" } }
-				selectedKeys={ [selectConversationId] }
+				selectedKeys={ [selectConversationId + isSelectCovGroup] }
 			>
 				{
 					conversationsSort.map((item) => {
-						const selectGroup = groupChats[item.conversationId()];
-						const selectMember = allMembersInfo[item.conversationId()];
+						const conversationType = item.conversationType();
+						const conversationId = item.conversationId();
+						const selectGroup = conversationType == 1;
+						let arrContacs = allContacts.contacts;
+						const selectMember = conversationId == 0;
+						let param = conversationId + conversationType;
+
 						return (
-							<Menu.Item key={ item.conversationId() }>
-								<HeadImageView
-									imgUrl={
-										selectGroup
-											? selectGroup.avatar
-											: (selectMember ? selectMember.image : "")
-									}
-									name={
-										selectGroup
-											? selectGroup.chatName
-											: (selectMember ? selectMember.realName : "")
-									}
-								/>
+							//key传参为会话id+会话类型
+							<Menu.Item 
+							key={ param}>
+								<HeadImageView/>
 								<div onContextMenu={ e => this.handleContextMenu(e, item.conversationId()) }>
 									<div className="item-top">
 										<span className="ellipsis item-name">
 											{/* { selectGroup ? selectGroup.chatName : selectMember.realName } */}
 											{
 												selectGroup
-													? selectGroup.chatName
-													: (selectMember ? selectMember.realName || selectMember.username : "")
+													? groupManager.groupWithId(conversationId).groupSubject()
+													: (item.conversationId())
 											}
 										</span>
 										{/* <span>{this.showTime(item.latestMessage())}</span> */}
@@ -250,32 +238,8 @@ class ConversationListView extends Component {
 
 	render(){
 		const {
-			networkConnection,
-			searchConversation
+			networkConnection
 		} = this.props;
-		const options = _.values(searchConversation).map(conversation => (
-			<OptGroup
-				style={ { width: 240, border: "none" } }
-				allowClear={ true }
-				key={ conversation.id }
-			>
-				<Option
-					key={ conversation.easemobName || conversation.easemobGroupId }
-					value={ conversation.easemobName || conversation.easemobGroupId }
-				>
-					<HeadImageView
-						imgUrl={ conversation.avatar || conversation.image }
-						name={ conversation.chatName || conversation.realName }
-					/>
-					<div className="item-top">
-						<span className="ellipsis item-name">
-							{ conversation.chatName || conversation.realName || conversation.username }
-						</span>
-					</div>
-				</Option>
-			</OptGroup>
-		));
-
 
 		return (
 			<div className="oa-main-list oa-conversation-list oa-conversation-serarch-list" >
@@ -285,7 +249,6 @@ class ConversationListView extends Component {
 						: null
 				}
 				<div className="conversation-serach">
-					<SearchView />
 					<CreateGroupView></CreateGroupView>
 				</div>
 
@@ -302,11 +265,12 @@ const mapStateToProps = state => ({
 	conversations: state.conversations,
 	unReadMessageCount: state.unReadMessageCount,
 	allMembersInfo: state.allMembersInfo,
-	groupChats: state.groupChats,
 	searchConversation: state.searchConversation,
 	globals: state.globals,
 	messages: state.messages,
 	conversationsSort: selectors.conversationsSort(state),
-	groupAtMsgs: state.groupAtMsgs
+	groupAtMsgs: state.groupAtMsgs,
+	allContacts: state.allContacts,
+	isSelectCovGroup: state.isSelectCovGroup
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(ConversationListView));

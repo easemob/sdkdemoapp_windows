@@ -8,10 +8,11 @@ var _const = require("@/views/common/domain");
 class GroupSettingView extends Component {
 	constructor(props){
 		super(props);
-		const { selectConversationId, groupChats } = this.props;
+		const { selectConversationId,globals } = this.props;
+		var group = globals.groupManager.groupWithId(selectConversationId);
 		this.state = {
-			chatName: groupChats[selectConversationId].chatName,
-			avatarUrl: groupChats[selectConversationId].avatar,
+			chatName: group.groupSubject(),
+			avatarUrl: "",
 			previewVisible: false,
 			previewImage: "",
 			fileList: [
@@ -19,7 +20,7 @@ class GroupSettingView extends Component {
 					uid: -1,
 					name: "",
 					status: "done",
-					url: groupChats[selectConversationId].avatar ? `${_const.domain}${groupChats[selectConversationId].avatar}` : `${require("@/views/config/img/default_avatar.png")}`,
+					url: `${require("@/views/config/img/default_avatar.png")}`
 				}
 			],
 
@@ -81,10 +82,16 @@ class GroupSettingView extends Component {
 	handleDissolveGroup(){
 		const {
 			selectConversationId,
-			userInfo,
-			requestDestoryGroup,
+			globals,
+			destoryGroup
 		} = this.props;
-		requestDestoryGroup(userInfo.user.tenantId, selectConversationId);
+		let groupManager = globals.groupManager;
+		let error = new globals.easemob.EMError();
+		groupManager.destroyGroup(selectConversationId,error);
+		if(error.errorCode == 0)
+		{
+			destoryGroup(selectConversationId);
+		}
 	}
 
 	handleChangeChatName(event){
@@ -94,7 +101,7 @@ class GroupSettingView extends Component {
 	}
 
 	handleChangeAvatar({ fileList, file }){
-		const { setNotice, selectConversationId, groupChats } = this.props;
+		const { setNotice, selectConversationId } = this.props;
 		this.setState({ fileList });
 		if(file.status == "done"){
 			this.setState({ avatarUrl: file.response.url });
@@ -107,7 +114,7 @@ class GroupSettingView extends Component {
 						uid: -1,
 						name: "",
 						status: "done",
-						url: groupChats[selectConversationId].avatar ? `${_const.domain}${groupChats[selectConversationId].avatar}` : `${require("@/views/config/img/default_avatar.png")}`,
+						url: `${require("@/views/config/img/default_avatar.png")}`,
 					}
 				] });
 			}
@@ -127,22 +134,16 @@ class GroupSettingView extends Component {
 
 	handleSave(){
 		const {
-			requestChantGroupInfo,
 			userInfo,
 			selectConversationId,
+			conversationOfSelect,
 			globals
 		} = this.props;
-		requestChantGroupInfo(
-			userInfo.user.tenantId,
-			selectConversationId,
-			{
-				chatName: this.state.chatName.substring(0, 20),
-				avatar: this.state.avatarUrl
-			},
-			globals.easemob,
-			userInfo.user.easemobName,
-			globals
-		);
+		let groupManager = globals.groupManager;
+		const error = new globals.easemob.EMError();
+		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20),error);
+		conversationOfSelect("");
+		conversationOfSelect(selectConversationId);
 	}
 
 
@@ -331,7 +332,6 @@ class GroupSettingView extends Component {
 }
 
 const mapStateToProps = state => ({
-	groupChats: state.groupChats,
 	selectGroup: state.selectGroup,
 	globals: state.globals,
 	selectConversationId: state.selectConversationId,

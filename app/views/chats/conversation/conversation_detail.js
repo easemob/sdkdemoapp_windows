@@ -7,8 +7,6 @@ import { msgParse } from "@/utils/msg_parse";
 import ImgPreview from "./img_preview";
 import HeadImageView from "@/views/common/head_image";
 import FileView from "./file_view";
-import VideoView from "./video_view";
-import AudioView from "./audio_view";
 import LocationView from "./location_view";
 import moment from "moment";
 import { downLoadFile } from "@/utils/local_remote_file";
@@ -70,10 +68,11 @@ class ConversationDetailView extends Component {
 
 	// 删除消息
 	onDeleteMessages(message){
-		const { deleteMessageAction, messages, groupChats, globals } = this.props;
+		const { deleteMessageAction, messages, isSelectCovGroup, globals } = this.props;
 		const conversationId = message.conversationId();
 		var msgs = messages[conversationId];
-		var conversationType = groupChats[conversationId] ? 1 : 0;
+		var conversationType = isSelectCovGroup;
+		console.log("type:"+conversationType);
 		var conversation = globals.chatManager.conversationWithType(conversationId, conversationType);
 		conversation.removeMessage(message);
 		deleteMessageAction({
@@ -85,10 +84,10 @@ class ConversationDetailView extends Component {
 
 	// 消息撤回
 	onRecallMessages(message){
-		const { recallMessageAction, messages, groupChats, globals, userInfo, selectConversationId } = this.props;
+		const { recallMessageAction, messages, isSelectCovGroup, globals, userInfo, selectConversationId } = this.props;
 		const conversationId = selectConversationId;
 		var msgs = messages[conversationId];
-		var conversationType = groupChats[conversationId] ? 1 : 0;
+		var conversationType = isSelectCovGroup;
 		var conversation = globals.chatManager.conversationWithType(conversationId, conversationType);
 		var messageText = "您撤回了一条消息";
 		var textMsgBody = new globals.easemob.EMTextMessageBody(messageText);
@@ -177,12 +176,8 @@ class ConversationDetailView extends Component {
 	}
 
 	showMemberInfo(item){
-		const { groupChats, selectConversationId, userInfo, allMembersInfo } = this.props;
-		var memberInfo = allMembersInfo[item.from()];
-		if(groupChats[selectConversationId] && item.from() != userInfo.user.easemobName){
-			if(allMembersInfo[item.from()]){
-				return memberInfo.realName || memberInfo.username || memberInfo.easemobName;
-			}
+		const { selectConversationId, userInfo,isSelectCovGroup } = this.props;
+		if(isSelectCovGroup && item.from() != userInfo.user.easemobName){
 			return item.from();
 		}
 		return "";
@@ -261,6 +256,7 @@ const mapStateToProps = state => ({
 	allMembersInfo: state.allMembersInfo,
 	userInfo: state.userInfo,
 	globals: state.globals,
-	groupAtMsgs: state.groupAtMsgs
+	groupAtMsgs: state.groupAtMsgs,
+	isSelectCovGroup: state.isSelectCovGroup
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(ConversationDetailView));

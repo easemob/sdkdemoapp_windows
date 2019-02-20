@@ -17,14 +17,11 @@ class ContactGroupMemberView extends PureComponent {
 	}
 
 	handleOnChange(e, item){
-		const { selectDelMembersAction, selectVideoMembersAction, cancelDelMembersAction, cancelVideoMembersAction  } = this.props;
+		const { selectDelMembersAction,cancelDelMembersAction  } = this.props;
 		if(e.target.checked){
 			switch(this.operate){
 			case "delGroupMember":
-				selectDelMembersAction(item);
-				break;
-			case "videoCall":
-				selectVideoMembersAction(item);
+				selectDelMembersAction({easemobName:item});
 				break;
 			default:
 				break;
@@ -33,10 +30,7 @@ class ContactGroupMemberView extends PureComponent {
 		else{
 			switch(this.operate){
 			case "delGroupMember":
-				cancelDelMembersAction(item);
-				break;
-			case "videoCall":
-				cancelVideoMembersAction(item);
+				cancelDelMembersAction({easemobName:item});
 				break;
 			default:
 				break;
@@ -52,17 +46,17 @@ class ContactGroupMemberView extends PureComponent {
 		// 	? <Checkbox checked={ true } ></Checkbox>
 		// 	: <Checkbox onChange={ e => this.handleOnChange(e, item) } ></Checkbox>
 		var isSelected = _.filter(selectMemberData, (item) => {
-			return item == member.easemobName;
+			return item == member;
 		});
+		console.log("member:"+member);
 		return (
 			<Checkbox
 				checked={
-					!!(userInfo.user.easemobName == member.easemobName ||
-				isSelected.length)
+					!!(isSelected.length)
 				}
 				onChange={
-					userInfo.user.easemobName == member.easemobName ||
-					selectConversationId == member.easemobName
+					userInfo.user.easemobName == member ||
+					selectConversationId == member
 						? e => null
 						: e => this.handleOnChange(e, member)
 				}
@@ -84,13 +78,11 @@ class ContactGroupMemberView extends PureComponent {
 									<div className="avatar-name">
 										<HeadImageView imgUrl={ memberInfoOfGroup ? memberInfoOfGroup.image : "" } />
 										{
-											memberInfoOfGroup
-												? memberInfoOfGroup.realName || memberInfoOfGroup.username || memberInfoOfGroup.easemobName
-												: item
+											item
 										}
 									</div>
 									{
-										this.showCheckbox(memberInfoOfGroup)
+										this.showCheckbox(item)
 									}
 								</Menu.Item>
 							);
@@ -107,7 +99,6 @@ const mapStateToProps = state => ({
 	userInfo: state.userInfo,
 	selectConversationId: state.selectConversationId,
 	// membersOfCreateGroup: state.membersOfCreateGroup,
-	groupChats: state.groupChats,
 	allMembersInfo: state.allMembersInfo
 });
 export default connect(mapStateToProps, actionCreators)(ContactGroupMemberView);

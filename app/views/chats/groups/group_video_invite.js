@@ -35,9 +35,9 @@ class GroupVideoInvite extends Component {
 	}
 
 	handleAudioAndVideo(){
-		const { userInfo, globals, conId, allMembersInfo, groupChats } = this.props;
+		const { userInfo, globals, conId, allMembersInfo, isSelectCovGroup } = this.props;
 		var logintoken = globals.emclient.getLoginInfo().loginToken();
-		let isGroup = !!groupChats[conId];
+		let isGroup = isSelectCovGroup;
 		audioAndVideo({
 			userInfo: JSON.stringify(userInfo),
 			conversationId: conId,
@@ -46,7 +46,7 @@ class GroupVideoInvite extends Component {
 			isVideo: false,	// 默认不开启摄像头
 			isInvited: false,
 			isGroup,
-			groupInfo: groupChats[conId],
+			groupInfo:isSelectCovGroup,
 			allMembersInfo: JSON.stringify(allMembersInfo),
 		});
 	}
@@ -59,14 +59,15 @@ class GroupVideoInvite extends Component {
 	getMemberInfo(){
 		let members;
 		let adminMembers;
-		const { groupChats, conId } = this.props;
-		let groupOwner = groupChats[conId].owner;
-		if(groupChats[conId]){
-			members = groupChats[conId].members || [];
-			adminMembers = groupChats[conId].adminMembers || [];
-			return [groupOwner].concat(adminMembers).concat(members);
-		}
-		return [groupOwner];
+		const { conId,globals, } = this.props;
+		let group = globals.groupManager.groupWithId(conId,1);
+		if(!group)
+		    return [];
+		
+		let groupOwner = group.groupOwner();
+		members = group.groupMembers();
+		adminMembers = group.groupAdmins();
+		return [groupOwner].concat(adminMembers).concat(members);
 	}
 
 	render(){
@@ -131,10 +132,11 @@ class GroupVideoInvite extends Component {
 }
 
 const mapStateToProps = state => ({
-	groupChats: state.groupChats,
 	userInfo: state.userInfo,
 	globals: state.globals,
 	allMembersInfo: state.allMembersInfo,
-	membersOfVideoGroup: state.membersOfVideoGroup
+	membersOfVideoGroup: state.membersOfVideoGroup,
+	isSelectCovGroup: state.isSelectCovGroup,
+	globals: state.globals
 });
 export default connect(mapStateToProps, actionCreators)(GroupVideoInvite);

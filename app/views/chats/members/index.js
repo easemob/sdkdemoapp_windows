@@ -35,7 +35,6 @@ class MemberTabView extends Component {
 }
 
 const mapStateToProps = state => ({
-	groupChats: state.groupChats,
 	selectGroup: state.selectGroup,
 	globals: state.globals,
 	selectConversationId: state.selectConversationId,

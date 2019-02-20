@@ -51,59 +51,6 @@ class AppRemote {
 			shell.openExternal(url);
 		});
 
-		// 音视频窗口
-		ipcMain.on("receive-audio-and-video", (e, userInfo, conversationId, inviterInfo, logintoken, isVideo, isInvited, isGroup, groupInfo, allMembersInfo, conference) => {
-			this.createAudioVideoWindow(userInfo, conversationId, inviterInfo, logintoken, isVideo, isInvited, isGroup, groupInfo, allMembersInfo, conference);
-		});
-
-		ipcMain.on("audio-video-hangup", (event, conversationId, confrId, isGroup, conferenceMsg, timeout) => {
-			console.log(conversationId, confrId, isGroup, conferenceMsg, timeout);
-			delete this.windows[confrId];
-			this.audioAndVideoWindow && this.audioAndVideoWindow.close(confrId);
-			this.mainWindow.webContents.send("active-hangup", conversationId, confrId, isGroup, conferenceMsg, timeout);
-		});
-
-		// 邀请群成员加入会议
-		ipcMain.on("audio-video-addmember", (event, conversationId) => {
-			this.mainWindow.webContents.send("audio-video-addmember", conversationId);
-		});
-
-		// 接通后改变窗口的位置和大小
-		ipcMain.on("audio-video-answered", (event, conferenceId, isVideo) => {
-			// this.audioAndVideoWindow && this.audioAndVideoWindow.close();
-			console.log("audio-video-answer");
-			this.isAnswered = true;
-			clearInterval(this.audioVideoWindowTimer);
-			this.audioAndVideoWindow.center();
-			this.changeWindow(isVideo);
-			this.mainWindow.webContents.send("audio-video-answered", conferenceId);
-		});
-
-		ipcMain.on("audio-video-joined-error", (event, confrId, isGroup, isVideo) => {
-			delete this.windows[confrId];
-			this.audioAndVideoWindow && this.audioAndVideoWindow.close(confrId);
-			this.mainWindow.webContents.send("audio-video-joined-error");
-		});
-
-		// 接收到对方挂断或拒绝的信息
-		ipcMain.on("audio-video-receive-hangup", (event, confrId, conversationId, from, to, isGroup) => {
-			this.cancelConfrId[confrId] = true;
-			console.log("confrId");
-			console.log(confrId);
-			clearInterval(this.audioVideoWindowTimer);
-			console.log(confrId, conversationId, from, to, isGroup);
-			this.audioAndVideoWindow && this.audioAndVideoWindow.webContents.send("audio-video-receive-hangup", confrId, conversationId, from, to, isGroup);
-		});
-
-		// 收到切换为语音通话的消息
-		ipcMain.on("audio-video-forwardto_voice", () => {
-			this.audioAndVideoWindow && this.audioAndVideoWindow.webContents.send("audio-video-forwardto_voice");
-		});
-
-		ipcMain.on("originator-join-conference", (event, conference, isGroup) => {
-			this.mainWindow.webContents.send("originator-join-conference", conference, isGroup);
-		});
-
 		// 消息右键菜单
 		ipcMain.on("show-context-menu", (event, fromMe, isAllowRecall, type, openFilePath, fileName, remotePath) => {
 			this.openFilePath = openFilePath;
@@ -111,16 +58,11 @@ class AppRemote {
 			this.remotePath = remotePath;
 			switch(type){
 			case "TEXT":
-			case "AUDIO":
 			case "LOCATION":
 				me.contextMenuTemplate = _.clone(me.textMenuTemplate);
 				break;
 			case "IMAGE":
 			case "FILE":
-			case "VIDEO":
-				me.contextMenuTemplate = _.clone(me.mediaMenuTemplate);
-				!me.openFilePath && me.contextMenuTemplate.splice(1, 1, { label: "打开文件夹", click(){ me.openItemInFolder();}, enabled: false });
-				break;
 			default:
 				me.contextMenuTemplate = _.clone(me.textMenuTemplate);
 			}
@@ -153,16 +95,6 @@ class AppRemote {
 			this.checkForAutoUpdate();
 		});
 
-		// 音视频通话处理设备同步
-		ipcMain.on("audio-video-client-sync", (event, conferenceId) => {
-			if(this.windows[conferenceId]){
-				console.log("audio-video-client-sync");
-				this.windows[conferenceId].close(conferenceId);
-				this.mainWindow.webContents.send("audio-video-client-sync");
-				delete this.windows[conferenceId];
-			}
-		});
-
 	}
 
 	init(entryPath){
@@ -176,115 +108,6 @@ class AppRemote {
 	ready(){
 		this.openMainWindow();
 		this.initTrayIcon();
-	}
-
-	createAudioVideoWindow(userInfo, conversationId, inviterInfo, logintoken, isVideo, isInvited, isGroup, groupInfo, allMembersInfo, conference){
-		let x = screen.getPrimaryDisplay().size.width - 260;
-		let name = conference ? JSON.parse(conference).confrId : "video";
-		let options = {
-			width: 260,
-			height: 260,
-			minWidth: 260,
-			minHeight: 260,
-			autoHideMenuBar: !IS_MAC_OSX,
-			backgroundColor: "#465d78",
-			frame: true,
-			titleBarStyle: "hidden",
-			webPreferences: { webSecurity: false },
-			thickFrame: true,
-			show: false,
-			x,
-			y: 30,
-			resizable: false, // 设置窗口是否可以改变大小
-			url: "video.html",
-			hashRoute: "/video",
-			name
-		};
-		this.isInvited = isInvited;
-		this.isAnswered = false;
-		// 有未结束的通话
-		if(this.audioAndVideoWindow){
-			this.mainWindow.webContents.send("audio-video-not-finished");
-		}
-		else if((inviterInfo && conference && !this.cancelConfrId[JSON.parse(conference).confrId]) || !conference){
-			let audioAndVideoWindow = new BrowserWindow(options);
-			this.audioAndVideoWindow = audioAndVideoWindow;
-			this.windows[name] = this.audioAndVideoWindow;
-			audioAndVideoWindow.webContents.on("did-frame-finish-load", () => {
-				audioAndVideoWindow.webContents.send(
-					"audio_video_window_load",
-					userInfo,
-					conversationId,
-					inviterInfo,
-					logintoken,
-					isVideo,
-					isInvited,
-					isGroup,
-					groupInfo,
-					allMembersInfo,
-					conference
-				);
-				this.time = 0;
-				this.audioVideoWindowTimer = setInterval(() => {
-					this.time++;
-					console.log("this.isAnswered", this.isAnswered);
-					if((this.time >= 30 && !this.isAnswered && !isGroup) || (this.time >= 30 && !this.isAnswered && isGroup && isInvited)){
-						this.audioAndVideoWindow.webContents.send("audio_video_timeout");
-					}
-				}, 1000);
-			});
-			if(!isInvited){
-				audioAndVideoWindow.center();
-				this.changeWindow(isGroup || (!isGroup && isVideo));
-			}
-
-			audioAndVideoWindow.once("ready-to-show", () => {
-				audioAndVideoWindow.show();
-			});
-
-			let url = options.url;
-			if(!url.startsWith("file://") && !url.startsWith("http://") && !url.startsWith("https://")){
-				url = `file://${this.entryPath}/${options.url}`;
-			}
-			if(DEBUG){
-				url += "?react_perf";
-			}
-			if(options.hashRoute){
-				url += `#${options.hashRoute}`;
-			}
-			audioAndVideoWindow.loadURL(url);
-			audioAndVideoWindow.webContents.openDevTools();
-
-
-			audioAndVideoWindow.on("close", (event, confrId) => {
-				console.log(confrId);
-				clearInterval(this.audioVideoWindowTimer);
-				console.log("audio_video_window_close");
-				this.windows[confrId] && this.windows[confrId].webContents.send("audio_video_window_close");
-				this.closeAudioVideoWindow();
-			});
-		}
-	}
-
-	changeWindow(isVideo){
-		if(isVideo){
-			this.audioAndVideoWindow.setSize(690, 460, true);
-			this.audioAndVideoWindow.setMinimumSize(690, 460);
-			this.audioAndVideoWindow.setResizable(true);
-			// 设置宽高比
-			this.audioAndVideoWindow.setAspectRatio(1.5);
-		}
-		else{
-			this.audioAndVideoWindow.setSize(390, 260, true);
-			this.audioAndVideoWindow.setResizable(false);
-		}
-	}
-
-	closeAudioVideoWindow(){
-		if(this.audioAndVideoWindow){
-			this.audioAndVideoWindow.hide();
-			this.audioAndVideoWindow = null;
-		}
 	}
 
 	initTrayIcon(){

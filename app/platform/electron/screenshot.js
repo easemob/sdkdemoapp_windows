@@ -30,35 +30,10 @@ const getStream = (sourceId) => {
 			const display = getDisplay(sourceId);
 			const displayIndex = Screen.getAllDisplays().findIndex(item => item.id === sourceId);
 
-			const mediaConfig = {
-				audio: false,
-				video: {
-					mandatory: {
-						chromeMediaSource: "desktop",
-						chromeMediaSourceId: sources[displayIndex].id,
-						maxWidth: display.size.width,
-						maxHeight: display.size.height,
-						minWidth: display.size.width,
-						minHeight: display.size.height
-					}
-				}
-			};
-
 			navigator.webkitGetUserMedia(mediaConfig, (stream) => {
 				lastSteam = stream;
 				resolve(stream);
 			}, reject);
-		});
-	});
-};
-
-const getVideo = (stream) => {
-	return new Promise((resolve) => {
-		const video = document.createElement("video");
-		video.autoplay = true;
-		video.src = URL.createObjectURL(stream);
-		video.addEventListener("playing", () => {
-			resolve(video);
 		});
 	});
 };
@@ -68,10 +43,6 @@ const getCanvas = (width, height) => {
 	canvas.width = width;
 	canvas.height = height;
 	return canvas;
-};
-
-const drawFrame = ({ ctx, video, x, y, width, height, availTop = screen.availTop }) => {
-	ctx.drawImage(video, x, y, width, height, 0, -availTop, width, height);
 };
 
 const getFrameImage = (canvas) => {
@@ -97,53 +68,6 @@ const getLoop = (fn) => {
 	};
 };
 
-const startRecording = ({ canvas, video, x, y, width, height, availTop }) => {
-	const recorder = RecordRTC(canvas, { type: "canvas" });
-	const ctx = canvas.getContext("2d");
-	const stopLoop = getLoop(() => drawFrame({ ctx, video, x, y, width, height, availTop }));
-
-	recorder.startRecording();
-
-	return {
-		stop(){
-			return new Promise((resolve) => {
-				stopLoop();
-				recorder.stopRecording(() => {
-					recorder.getDataURL(url => resolve({ url, width, height }));
-				});
-			});
-		},
-		pause(){
-			recorder.pauseRecording();
-		},
-		resume(){
-			recorder.resumeRecording();
-		}
-	};
-};
-
-const takeScreenshot = ({ x = 0, y = 0, width = 0, height = 0, sourceId = 0 }) => {
-	const display = getDisplay(sourceId);
-	const availTop = screen.availTop - display.bounds.y;
-	sourceId = display.id;
-
-	if(!width) width = display.bounds.width;
-	if(!height) height = display.bounds.height;
-
-	return getStream(sourceId)
-	.then(getVideo)
-	.then((video) => {
-		const canvas = getCanvas(width, height);
-		const ctx = canvas.getContext("2d");
-		drawFrame({ ctx, video, x, y, width, height, availTop });
-		stopStream();
-		return getFrameImage(canvas);
-	})
-	.catch((error) => {
-		stopStream();
-		return Promise.reject(error);
-	});
-};
 
 const takeAllScreenshots = (options) => {
 	if(!options){

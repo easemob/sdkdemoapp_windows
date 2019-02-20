@@ -23,16 +23,20 @@ class GroupList extends Component {
 	}
 
 	handleClick(e){
-		const { selectOfGroup, groupChats } = this.props;
-		selectOfGroup(groupChats[e.key]);
+		const { selectOfGroup } = this.props;
+		selectOfGroup({
+			"easemobGroupId":e.key
+		});
 	}
 
 	render(){
 		const {
-			groupChats,
 			selectGroup,
-			networkConnection
+			networkConnection,
+			allGroupChats,
+			globals
 		} = this.props;
+		let arrGroupChats = allGroupChats.allGroups;
 		return (
 			<div className="oa-main-list oa-conversation-list">
 				{
@@ -48,16 +52,17 @@ class GroupList extends Component {
 					mode="inline"
 				>
 					{
-						_.map(groupChats, (group) => {
+						arrGroupChats.map((groupId) => {
+							var groupManager = globals.groupManager;
+							var group = groupManager.groupWithId(groupId);
 							return (
-								<Menu.Item key={ group.easemobGroupId }>
+								<Menu.Item key={ group.groupId() }>
 									<HeadImageView
-										imgUrl={ group.avatar }
-										name={ group.chatName }
+										name={ group.groupSubject() }
 									/>
 									<div className="item-top">
 										<span className="ellipsis item-name">
-											{ group.chatName }
+											{ group.groupSubject() }
 										</span>
 									</div>
 								</Menu.Item>);
@@ -70,8 +75,9 @@ class GroupList extends Component {
 }
 
 const mapStateToProps = state => ({
-	groupChats: state.groupChats,
 	selectGroup: state.selectGroup,
-	networkConnection: state.networkConnection
+	networkConnection: state.networkConnection,
+	allGroupChats: state.allGroupChats,
+	globals: state.globals
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(GroupList));

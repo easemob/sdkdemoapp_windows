@@ -106,19 +106,6 @@ export const cancelDelMembersAction = payload => ({
 	payload
 });
 
-export const selectVideoMembersAction = payload => ({
-	type: "app/selectVideoMembersOfGroup",
-	payload
-});
-export const cancelVideoMembersAction = payload => ({
-	type: "app/cancelVideoMembersOfGroup",
-	payload
-});
-export const cancelVideoGroupAction = payload => ({
-	type: "app/cancelVideoGroup",
-	payload
-});
-
 export const cancelRemoveGroupAction = payload => ({
 	type: "app/cancelDeleteGroup",
 	payload
@@ -173,7 +160,7 @@ export const receiveMemberJoinGroupAction = payload => ({
 	payload
 });
 
-export const createGroup = payload => ({
+export const createAGroup = payload => ({
 	type: "app/createGroup",
 	payload
 });
@@ -351,175 +338,40 @@ export const markRequestPending = key => ({
 	meta: { key },
 });
 
-// 生成一个 action creator，用来 dispatch initial action 事件。
-// 当请求开始 meta.done 需要 false。此时并不需要 payload。
-export const markRequestSuccess = key => ({
-	type: "app/markRequestSuccess",
-	meta: { key },
+// 设置好友列表
+export const setAllContacts = (payload) => ({
+	type:"app/setcontacts",
+	payload
 });
 
-// 当请求成功则需要 dispatch success action 事件。此时需要 meta.done 设为 true，以便标记请求已完成。
-// 注意此时不需要 error 属性，这样就能知道带的 payload 是一个 success 的 payload。
-export const markRequestFailed = (reason, key) => ({
-	type: "app/markRequestFailed",
-	payload: reason,
-	meta: { key },
+// 添加一个好友
+export const addContact = (payload) => ({
+	type:"app/addcontacts",
+	payload
 });
 
-export const createRequestThunk = ({ request, key, start = [], success = [], failure = [] }) => {
-
-	// view 中调用的其实是这个函数了
-	return (...args) =>
-		// redux-thunk 捕获到后，直接调用塞进来的，两个参数：dispatch & getState
-		// 怎么捕获的？wrap 了 props。
-		(dispatch) => {
-			const requestKey = (typeof key === "function") ? key(...args) : key;
-			// 告知开始的一系列事件
-			// dispatch 就是进入 reducer 的，在那边会自然扩充 state.requests
-			start.forEach(actionCreator => dispatch(actionCreator()));
-			dispatch(markRequestPending(requestKey));
-			// 立即请求
-			return request(...args)
-			.then((data) => {
-				// 1. 外部添加多个 action creator 栈，顺序执行
-				// data 已经被 filter 过，不会有问题
-				success.forEach(actionCreator => dispatch(actionCreator(data, requestKey)));
-				// 2. 将生成的 request key 传入所有的 action creators
-				dispatch(markRequestSuccess(requestKey));
-			})
-			["catch"]((reason) => {
-				failure.forEach(actionCreator => dispatch(actionCreator(reason)));
-				dispatch(markRequestFailed(reason, requestKey));
-			});
-		};
-};
-
-export const requestLogin = createRequestThunk({
-	request: api.login,
-	key: "login",
-	success: [
-		loginState,
-	],
-	failure: [
-		() => setNotice("用户名或密码错误", "fail"),
-	],
+// 删除一个好友
+export const removeContact = (payload) => ({
+	type:"app/removecontacts",
+	payload
 });
 
+// 设置群组列表
+export const setGroupChats = (payload) => ({
+	type:"app/setgroupchats",
+	payload
+})
 
+// 设置当前选择的会话是否群组会话
+export const setSelectConvType = (payload) => ({
+	type:"app/isSelectCovGroup",
+	payload
+})
 
-export const requestChildOrg = createRequestThunk({
-	request: api.getChildOrg,
-	key: "getChildOrg",
-	success: [
-		childOrg,
-	],
-});
-
-export const requestMembersOfOrg = createRequestThunk({
-	request: api.getMembersOfOrg,
-	key: "getMembersOfOrg",
-	success: [
-		membersOfOrg,
-	],
-});
-
-export const requestRootOrg = createRequestThunk({
-	request: api.getRootOrg,
-	key: "getRootOrg",
-	success: [
-		data => requestChildOrg(data[0].tenantId, data[0].id),
-		data => requestMembersOfOrg(data[0].tenantId, data[0].id),
-		rootOrg,
-	],
-});
-
-export const requestAllMembers = createRequestThunk({
-	request: api.getAllMembers,
-	key: "getAllMembers",
-	success: [
-		getAllMembers,
-	],
-});
-
-export const requestCreateGroup = createRequestThunk({
-	request: api.createGroup,
-	key: "createGroup",
-	success: [
-		createGroup,
-	],
-});
-
-export const requestGroups = createRequestThunk({
-	request: api.getGroupChats,
-	key: "getGroupChats",
-	success: [
-		getGroupChats,
-	],
-});
-
-export const requestDestoryGroup = createRequestThunk({
-	request: api.destoryGroup,
-	key: "destoryGroup",
-	success: [
-		destoryGroup,
-	],
-});
-
-// 修改群信息
-export const requestChantGroupInfo = createRequestThunk({
-	request: api.changeGroupInfo,
-	key: "changeGroupInfo",
-	success: [
-		changeGroupInfo,
-		() => setNotice("修改成功", "success"),
-	],
-	failure: [
-		() => setNotice("保存失败", "fail"),
-	],
-});
-
-// 修改个人信息
-export const requestChangeUserInfo = createRequestThunk({
-	request: api.changeUserInfo,
-	key: "changeUserInfo",
-	success: [
-		changeUserInfo,
-		() => setNotice("修改成功", "success"),
-
-	],
-	failure: [
-		() => setNotice("保存失败", "fail"),
-	],
-});
-
-// 查看群聊信息
-export const requestGroupInfo = createRequestThunk({
-	request: api.getGroupInfo,
-	key: "getGroupInfo",
-	success: [
-		getGroupInfo,
-	],
-});
-
-// 获取成员信息
-export const requestMemberInfo = createRequestThunk({
-	request: api.getMemberFromEasemob,
-	key: "getMemberFromEasemob",
-	success: [
-		getMemberInfoAction,
-	],
-});
-
-// 搜索联系人
-export const requestSearchMember = createRequestThunk({
-	request: api.searchMember,
-	key: "searchMembersOfConcat",
-	success: [
-		searchMembersOfConcat
-	]
-});
-
-//
-export const requestDownloadAvatar = createRequestThunk({
-	request: api.getAvatar,
-});
+//  设置登录请求
+export const requestLogin = (payload) => (
+	{
+		type: "app/setLogin",
+		payload
+	}
+);

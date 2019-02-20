@@ -92,7 +92,18 @@ class LoginForm extends PureComponent {
 			this.handleRemoveCookie();
 		}
 		if(navigator.onLine){
-			requestLogin(this.state.userName, this.state.password, "PC");
+			var payload = {
+				"user":{
+					"easemobName":this.state.userName,
+					"id":1,
+					"easemobPwd":this.state.password,
+					"os":"PC",
+					"appkey":"easemob-demo#chatdemoui",
+					"tenantId":9,
+					"image":""
+				}
+			};
+			requestLogin(payload);
 		}
 		else{
 			setNotice("当前网络不可用，请检查网络状态", "fail");

@@ -41,20 +41,20 @@ class MemberSettingView extends PureComponent {
 
 	render(){
 		const { selectConversationId, allMembersInfo } = this.props;
+		console.log("selectConversationId:" + selectConversationId);
+		console.log("allMembersInfo:" + allMembersInfo);
 		const memberInfo = allMembersInfo[selectConversationId];
+		console.log("memberInfo:" + memberInfo);
 		return (
 			<div>
 				<div className="member-info">
 					<div className="avatar-name">
-						<HeadImageView imgUrl={ memberInfo.image } />
 						<div className="member-name">
-							{ memberInfo.realName || memberInfo.username || memberInfo.easemobName}
+							{ selectConversationId}
 						</div>
 					</div>
 					<div className="info">
-						<div><span>性别:</span><span className="ellipsis infos">{ memberInfo.gender }</span></div>
-						<div><span>邮箱:</span><span className="ellipsis infos">{memberInfo.email}</span></div>
-						<div><span>电话:</span><span className="ellipsis infos">{ memberInfo.mobilephone }</span></div>
+						<div><span>用户:</span><span className="ellipsis infos">{ selectConversationId }</span></div>
 						<div className="operate-member" onClick={ this.handleClearRecord }>清空聊天记录</div>
 					</div>
 				</div>

@@ -28,7 +28,7 @@ const filterDomain = (msg, userInfo, msgFrom, atMsg) => {
 	if(userInfo && atMsg){
 		userEasemobName = userInfo.user.easemobName;
 		if(msgFrom != userEasemobName && atMsg.indexOf(userEasemobName) > -1){
-			re = new RegExp(`@${userInfo.user.realName}`, "g");
+			re = new RegExp(`@${userInfo.user.easemobName}`, "g");
 			msg = msg.replace(re, `<span class="msg-at">@${userInfo.user.realName}</span>`);
 		}
 		if(atMsg.toLowerCase().indexOf("all") > -1){

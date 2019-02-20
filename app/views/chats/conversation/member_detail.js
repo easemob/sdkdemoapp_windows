@@ -12,10 +12,22 @@ class MemberDetailView extends PureComponent {
 	}
 
 	render(){
-		const { selectConversationId, allMembersInfo, groupChats } = this.props;
+		const { selectConversationId, allMembersInfo,isSelectCovGroup,globals } = this.props;
 		const selectMember = allMembersInfo[selectConversationId];
-		const selectGroup = groupChats[selectConversationId];
+		const selectGroup = isSelectCovGroup;
 		var groupMembers = selectGroup ? [selectGroup.owner].concat(selectGroup.adminMembers).concat(selectGroup.members) : [];
+		let isGroup = isSelectCovGroup == 1;
+		let conversation = globals.chatManager.conversationWithType(selectConversationId, isGroup);
+		let name;
+		console.log("isGroup:" + isGroup + "    isSelectCovGroup:" + isSelectCovGroup);
+		console.log("selectConversationId:" + selectConversationId);
+		if(isGroup)
+		{
+			var group = globals.groupManager.groupWithId(selectConversationId);
+			name = group.groupSubject();
+		}else
+			name = selectConversationId;
+		console.log("name:" + name);
 		return (
 
 			<div className="oa-conversation-top">
@@ -25,14 +37,13 @@ class MemberDetailView extends PureComponent {
 					/>
 					<span className="ellipsis selectName">
 						{
-							(selectMember && (selectMember.realName || selectMember.username || selectMember.easemobName)) ||
-							(selectGroup && `${selectGroup.chatName}`)
+							name
 						}
 					</span>
-					<span>{ selectGroup && `（${groupMembers.length}）`}</span>
+					<span>{ isGroup && `（${groupMembers.length}）`}</span>
 				</div>
 				{
-					selectMember && <CreateGroupView selectMember={ [selectMember] } />
+					!isGroup && <CreateGroupView selectMember={ [{easemobName:selectConversationId}] } />
 				}
 			</div>
 		);
@@ -43,6 +54,7 @@ class MemberDetailView extends PureComponent {
 const mapStateToProps = state => ({
 	allMembersInfo: state.allMembersInfo,
 	selectConversationId: state.selectConversationId,
-	groupChats: state.groupChats,
+	isSelectCovGroup:state.isSelectCovGroup,
+	globals: state.globals,
 });
 export default connect(mapStateToProps, actionCreators)(MemberDetailView);

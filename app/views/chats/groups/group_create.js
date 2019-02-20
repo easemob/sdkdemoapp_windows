@@ -6,6 +6,7 @@ import { Icon, Modal, Input, Button, Form, Upload, Switch } from "antd";
 import HeadImageView from "@/views/common/head_image";
 import MenuList from "../contacts/contact_all_list";
 import _ from "underscore";
+import { setSelectConvType } from "../../../stores/actions";
 var _const = require("@/views/common/domain");
 var inviteGroupMember = false;
 
@@ -42,8 +43,8 @@ class HorizontalLoginForm extends PureComponent {
 
 	render(){
 		const { getFieldDecorator } = this.props.form;
-		const { createGroup } = this.props;
 		const { membersIdOfCreateGroup } = this.props.reduxProps;
+		const { createGroup } = this.props;
 		return (
 			<Form
 				onSubmit={
@@ -137,7 +138,7 @@ class CreateGroupView extends PureComponent {
 	}
 
 	handleChangeAvatar({ fileList, file }){
-		const { setNotice, selectConversationId, groupChats } = this.props;
+		const { setNotice, selectConversationId } = this.props;
 		this.setState({ fileList });
 		if(file.status == "done"){
 			this.setState({ avatarUrl: file.response.url });
@@ -150,7 +151,7 @@ class CreateGroupView extends PureComponent {
 						uid: -1,
 						name: "",
 						status: "done",
-						url: groupChats[selectConversationId].avatar ? `${_const.domain}${groupChats[selectConversationId].avatar}` : `${require("@/views/config/img/default_avatar.png")}`,
+						url: `${require("@/views/config/img/default_avatar.png")}`,
 					}
 				] });
 			}
@@ -186,7 +187,6 @@ class CreateGroupView extends PureComponent {
 	// 创建群组时除了自己应该至少选 2 人，否则去单聊
 	createGroup(groupName, description){
 		const {
-			requestCreateGroup,
 			membersId,
 			membersIdArray,
 			userInfo,
@@ -196,7 +196,9 @@ class CreateGroupView extends PureComponent {
 			msgsOfConversation,
 			allMembersInfo,
 			cancelCreateGroupAction,
-			setNotice
+			setNotice,
+			createAGroup,
+			setSelectConvType
 		} = this.props;
 		var conversation;
 		var messages;
@@ -204,28 +206,10 @@ class CreateGroupView extends PureComponent {
 		var selectMember;
 		var username;
 
-		// var conversation = globals.chatManager.conversationWithType(selectMember.easemobName, 1);
-		// // var messages = conversation.loadMoreMessages(0, "", 20);
-		// // var extInfo = {
-		// // 	avatar: selectMember.image,
-		// // 	nick: selectMember.realName,
-		// // 	userid: selectMember.id
-		// // };
-		// // // 设置扩展消息
-		// // conversation.setExtField(JSON.stringify(extInfo));
-		// conversationOfSelect(selectMember.easemobName);
-		// msgsOfConversation({ id: selectMember.easemobName, msgs: messages, conversation });
 		if(membersIdArray.length == 1){
 			selectMember = allMembersInfo[membersIdArray[0]];
 			conversation = globals.chatManager.conversationWithType(membersIdArray[0], 0);
 			messages = conversation.loadMoreMessagesByMsgId("", 20,0);
-			extInfo = {
-				avatar: selectMember.image,
-				nick: selectMember.realName,
-				userid: selectMember.id
-			};
-			// // 设置扩展消息
-			conversation.setExtField(JSON.stringify(extInfo));
 			conversationOfSelect(membersIdArray[0]);
 			msgsOfConversation({ id: membersIdArray[0], msgs: messages, conversation });
 			cancelCreateGroupAction();
@@ -240,21 +224,28 @@ class CreateGroupView extends PureComponent {
 			username = userInfo.user.realName || userInfo.user.username || userInfo.user.easemobName;
 			groupName = groupName ? groupName.substring(0, 20) : `${username},${membersName}`.substring(0, 20);
 			description = description ? description.substring(0, 100) : "";
-			requestCreateGroup(
-				userInfo.user.tenantId,
-				groupName,
-				this.state.avatarUrl,
-				membersId,
-				description,
-				userInfo.user.easemobName,
-				userInfo.user.id,
-				globals.chatManager,
-				inviteGroupMember
-			);
+			var groupManager = globals.groupManager;
+			// 组设置，4个参数分别为组类型（0,1,2,3），最大成员数，邀请是否需要确认，扩展信息
+			var setting = new globals.easemob.EMMucSetting(1, 20, false, "test");
+			let error = new globals.easemob.EMError();
+			console.log("membersIdArray:" + membersIdArray);
+			console.log("membersId:" + membersId);
+			groupManager.createGroup(groupName,description,"welcome message",setting,membersIdArray, error,(group,err) => {
+				if(err.errorCode == 0)
+				{
+					let conversation = globals.chatManager.conversationWithType(group.groupId(),1);
+					//createGroup({"easemobGroupId":group.groupId(),"convesation":conversation});
+					createAGroup({easemobGroupId:group.groupId(),conversation});
+					setSelectConvType(1);
+				}else
+					console.log("createGroup fail!errorDescription:" + err.description);
+				cancelCreateGroupAction();
+				
+			});
 			cancelCreateGroupAction();
 			this.setState({
-				visible: false,
-			});
+					visible: false,
+				});
 		}
 
 
@@ -295,9 +286,9 @@ class CreateGroupView extends PureComponent {
 						<div className="oa-group-setting oa-group-create-setting">
 							<div>当前已选择{ membersIdOfCreateGroup.length + 1}人</div>
 							<div className="selected-members-container">
-								<div className="select-member" key={ userInfo.user.id }>
-									<HeadImageView imgUrl={ userInfo.user.image }></HeadImageView>
-									<div className="member-name">{ userInfo.user.realName || userInfo.user.username || userInfo.user.easemobName }</div>
+								<div className="select-member" >
+									<HeadImageView imgUrl={ "" }></HeadImageView>
+									<div className="member-name">{ userInfo.user.easemobName }</div>
 								</div>
 								{
 									_.map(membersIdOfCreateGroup, (member) => {
@@ -325,29 +316,6 @@ class CreateGroupView extends PureComponent {
 									})
 								}
 							</div>
-							<div className="group-info">
-								<div className="group-avatar">群头像</div>
-								<Upload
-									action={ `${_const.domain}/v1/tenants/${userInfo.user.tenantId}/mediafile` }
-									listType="picture-card"
-									fileList={ fileList }
-									accept="image/*"
-									onPreview={ this.handlePreviewAvatar }
-									onChange={ this.handleChangeAvatar }
-									onRemove={ this.handleRemoveAvatar }
-								>
-									{fileList.length >= 1
-										? null
-										: <div>
-											<Icon type="plus" />
-											<div className="ant-upload-text">上传</div>
-										</div>
-									}
-								</Upload>
-								<Modal visible={ previewVisible } footer={ null } onCancel={ this.handleCancelAvatar }>
-									<img alt="example" style={ { width: "100%" } } src={ previewImage } />
-								</Modal>
-							</div>
 							<WrappedHorizontalLoginForm reduxProps={ this.props } createGroup={ this.createGroup } />
 						</div>
 						<div className="oa-group-member">
@@ -371,7 +339,6 @@ const mapStateToProps = state => ({
 	membersId: selectors.membersIdOfGroup(state),
 	membersName: selectors.membersNameOfGroup(state),
 	userInfo: state.userInfo,
-	groupChats: state.groupChats,
 	// membersOfCreateGroup: state.membersOfCreateGroup,
 	membersIdArray: selectors.membersIdArray(state),
 	membersIdOfCreateGroup: selectors.createGroupMembersIdArray(state),

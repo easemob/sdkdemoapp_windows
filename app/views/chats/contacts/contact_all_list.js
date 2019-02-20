@@ -23,10 +23,10 @@ class ContactView extends PureComponent {
 	handleOnChange(e, item){
 		const { selectMembersAction, cancelMembersAction  } = this.props;
 		if(e.target.checked){
-			selectMembersAction(item);
+			selectMembersAction({"easemobName":item});
 		}
 		else{
-			cancelMembersAction(item.easemobName);
+			cancelMembersAction(item);
 		}
 	}
 
@@ -59,10 +59,12 @@ class ContactView extends PureComponent {
 		_.map(selectMemberData.concat(groupMemberData), function(member){
 			selectMemberEasemobnameData.push(member);
 		});
-		isSelected = selectMemberEasemobnameData.indexOf(memberInfo.easemobName);
+		isSelected = selectMemberEasemobnameData.indexOf(memberInfo);
 		isEditSelector = _.filter(groupMemberData, function(item){
-			return item == memberInfo.easemobName;
+			return item == memberInfo;
 		});
+		console.log("selectMemberEasemobnameData:" + selectMemberEasemobnameData);
+		console.log("memberInfo:" + memberInfo);
 		return (
 			<Checkbox
 				checked={
@@ -78,29 +80,19 @@ class ContactView extends PureComponent {
 	}
 
 	render(){
-		const { allMembersInfo, searchMembers } = this.props;
-		var concatList;
-		var activeAllMembers = _.filter(allMembersInfo, (item) => { return item.easemobName; });
-		activeAllMembers = _.sortBy(activeAllMembers, "username");
-		concatList = this.searchValue ? _.values(searchMembers) : activeAllMembers;
-		concatList = concatList.splice(0, 300);
+		const { allContacts } = this.props;
+		var concatList = allContacts.contacts;
 		return (
 			<div>
-				<Search
-					placeholder="搜索"
-					// onSearch={ value => this.handleSearch(value) }
-					onChange={ e => this.handleChangeSearchVal(e) }
-					style={ { width: 250 } }
-				/>
 				<div className="member-list">
 					<Menu>
 						{
 							_.map(concatList, (item) => {
 								return (
-									<Menu.Item key={ item.easemobName }>
+									<Menu.Item key={ item }>
 										<div className="avatar-name">
 											<HeadImageView imgUrl={ item.image } />
-											{item.realName || item.username || item.easemobName}
+											{item}
 										</div>
 										{
 											this.showCheckbox(item)
@@ -120,10 +112,9 @@ const mapStateToProps = state => ({
 	globals: state.globals,
 	userInfo: state.userInfo,
 	selectConversationId: state.selectConversationId,
-	groupChats: state.groupChats,
 	searchMembers: state.searchMemberOfCreateGroup,
 	allMembersInfo: state.allMembersInfo,
-	// membersOfCreateGroup: state.membersOfCreateGroup,
-	// groupMembers: selectors.getGroupMembers(state),
+	allContacts: state.allContacts,
+	membersOfCreateGroup: state.membersOfCreateGroup
 });
 export default connect(mapStateToProps, actionCreators)(ContactView);

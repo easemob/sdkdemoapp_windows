@@ -36,7 +36,6 @@ class AppView extends Component {
 		return (
 			<div className="oa-main-index">
 				<Notify />
-				<UpdateView />
 				{/* 设置无边框后 windows 无最大化最小化关闭按钮，需要单独设置下 */}
 				{/* {
 					IS_MAC_OSX

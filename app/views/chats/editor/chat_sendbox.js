@@ -3,12 +3,10 @@ import { connect } from "react-redux";
 import * as actionCreators from "@/stores/actions";
 import * as selectors from "@/stores/selectors";
 import ChatEmoji from "./chat_emoji";
-import { audioAndVideo } from "@/views/main/receive_audio_video";
 import { Input, Button, Upload, Icon, Modal } from "antd";
 import uuid from "uuid";
 import _ from "underscore";
 import { ipcRenderer } from "electron";
-import GroupVideoInvite from "../groups/group_video_invite";
 // import $ from "jquery";
 const { remote } = require("electron");
 let configDir = remote.app.getPath("userData");
@@ -35,9 +33,6 @@ class ChatSendBoxView extends PureComponent {
 		this.handleSendImg = this.handleSendImg.bind(this);
 
 		this.handleKeyDown = this.handleKeyDown.bind(this);
-
-		this.handleVoiceCall = this.handleVoiceCall.bind(this);
-		this.handleVideoCall = this.handleVideoCall.bind(this);
 
 		this.hideInviteDialog = this.hideInviteDialog.bind(this);
 
@@ -79,43 +74,6 @@ class ChatSendBoxView extends PureComponent {
 
 	hideInviteDialog(){
 		this.setState({ visibleInviteDialog: false });
-	}
-
-	handleAudioAndVideo(opt){
-		const { userInfo, globals, selectConversationId, allMembersInfo, groupChats } = this.props;
-		var logintoken = globals.emclient.getLoginInfo().loginToken();
-		let isGroup = !!groupChats[selectConversationId];
-		audioAndVideo({
-			userInfo: JSON.stringify(userInfo),
-			conversationId: selectConversationId,
-			inviterInfo: JSON.stringify(allMembersInfo[selectConversationId]),
-			logintoken,
-			isVideo: opt.isVideo,
-			isInvited: false,
-			isGroup,
-			groupInfo: groupChats[selectConversationId],
-			allMembersInfo: JSON.stringify(allMembersInfo),
-		});
-	}
-
-	// 发起语音
-	handleVoiceCall(){
-		this.handleAudioAndVideo({ isVideo: false });
-	}
-
-	// 发起视频
-	handleVideoCall(){
-		const { selectConversationId, groupChats } = this.props;
-		let isGroup = !!groupChats[selectConversationId];
-		// 是群组需要先选择群成员
-		if(isGroup){
-			this.setState({
-				visibleInviteDialog: true,
-			});
-		}
-		else{
-			this.handleAudioAndVideo({ isVideo: true });
-		}
 	}
 
 	handlePaste(e){
@@ -236,10 +194,9 @@ class ChatSendBoxView extends PureComponent {
 		var {
 			globals,
 			selectConversationId,
+			isSelectCovGroup,
 			sendMsg,
 			userInfo,
-			groupChats,
-			atMembersOfGroup,
 			setNotice,
 			networkStatus,
 			conversations
@@ -259,7 +216,7 @@ class ChatSendBoxView extends PureComponent {
 		let emCallback = globals.emCallback;
 		let sendMessage = globals.easemob.createSendMessage((userInfo && userInfo.user.easemobName), conversationId, msg);
 		let textareaVal = this.input ? this.input.textAreaRef.value : "";
-		let chatType = groupChats[conversationId] ? 1 : 0;
+		let chatType = isSelectCovGroup;
 		this.cfr = cfr;
 		// 群聊需要设置 setChatType(1) 和 setTo(groupId)
 		if(chatType == 1){
@@ -267,9 +224,13 @@ class ChatSendBoxView extends PureComponent {
 				sendMessage.setAttribute("em_at_list", "all");
 			}
 			else{
+				let atMembersOfGroup;
+				let admins = globals.groupManager.groupWithId(conversationId).groupAdmins();
+				let members = globals.groupManager.groupWithId(conversationId).groupMembers();
+				atMembersOfGroup = admins.concat(members);
 				_.map(textareaVal.split("@"), function(member){
 					atList = _.find(atMembersOfGroup, function(m){
-						return m.name == member.split(" ")[0];
+						return m == member.split(" ")[0];
 					});
 					atList && atListEasemobName.push(`"${atList.id}"`);
 				});
@@ -327,9 +288,9 @@ class ChatSendBoxView extends PureComponent {
 		// var atPosition = screen.getCursorScreenPoint();
 		var currentVal = e.currentTarget.value;
 		const {
-			atMembersOfGroup,  // 可以 @ 的群成员  群主 && 管理员 && 普通成员 && 去掉自己
-			groupChats,
-			selectConversationId
+			selectConversationId,
+			isSelectCovGroup,
+			globals
 		} = this.props;
 		this.setState(
 			{
@@ -340,8 +301,11 @@ class ChatSendBoxView extends PureComponent {
 		// 获取光标绝对位置
 		// console.log(screen.getCursorScreenPoint());
 		// $(e.target).caret("position");
-
-		if(groupChats[selectConversationId]){
+		let atMembersOfGroup;
+		let admins = globals.groupManager.groupWithId(selectConversationId).groupAdmins();
+		let members = globals.groupManager.groupWithId(selectConversationId).groupMembers();
+		atMembersOfGroup = admins.concat(members);
+		if(isSelectCovGroup){
 			$(e.target).atwho({
 				at: "@",
 				data: atMembersOfGroup,
@@ -403,8 +367,8 @@ class ChatSendBoxView extends PureComponent {
 			action: "//jsonplaceholder.typicode.com/posts/",
 			showUploadList: false,
 		};
-		const { selectConversationId, groupChats, membersIdOfVideoGroup } = this.props;
-		let isGroup = !!groupChats[selectConversationId];
+		const { selectConversationId, isSelectCovGroup, membersIdOfVideoGroup } = this.props;
+		let isGroup = isSelectCovGroup;
 		return (
 			<div className="oa-main-sendbox">
 				<div className="oa-main-toolbar">
@@ -416,13 +380,6 @@ class ChatSendBoxView extends PureComponent {
 					<div title="文件"><Upload { ...uploadProps } data={ this.uploadAttachmentData }><Icon type="file" /></Upload></div>
 					{/* 上传视频 */}
 					{/* <div title="视频"><Upload { ...uploadProps } data={ this.uploadVideoData } accept="video/*"><Icon type="video-camera" /></Upload></div> */}
-					{
-						isGroup
-							? null
-							: <div title="语音通话" onClick={ this.handleVoiceCall }><Icon type="phone" /></div>
-					}
-					<div title="视频通话" onClick={ this.handleVideoCall }><Icon type="video-camera" /></div>
-					{/* <div onClick={ this.handleTest }>点击</div> */}
 				</div>
 				<TextArea
 					placeholder="请输入..."
@@ -448,12 +405,6 @@ class ChatSendBoxView extends PureComponent {
 						style={ { maxWidth: "100%" } }
 					/>
 				</Modal>
-				{
-					// this.showGroupMember()
-					this.state.visibleInviteDialog
-						? <GroupVideoInvite conId={ selectConversationId } selectMemberData={ membersIdOfVideoGroup }  hideInviteDialog={ this.hideInviteDialog } />
-						: null
-				}
 				{/* <div className="oa-chatbox-send">
 					<Button type="primary">发送</Button>
 				</div> */}
@@ -464,14 +415,11 @@ class ChatSendBoxView extends PureComponent {
 }
 const mapStateToProps = state => ({
 	selectConversationId: state.selectConversationId,
-	groupChats: state.groupChats,
+	isSelectCovGroup: state.isSelectCovGroup,
 	globals: state.globals,
 	userInfo: state.userInfo,
 	allMembersInfo: state.allMembersInfo,
-	atMembersOfGroup: selectors.getAtMembersOfGroup(state),
-	groupOwner: selectors.getGroupOwner(state),
 	// memberInfo: selectors.getGroupMembers(state),
-	membersIdOfVideoGroup: selectors.videoCallGroupMembersIdArray(state),
 	networkStatus: state.networkConnection,
 	conversations: state.conversations
 	// memberInfo: state.memberInfo

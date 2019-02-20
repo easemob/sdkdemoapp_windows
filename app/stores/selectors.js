@@ -36,10 +36,6 @@ export const getAllMembers = (state) => {
 export const membersIdArray = state =>  _.pluck(state.membersOfEditGroup, "easemobName");
 export const createGroupMembersIdArray = state =>  _.pluck(state.membersOfCreateGroup, "easemobName");
 export const deleteGroupMembersIdArray = state =>  _.pluck(state.membersOfDeleteGroup, "easemobName");
-export const videoCallGroupMembersIdArray = function(state){
-	var result = _.pluck(state.membersOfVideoGroup, "easemobName");
-	return result;
-};
 
 export const membersIdOfGroup = (state) => {
 	return membersIdArray(state).join(",");
@@ -54,57 +50,9 @@ export const membersNameOfGroup = (state) => {
 	// return _.pluck(state.membersOfEditGroup, "realName").join(",");
 };
 
-// 群组成员(管理员和普通成员)
-export const getGroupMembers = function(state){
-	// var memberInfo = [];
-	// var adminMemeberInfo = [];
-	var members;
-	var adminMembers;
-	let groupOwner = state.groupChats[state.selectConversationId].owner;
-	if(state.groupChats[state.selectConversationId]){
-		members = state.groupChats[state.selectConversationId].members || [];
-		adminMembers = state.groupChats[state.selectConversationId].adminMembers || [];
-		// memberInfo = _.filter(members, (member) => {
-		// 	return state.allMembersInfo[member];
-		// });
-		// adminMemeberInfo = _.filter(adminMembers, (member) => {
-		// 	return state.allMembersInfo[member];
-		// });
-		return [groupOwner].concat(adminMembers).concat(members);
-	}
-	return [groupOwner];
-
-};
-export const getGroupAdminMembers = function(state){
-	return state.groupChats[state.selectConversationId] ? state.groupChats[state.selectConversationId].adminMembers || [] : [];
-};
-export const getGroupOwner = (state) => {
-	return state.groupChats[state.selectConversationId] ? state.groupChats[state.selectConversationId].owner : "";
-};
-
-// 获取群主和所有成员
-// export const getGroupMemberAndOwner = function(state){
-// 	// return getGroupOwner(state) ? [state.allMembersInfo[getGroupOwner(state)]].concat(getGroupMembers(state)) : getGroupMembers(state);
-// 	var allMembers = [];
-// 	var owner;
-// 	if(getGroupOwner(state)){
-// 		owner = state.allMembersInfo[getGroupOwner(state)];
-// 		owner && allMembers.push(owner);
-// 		allMembers.concat(getGroupMembers(state));
-// 	}
-// 	else{
-// 		allMembers = getGroupMembers(state);
-// 	}
-// 	return allMembers;
-// };
-
 // 添加的群成员 _.difference(现在所有的群成员, 之前的群成员)
 export const getAddMembers = (state) => {
-	var a = _.difference(
-		_.pluck(state.membersOfEditGroup, "easemobName"),
-		state.groupChats[state.selectConversationId].members
-	);
-	return a;
+	return _.pluck(state.membersOfEditGroup, "easemobName");
 };
 
 export const getRemoveMembers = (state) => {
@@ -114,7 +62,7 @@ export const getRemoveMembers = (state) => {
 export const getAtMembersOfGroup = (state) => {
 	var membersOfGroup = [];
 	var user = state.userInfo.user.easemobName;
-	var group = state.groupChats[state.selectConversationId];
+	var group = isSelectCovGroup;
 	var memberInfo;
 	// 群主和管理员可以 @ all
 	if(!group){

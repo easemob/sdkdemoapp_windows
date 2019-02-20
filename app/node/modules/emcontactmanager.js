@@ -74,8 +74,8 @@ EMContactManager.prototype.inviteContact = function (username, message, error) {
  * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.deleteContact = function (username, message, error) {
-  this._manager.deleteContact(username, message, error._error);
+EMContactManager.prototype.deleteContact = function (username, error,keepConversation) {
+  this._manager.deleteContact(username, error._error,keepConversation);
 };
 
 /**

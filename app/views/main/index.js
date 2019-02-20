@@ -8,8 +8,6 @@ import * as actionCreators from "@/stores/actions";
 import TopNav from "./topnav";
 import moment from "moment";
 import { userChange } from "./receive_notice";
-import { audioAndVideo } from "./receive_audio_video";
-import { audioAndVideoNotification } from "../notification";
 import api from "@/api";
 import _ from "underscore";
 var fs = require("fs-extra");
@@ -44,15 +42,14 @@ class MainView extends PureComponent {
 		const {
 			userInfo,
 			logout,
-			requestAllMembers,
-			requestGroups,
 			globalAction,
-			groupChats,
 			allMembersInfo,
-			requestMemberInfo,
 			unReadMsgCountAction,
 			initConversationsActiton,
-			networkConnectAction
+			networkConnectAction,
+			setNotice,
+			setAllContacts,
+			setGroupChats
 		} = this.props;
 		fs.ensureDir(`${configDir}/easemob`, function(err){
 			console.log(err);
@@ -89,6 +86,7 @@ class MainView extends PureComponent {
 				console.log("EMConnectionListener onDisconnect");
 				console.log(error.errorCode);
 				console.log(error.description);
+				this.emclient.logout();
 				logout(); // 这个只是我前端用来控制 ui 上的展示的，跟 emclient 没有关系
 
 				Modal.info({
@@ -133,13 +131,10 @@ class MainView extends PureComponent {
 		});
 		// addListener(listener) 添加消息回调监听，从监听中获取接收消息。
 		this.chatManager.addListener(this.listener);
-
+		this.contactManager = this.emclient.getContactManager();
 
 
 		this.groupManager = this.emclient.getGroupManager();
-
-		requestAllMembers(userInfo.user.tenantId);
-		requestGroups(userInfo.user.tenantId);
 		globalAction({
 			emclient: this.emclient,
 			chatManager: this.chatManager,
@@ -147,28 +142,38 @@ class MainView extends PureComponent {
 			log: this.log,
 			groupManager: this.groupManager,
 			emCallback: this.emCallback,
+			groupManager: this.groupManager,
+			contactManager:this.contactManager
 		});
 
 
-		this.contactManager = this.emclient.getContactManager();
+		
 		this.contactListener = new easemob.EMContactListener();
 		
 		this.contactListener.onContactAdded((username) => {
+			const {addContact} = this.props;
 			console.log("onContactAdded username: " + username);
-			this.allContacts = this.contactManager.getContactsFromServer();
+			addContact(username);
 		});
 		this.contactListener.onContactDeleted((username) => {
+			const {removeContact} = this.props;
 			console.log("onContactDeleted username: " + username);
-			this.allContacts = this.contactManager.getContactsFromServer();
+			removeContact(username);
 		});
 		this.contactListener.onContactInvited((username, reason) => {
-			var error = new easemob.EMError();
-			console.log("onContactInvited username: " + username + " reason: " + reason);
-			if (username == "jwfan1") {
-			  contactManager.acceptInvitation(username, error);
-			} else {
-			  contactManager.declineInvitation(username, error);
-			}
+			setTimeout(()=>{
+				var error = new easemob.EMError();
+				console.log("onContactInvited username: " + username + " reason: " + reason);
+				let con = confirm(username + "请求添加好友,是否同意");
+				if (con == true) {
+					console.log("agree invite");
+				  this.contactManager.acceptInvitation(username, error);
+				} else {
+				  contactManager.declineInvitation(username, error);
+				}
+			},500);
+			
+			
 			console.log("error.errorCode = " + error.errorCode);
 			console.log("error.description = " + error.description);
 		});
@@ -269,6 +274,7 @@ class MainView extends PureComponent {
 		// group : 发生操作的群组
 		// member : 加入群组的成员名称
 		this.groupListener.onMemberJoinedGroup((groupId, member)=>{
+			console.log("-----member:" + member);
 			setTimeout(function(){
 				me.onMemberJoinedGroup(groupId, member);
 			}, 1);
@@ -278,6 +284,7 @@ class MainView extends PureComponent {
 		// group : 发生操作的群组
 		// member : 离开群组的成员名称
 		this.groupListener.onMemberLeftGroup((groupId, member)=>{
+			console.log("-----member:" + member);
 			setTimeout(function(){
 				me.onMemberLeftGroup(groupId, member);
 			}, 1);
@@ -314,17 +321,38 @@ class MainView extends PureComponent {
 		);
 		console.log(`loginCode:${this.ret.errorCode}`);
 		if(this.ret.errorCode != 0){
+			setNotice(`登录失败，${this.ret.errorCode}`);
+			this.emclient.logout();
 			logout();
 		}
+
+		// 获取好友列表
+		var error = new easemob.EMError();
+		var contacts = this.contactManager.getContactsFromServer(error);
+		console.log("error.errorCode:" + error.errorCode + "  description:" + error.description);
+		console.log("allContacts length:" + contacts.length);
+		contacts.map((item) => {
+			console.log(item);
+		})
+		setAllContacts({contacts});
+
+		// 获取用户所在的组
+		var groups = this.groupManager.fetchAllMyGroups(error);
+		let allGroups = [];
+		groups.map((group) => {
+			allGroups.push(group.groupId());
+		});
+		setGroupChats({allGroups});
+
 
 		// this.chatManager.getConversations();// 获取缓存中的会话列表
 		let conversationType = 0;
 		this.chatManager.getConversations().map((item) => {
 			var msgObj = {};
 			var unReadMsgMsgId = [];
-			conversationType = groupChats[item.conversationId()] ? 1 : 0;
-			conversation = this.chatManager.conversationWithType(item.conversationId(), conversationType);
-			messages = conversation.loadMoreMessagesByMsgId("", 20,0);
+			conversationType = item.conversationType();
+			//conversation = this.chatManager.conversationWithType(item.conversationId(), conversationType);
+			messages = item.loadMoreMessagesByMsgId("", 20,0);
 			messages.map((msg) => {
 				msgObj[msg.msgId()] = msg.isRead();
 			});
@@ -332,8 +360,7 @@ class MainView extends PureComponent {
 				!msg && unReadMsgMsgId.push(key);
 			});
 			unReadMsgCountAction({ id: item.conversationId(), unReadMsg: unReadMsgMsgId });
-			initConversationsActiton({ id: item.conversationId(), msgs: messages, conversation });
-			conversationType == 0 && !allMembersInfo[item.conversationId()] && requestMemberInfo(userInfo.user.tenantId, item.conversationId());
+			initConversationsActiton({ id: item.conversationId(), msgs: messages, "conversation":item });
 		});
 
 		const updateOnlineStatus = () => {
@@ -375,13 +402,13 @@ class MainView extends PureComponent {
 			leaveGroupAction(target);
 			break;
 		case 26:	// 设为管理员
-			setAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });
+			//setAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });
 			break;
 		case 27:	// 取消管理员
-			cancelAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });
+			//cancelAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });
 			break;
 		case 25:	// 更换群主
-			setOwnerAction({ id: target, owner: usernames[0], group: groupChats[target] });
+			//setOwnerAction({ id: target, owner: usernames[0], group: groupChats[target] });
 			break;
 		default:
 			break;
@@ -434,12 +461,12 @@ class MainView extends PureComponent {
 		console.log(`inviteMessage = ${inviteMessage}`);
 		const {
 			userInfo,
-			requestGroupInfo,
 		} = this.props;
 
 		// group = this.groupManager.fetchGroupSpecification(group.groupId(), this.error, true);
 		// this.groupManager.fetchGroupMembers(group.groupId(), "", 500, this.error);
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
+		/*
 		this.asyncGetMemberInfo(inviter, group)
 		.done(function(name){
 			messageText = inviter == "系统管理员" ? `群 ${name} 创建成功` : `${name} 邀请你进群`;
@@ -449,6 +476,7 @@ class MainView extends PureComponent {
 			conversation.insertMessage(textRecvMsg);
 			requestGroupInfo(userInfo.user.tenantId, group.groupId(), conversation, me.groupManager, me.error);
 		});
+		*/
 		// msgs = messages[group.groupId()] && messages[group.groupId()].length > 0 ? [textRecvMsg].concat(messages[group.groupId()]) : [textRecvMsg];
 		// receiveJoinGroupAction(
 		// 	{
@@ -499,8 +527,6 @@ class MainView extends PureComponent {
 		console.log(`group.groupSubject() = ${group.groupSubject()}`);
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`admin = ${admin}`);
-		const { setAdminAction, groupChats } = this.props;
-		groupChats[group.groupId()] && setAdminAction({ id: group.groupId(), adminMember: admin, group: groupChats[group.groupId()] });
 	}
 
 	// 删除群管理员时触发(只有是自己时才能收到通知)
@@ -530,7 +556,6 @@ class MainView extends PureComponent {
 		console.log(`newOwner = ${newOwner}`);
 		console.log(`oldOwner = ${oldOwner}`);
 		const { setOwnerAction, groupChats } = this.props;
-		groupChats[group.groupId()] && setOwnerAction({ id: group.groupId(), owner: newOwner, group: groupChats[group.groupId()] });
 	}
 
 	// 成员加入群组时触发
@@ -542,6 +567,7 @@ class MainView extends PureComponent {
 		var textRecvMsg;
 		var msgs;
 		var group = this.groupManager.groupWithId(groupId);
+		console.log("goupId:" + groupId + "member:" + member);
 		console.log("\n\n EMGroupManagerListener onMemberJoinedGroup ----- !");
 		console.log(`${member} has join the group ${group.groupId()}`);
 		console.log(`group.groupSubject() = ${group.groupSubject()}`);
@@ -549,8 +575,6 @@ class MainView extends PureComponent {
 		console.log(`group.groupMembers() = ${group.groupMembers()}`);
 		const {
 			inviteMemberAction,
-			groupChats,
-			requestGroupInfo,
 			conversations,
 			messages,
 			receiveMsgAction,
@@ -560,9 +584,8 @@ class MainView extends PureComponent {
 
 		msgs = messages[group.groupId()] || [];
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
-		this.asyncGetMemberInfo(member, group)
-		.done(function(name){
-			textMsgBody = new easemob.EMTextMessageBody(`${name} 加入群`);
+		{
+			textMsgBody = new easemob.EMTextMessageBody(`${member} 加入群`);
 			textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
 			textRecvMsg.setFrom("oa-easemob-system");
 			if(msgs[msgs.length - 1]){
@@ -584,13 +607,6 @@ class MainView extends PureComponent {
 					conversation
 				}
 			);
-		});
-
-		if(conversations[group.groupId()] && groupChats[group.groupId()]){
-			inviteMemberAction({ id: group.groupId(), members: [member] });
-		}
-		else{
-			requestGroupInfo(userInfo.user.tenantId, group.groupId(), conversation, this.groupManager, this.error);
 		}
 	}
 
@@ -610,11 +626,10 @@ class MainView extends PureComponent {
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`group.groupMembers() = ${group.groupMembers()}`);
 
-		const { memberLeftGroupAction, userInfo, messages } = this.props;
+		const { userInfo, messages } = this.props;
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
-		this.asyncGetMemberInfo(member, group)
-		.done(function(name){
-			textMsgBody = new easemob.EMTextMessageBody(`${name} 离开群`);
+		{
+			textMsgBody = new easemob.EMTextMessageBody(`${member} 离开群`);
 			textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
 			textRecvMsg.setFrom("oa-easemob-system");
 			msgs = messages[group.groupId()] || [];
@@ -628,8 +643,7 @@ class MainView extends PureComponent {
 			}
 			msgs.push(textRecvMsg);
 			conversation.insertMessage(textRecvMsg);
-			memberLeftGroupAction({ id: group.groupId(), member, messages: msgs });
-		});
+		}
 
 	}
 
@@ -676,10 +690,8 @@ class MainView extends PureComponent {
 			selectConversationId,
 			userInfo,
 			conversations,
-			requestGroupInfo,
-			requestMemberInfo,
 			groupAtAction,
-			groupChats
+			globals
 		} = this.props;
 		var conversation;
 		var conversationType;
@@ -694,44 +706,6 @@ class MainView extends PureComponent {
 			var conversationOfMessages;
 			var conference = message.getAttribute("conference");
 			let logintoken = me.emclient.getLoginInfo().loginToken();
-
-			// 语音或视频消息
-			if(conference && moment().format("x") - message.timestamp() < 30000){
-				if(message.from() == userInfo.user.easemobName){
-					return;
-				}
-				conference = JSON.parse(conference);
-
-				let isVideo = !!(conference.conf_type == 1);
-				let isGroup = conference.conf_type == 2;
-				if(isGroup){
-					// 多人音视频是通过单人的会话过来的，直接取 message.conversationId() 取的是单人的，所以要通过扩展消息带的 conversationId 取
-					// 还需要删除单人音视频邀请的消息, 如果之前的会话列表里没有和邀请人的视频会话，还需要删除
-					inviterConversation = me.chatManager.conversationWithType(conversationId, 0);
-					inviterConversation.removeMessage(message.msgId());
-					if(!conversations[conversationId]){
-						me.chatManager.removeConversation(conversationId);
-					}
-					conversationId = conference.conversationId;
-				}
-				// 单人的
-				else{
-					conversation = me.chatManager.conversationWithType(conversationId, 0);
-					conversation.removeMessage(message.msgId());
-				}
-				audioAndVideo({
-					userInfo: JSON.stringify(userInfo),
-					conversationId: conference.inviter,
-					inviterInfo: JSON.stringify(allMembersInfo[conference.inviter]),
-					logintoken,
-					isVideo,			// 是否是视频
-					isInvited: true,	// 是否是被邀请
-					isGroup,			// 是否是群组
-					groupInfo: groupChats[conversationId],
-					allMembersInfo: JSON.stringify(allMembersInfo),
-					conference: JSON.stringify(conference)
-				});
-			}
 			conversationOfMessages = messages[conversationId] || [];
 			msg = message.bodies()[0];
 			switch(msg.type()){
@@ -772,10 +746,20 @@ class MainView extends PureComponent {
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
 			if(conversationType == 1 && (!conversations[conversationId])){
-				requestGroupInfo(userInfo.user.tenantId, conversationId, conversation, me.groupManager, me.error);
+				var groups = this.groupManager.fetchAllMyGroups(error);
+				let allGroups = [];
+				groups.map((group) => {
+					allGroups.push(group.groupId());
+		});
+				setGroupChats({allGroups});
 			}
 			else if(conversationType == 0 && (!allMembersInfo[conversationId])){
-				requestMemberInfo(userInfo.user.tenantId, conversationId);
+				var groups = this.groupManager.fetchAllMyGroups(error);
+				let allGroups = [];
+				groups.map((group) => {
+					allGroups.push(group.groupId());
+		});
+				setGroupChats({allGroups});
 			}
 			receiveMsgAction(
 				{
@@ -806,9 +790,8 @@ class MainView extends PureComponent {
 const mapStateToProps = state => ({
 	userInfo: state.userInfo,
 	selectConversationId: state.selectConversationId,
-	groupChats: state.groupChats,
 	allMembersInfo: state.allMembersInfo,
 	messages: state.messages,
-	conversations: state.conversations
+	conversations: state.conversations,
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MainView));

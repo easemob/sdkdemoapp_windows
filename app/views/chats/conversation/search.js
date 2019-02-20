@@ -39,13 +39,11 @@ class SearchView extends Component {
 		const {
 			conversationOfSelect,
 			globals,
-			groupChats,
-			changeGroupInfoAction,
 			allMembersInfo,
 			setNotice,
 			userInfo,
-			requestMemberInfo,
-			getMemberInfoAction
+			getMemberInfoAction,
+			isSelectCovGroup
 		} = this.props;
 		var group;
 		var groupInfo;
@@ -54,7 +52,7 @@ class SearchView extends Component {
 		this.easemob = globals.easemob;
 		this.error = new this.easemob.EMError();
 		// 如果是群组，需要从 sdk 获取群信息跟新 reuducer，(除了头像、昵称、是否允许普通成员邀请群成员)
-		if(!!groupChats[key]){
+		if(isSelectCovGroup){
 			group = globals.groupManager.groupWithId(key);
 			if(group.groupMembers().length == 0){
 				group = globals.groupManager.fetchGroupSpecification(key, me.error);
@@ -65,16 +63,11 @@ class SearchView extends Component {
 				members: group.groupMembers(),
 				adminMembers: group.groupAdmins()
 			};
-			changeGroupInfoAction({ id: [key], groupInfo });
 			// 取某一个的会话信息
 			// 0 单聊 1 群聊 2 聊天室
 			me.handleSelectConversation(key, 1);
 
 			groupMembers = [group.groupOwner()].concat(group.groupMembers()).concat(group.groupAdmins());
-			// 群组成员不存的，去请求获取信息
-			_.map(groupMembers, (member) => {
-				!allMembersInfo[member] && requestMemberInfo(userInfo.user.tenantId, member);
-			});
 		}
 		else if(allMembersInfo[key]){
 			me.handleSelectConversation(key, 0);
@@ -113,23 +106,16 @@ class SearchView extends Component {
 
 	handleChangeSearchVal(value){
 		const {
-			requestSearchMember,
-			groupChats,
 			searchGroupAction,
 			userInfo
 		} = this.props;
 		var tenantId = userInfo.user.tenantId;
 		// 搜索通讯录
-		requestSearchMember(tenantId, value, userInfo.user.easemobName);
+		//requestSearchMember(tenantId, value, userInfo.user.easemobName);
 		// 搜索群组
-		searchGroupAction({
-			groupChats,
-			value
-		});
-		this.setState({
-			searchVal: value
-		});
-
+		//this.setState({
+		//	searchVal: value
+		//});
 	}
 
 	render(){
@@ -202,7 +188,6 @@ class SearchView extends Component {
 const mapStateToProps = state => ({
 	conversations: state.conversations,
 	allMembersInfo: state.allMembersInfo,
-	groupChats: state.groupChats,
 	searchConversation: state.searchConversation,
 	globals: state.globals,
 	messages: state.messages,

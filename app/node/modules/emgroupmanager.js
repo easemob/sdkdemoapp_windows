@@ -5,6 +5,7 @@ const EMError = require('./emerror');
 const {EMCursorResult, EMPageResult, EMStringCursorResult} = require('./emcursorresult');
 const EMCallback = require('./emcallback');
 const EMMucSharedFile = require('./emmucsharedfile');
+const async = require('async')
 
 /**
  * Easemob EMGroupManager implementation.
@@ -12,6 +13,7 @@ const EMMucSharedFile = require('./emmucsharedfile');
 
 function EMGroupManager(manager) {
   this._manager = manager;
+  this._async = async;
 }
 
 /**
@@ -123,8 +125,21 @@ EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize
  * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group created.
  */
-EMGroupManager.prototype.createGroup = function (subject, description, welcomeMessage, setting, members, error) {
-  return new EMGroup(this._manager.createGroup(subject, description, welcomeMessage, setting._setting, members, error._error));
+EMGroupManager.prototype.createGroup = function (subject, description, welcomeMessage, setting, members, error,callback) {
+  var _manager = this._manager;
+  async function f(){
+    /*
+    function sleep(delay) {
+      var start = (new Date()).getTime();
+      while ((new Date()).getTime() - start < delay) {
+        continue;
+      }
+    }
+    sleep(10000);
+    */
+    return new EMGroup(_manager.createGroup(subject, description, welcomeMessage, setting._setting, members, error._error));
+  }
+  f().then(group => callback(error,group));
 };
 
 /**
