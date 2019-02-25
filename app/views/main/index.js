@@ -337,12 +337,14 @@ class MainView extends PureComponent {
 		setAllContacts({contacts});
 
 		// 获取用户所在的组
-		var groups = this.groupManager.fetchAllMyGroups(error);
-		let allGroups = [];
-		groups.map((group) => {
-			allGroups.push(group.groupId());
+		this.groupManager.fetchAllMyGroups(error).then(groups => {
+			let allGroups = [];
+			groups.map((group) => {
+				allGroups.push(group.groupId());
+			});
+			setGroupChats({allGroups});
 		});
-		setGroupChats({allGroups});
+		
 
 
 		// this.chatManager.getConversations();// 获取缓存中的会话列表
@@ -567,12 +569,6 @@ class MainView extends PureComponent {
 		var textRecvMsg;
 		var msgs;
 		var group = this.groupManager.groupWithId(groupId);
-		console.log("goupId:" + groupId + "member:" + member);
-		console.log("\n\n EMGroupManagerListener onMemberJoinedGroup ----- !");
-		console.log(`${member} has join the group ${group.groupId()}`);
-		console.log(`group.groupSubject() = ${group.groupSubject()}`);
-		console.log(`group.groupDescription() = ${group.groupDescription()}`);
-		console.log(`group.groupMembers() = ${group.groupMembers()}`);
 		const {
 			inviteMemberAction,
 			conversations,
@@ -700,7 +696,7 @@ class MainView extends PureComponent {
 		var atMsg;
 		var msg;
 		var me = this;
-
+		console.log("receive msg:" + msgs);
 		msgs.forEach(function(message){
 			var conversationId = message.conversationId();
 			var conversationOfMessages;
@@ -746,20 +742,22 @@ class MainView extends PureComponent {
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
 			if(conversationType == 1 && (!conversations[conversationId])){
-				var groups = this.groupManager.fetchAllMyGroups(error);
-				let allGroups = [];
-				groups.map((group) => {
-					allGroups.push(group.groupId());
-		});
-				setGroupChats({allGroups});
-			}
+				this.groupManager.fetchAllMyGroups(error).then(groups => {
+					let allGroups = [];
+					groups.map((group) => {
+						allGroups.push(group.groupId());
+					});
+					setGroupChats({allGroups});
+			    });
+		    }
 			else if(conversationType == 0 && (!allMembersInfo[conversationId])){
-				var groups = this.groupManager.fetchAllMyGroups(error);
-				let allGroups = [];
-				groups.map((group) => {
-					allGroups.push(group.groupId());
-		});
-				setGroupChats({allGroups});
+				this.groupManager.fetchAllMyGroups(error).then(groups => {
+					let allGroups = [];
+					groups.map((group) => {
+						allGroups.push(group.groupId());
+			        });
+			        setGroupChats({allGroups});
+				});
 			}
 			receiveMsgAction(
 				{

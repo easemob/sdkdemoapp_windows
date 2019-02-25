@@ -4,6 +4,7 @@ import { Menu,Input,Button } from "antd";
 import { withRouter } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
 import _ from "underscore";
+import { setNotice } from "../../../stores/actions";
 const SubMenu = Menu.SubMenu;
 
 
@@ -21,11 +22,16 @@ class MenuList extends Component {
 	}
 	addContact(e){
 		const {
-			globals
+			globals,
+			setNotice
 		} = this.props;
 		let contactManager = globals.contactManager;
 		let error = new globals.easemob.EMError();
 		contactManager.inviteContact(this.state.chatName,"welcome",error);
+		if(error.errorCode == 0)
+		   setNotice("好友申请发送成功");
+		else
+		   setNotice("好友申请发送失败：" + error.description);
 	}
 	onIdChange(event){
 		this.setState({

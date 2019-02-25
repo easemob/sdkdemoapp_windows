@@ -36,7 +36,7 @@ class GroupDetailView extends Component {
 		// 从 sdk 获取群主及群成员列表更新 reducer
 		var error =  new globals.easemob.EMError();
 		var group = globals.groupManager.groupWithId(selectGroup.easemobGroupId);
-		globals.groupManager.fetchGroupMembers(selectGroup.easemobGroupId, "", 500, error);
+		globals.groupManager.fetchGroupMembers(selectGroup.easemobGroupId, "", 500, error).then();
 		groupInfo = {
 			owner: group.groupOwner(),
 			members: group.groupMembers(),

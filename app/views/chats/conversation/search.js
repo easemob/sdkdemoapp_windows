@@ -55,7 +55,9 @@ class SearchView extends Component {
 		if(isSelectCovGroup){
 			group = globals.groupManager.groupWithId(key);
 			if(group.groupMembers().length == 0){
-				group = globals.groupManager.fetchGroupSpecification(key, me.error);
+				globals.groupManager.fetchGroupSpecification(key, me.error).then(group => {
+					
+				});
 				globals.groupManager.fetchGroupMembers(key, "", 500, me.error);
 			}
 			groupInfo = {

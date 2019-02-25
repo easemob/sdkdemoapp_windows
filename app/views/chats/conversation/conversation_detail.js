@@ -227,7 +227,7 @@ class ConversationDetailView extends Component {
 									</div>
 									<div className={ `${this.getSide(item.from())} detail-message` }>
 										<div className="detail-avatar">
-											<HeadImageView imgUrl={ allMembersInfo[item.from()] ? allMembersInfo[item.from()].image : "" } />
+											<HeadImageView imgUrl= "" />
 										</div>
 										<div className="message-from">
 											{/* <span>{ item.from() }</span> */}

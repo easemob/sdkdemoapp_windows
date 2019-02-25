@@ -20,7 +20,8 @@ class MemberDetailView extends Component {
 			selectMember,
 			msgsOfConversation,
 			conversationOfSelect,
-			selectNavAction
+			selectNavAction,
+			setSelectConvType
 		} = this.props;
 		var conversation = globals.chatManager.conversationWithType(selectMember.easemobName, 0);
 		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
@@ -31,7 +32,7 @@ class MemberDetailView extends Component {
 		conversation.setExtField(JSON.stringify(extInfo));
 		conversationOfSelect(selectMember.easemobName);
 		msgsOfConversation({ id: selectMember.easemobName, msgs: messages, conversation });
-
+		setSelectConvType(0);
 		selectNavAction(ROUTES.chats.recents.__);
 	}
 

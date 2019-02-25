@@ -7,6 +7,7 @@ const EMContactManager = require('./emcontactmanager');
 const EMChatManager = require('./emchatmanager');
 const EMGroupManager = require('./emgroupmanager');
 const EMChatroomManager = require('./EMChatroomManager');
+const async = require('async');
 /**
  * Easemob EMClient implementation.
  */
@@ -87,7 +88,16 @@ EMClient.prototype.removeConnectionListener = function (listener) {
  * @return {EMError}
  */
 EMClient.prototype.createAccount = function (username, password) {
-  return new EMError(this._emclient.createAccount(username, password));
+  var _emclient = this._emclient;
+  async function f(){
+    try{
+      new EMError(_emclient.createAccount(username, password));
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**

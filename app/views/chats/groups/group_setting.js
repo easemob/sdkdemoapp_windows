@@ -74,7 +74,9 @@ class GroupSettingView extends Component {
 		} = this.props;
 		var groupManager = globals.groupManager;
 		var error = new globals.easemob.EMError();
-		groupManager.leaveGroup(selectConversationId, error);
+		groupManager.leaveGroup(selectConversationId, error).then(() => {
+			
+		});
 		leaveGroupAction(selectConversationId);
 	}
 
@@ -87,11 +89,12 @@ class GroupSettingView extends Component {
 		} = this.props;
 		let groupManager = globals.groupManager;
 		let error = new globals.easemob.EMError();
-		groupManager.destroyGroup(selectConversationId,error);
-		if(error.errorCode == 0)
-		{
-			destoryGroup(selectConversationId);
-		}
+		groupManager.destroyGroup(selectConversationId,error).then(() => {
+			if(error.errorCode == 0)
+			{
+				destoryGroup(selectConversationId);
+			}
+		});
 	}
 
 	handleChangeChatName(event){
@@ -141,7 +144,9 @@ class GroupSettingView extends Component {
 		} = this.props;
 		let groupManager = globals.groupManager;
 		const error = new globals.easemob.EMError();
-		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20),error);
+		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20),error).then(group => {
+
+		});
 		conversationOfSelect("");
 		conversationOfSelect(selectConversationId);
 	}
@@ -178,12 +183,22 @@ class GroupSettingView extends Component {
 		const groupManager = globals.groupManager;
 		const error = new globals.easemob.EMError();
 		if(checked){
-			groupManager.blockGroupMessage(selectConversationId, error);
+			groupManager.blockGroupMessage(selectConversationId, error).then(group => {
+				if(error.errorCode == 0)
+				{
+					console.log(`blockGroupMessage error.description = ${error.description}`);
+				}
+			});
 			// console.log(`blockGroupMessage error.errorCode = ${error.errorCode}`);
 			// console.log(`blockGroupMessage error.description = ${error.description}`);
 		}
 		else{
-			groupManager.unblockGroupMessage(selectConversationId, error);
+			groupManager.unblockGroupMessage(selectConversationId, error).then(group => {
+				if(error.errorCode == 0)
+				{
+					console.log(`unblockGroupMessage error.description = ${error.description}`);
+				}
+			});
 			// console.log(`unblockGroupMessage error.errorCode = ${error.errorCode}`);
 			// console.log(`unblockGroupMessage error.description = ${error.description}`);
 		}
