@@ -154,16 +154,15 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 接口API如下
 
     /** 
-     *  获取当前缓存中的好友列表，若缓存中没有则从数据库中获取,异步操作
+     *  获取当前缓存中的好友列表，若缓存中没有则从数据库中获取
      * param1 获取好友列表结果，EMError,输出参数，成功则属性errorCode为0
-     * return 返回Promise对象，resolve参数为好友列表，字符串Array
+     * return 返回好友列表，字符串Array
      */
     allContacts(error)
 调用方法如下
 
     var error = new easemob.EMError();
-    contactManager.allContacts(error).then(allContacts => {
-      });
+    contactManager.allContacts(error)
 * 从服务器获取
 
 接口API如下：
@@ -184,16 +183,15 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 接口API如下：
 
     /** 
-     *  从本地数据库获取好友列表,异步操作
+     *  从本地数据库获取好友列表
      * param1 获取好友列表结果，EMError,输出参数，成功则属性errorCode为0
-     * return 返回Promise对象，resolve参数为好友列表，字符串Array
+     * return 返回好友列表，字符串Array
      */
     getContactsFromDB(error);
 调用方法如下:
 
     var error = new easemob.EMError();
-    contactManager.getContactsFromDB(error).then(allContacts => {
-      });;
+    contactManager.getContactsFromDB(error)
 #### 添加好友
 接口API如下：
 
@@ -260,16 +258,15 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 接口API如下：
 
     /**  
-     * 获取用户的黑名单列表，黑名单的用户无法发送消息,异步操作
+     * 获取用户的黑名单列表，黑名单的用户无法发送消息
      * param error 操作结果，输出参数，EMError,错误ID为0表示成功
-     * return Promise对象，resolve参数为黑名单列表，字符串数组
+     * return 黑名单列表，字符串数组
      */
     blacklist(error);
 调用方法如下：
 
     var error = new easemob.EMError();
-	contactManager.blacklist(error).then((blacklist) => {
-      })
+	contactManager.blacklist(error)
 #### 设置黑名单
 接口API如下：
 
@@ -385,7 +382,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       * param error 群组创建结果，输出参数，EMError
       * return 返回Promise对象，resolve参数为创建的组EMGroup
       */
-    createGroup = function (subject, description, welcomeMessage, setting, members, error)
+    createGroup(subject, description, welcomeMessage, setting, members, error)
 调用方法如下:
 
 	groupManager.createGroup("subject","description","welcome message",setting,["jwfan1", "jwfan2"], error).then((group) => {})
@@ -789,12 +786,12 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param fileId 文件ID，输入参数，由文件列表数组获取
      * param callback 设置回调，输入
      * param error 操作结果，输出参数，EMError
-     * return 返回Promise对象，resolve参数为group
+     * return 返回group
      */
     downloadGroupSharedFile(groupId, filePath, fileId, callback, error)
 调用方法如下:
 
-    groupManager.downloadGroupSharedFile(groupid, filelocalpath, sharedFile.fileId(), emDownloadCallback, error).then((group) =>{});
+    groupManager.downloadGroupSharedFile(groupid, filelocalpath, sharedFile.fileId(), emDownloadCallback, error);
 #### 删除群文件
 接口API如下：
 
@@ -898,12 +895,12 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /** 
      * 获取会话列表
-     * return 返回Promise对象，resolve参数为会话列表，EMConversation数组
+     * return 返回会话列表，EMConversation数组
      */
     getConversations()
 调用方法如下:
 
-	chatManager.getConversations().then((conversationlist) => {});
+	var convlist = chatManager.getConversations();
 #### 根据会话ID获取会话
 接口API如下：
 
@@ -913,10 +910,10 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param type 会话类型，输入参数，0为单聊，1为群聊
      * return 会话，EMConversation
      */
-    getConversationWithType(conversationId,type)
+    conversationWithType(conversationId,type)
 调用方法如下:
 
-	let conversationlist = chatManager.getConversationWithType(conversationId,type);
+	let conversationlist = chatManager.conversationWithType(conversationId,type);
 #### 获取会话属性
 
     // 获取会话ID
@@ -944,7 +941,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 接口API如下：
 
     /** 
-     * 分页获取历史消息
+     * 分页获取历史消息,从服务器获取
      * param conversationId 会话ID,输入参数
      * param type 会话类型，1为群组，0为单聊
      * param error 获取结果，输出
@@ -964,11 +961,33 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /**
       * 不发送消息，只是插入到本地
       * param messagelist 要插入的消息列表，EMMessage数组
-      * return 返回Promise对象，resolve参数为空
+      * return 返回操作结果，bool型
 	insertMessages(messagelist);
 调用方法如下:
 
     chatManager.insertMessages(messagelist);
+#### 添加消息
+接口API如下：
+
+    /**
+      * 在末尾添加一条消息
+      * param message 要插入的消息，EMMessage对象
+      * return 返回操作结果，bool型
+	appendMessage(message);
+调用方法如下:
+
+    chatManager.appendMessage(message);
+#### 修改消息
+接口API如下：
+
+    /**
+      * 修改一条消息，不能改变消息ID
+      * param message 要插入的消息，EMMessage对象
+      * return 返回操作结果，bool型
+	updateMessage(message);
+调用方法如下:
+
+    chatManager.updateMessage(message);
 #### 加载会话消息
 接口API如下：
 
@@ -977,7 +996,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param refMsgId 起始消息ID,输入参数，空为最新消息
      * param count 加载的消息数，输入参数
      * param direction 消息加载方向，填0
-     * return 返回Promise对象，resolve参数为EMMessage数组
+     * return 返回为EMMessage数组
      */
 	loadMoreMessagesByMsgId(refMsgId, count, direction);
 
@@ -986,20 +1005,20 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param timeStamp 起始消息时间，输入参数
      * param count 加载的消息数，输入参数
      * param direction 消息加载方向，填0
-     * return 返回Promise对象，resolve参数为EMMessage数组
+     * return 返回EMMessage数组
      */
 	conversation.loadMoreMessagesByTime(timeStamp, count, direction);
 调用方法如下:
 
-	conversation.loadMoreMessagesByMsgId("", 20,0).then((msglist) => {});
-	conversation.loadMoreMessagesByTime(timeStamp, 20,0).then((msglist) => {});
+	conversation.loadMoreMessagesByMsgId("", 20,0);
+	conversation.loadMoreMessagesByTime(timeStamp, 20,0);
 #### 删除会话消息
 接口API如下：
 
     /** 
      * 按照ID移除会话消息，只操作缓存和本地数据库
      * param messageId 要删除的消息ID
-     * return 返回Promise对象，resolve参数为空
+     * return 返回操作结果，bool型
      */
     removeMessage(messageId)
 调用方法如下:
@@ -1010,12 +1029,12 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /** 
      * 清空会话消息，只操作缓存和本地数据库
-     * return 返回Promise对象，resolve参数为空
+     * return 返回操作结果，bool型
      */
     clearAllMessages()
 调用方法如下:
 
-	conversation.clearAllMessages().then(() =>{});
+	conversation.clearAllMessages();
 #### 设置消息已读状态
 接口API如下：
 
@@ -1023,13 +1042,13 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 根据消息ID标记消息已读状态
      * param msgid，消息ID
      * isread bool，已读状态
-     * return 返回Promise对象，resolve参数为空
+     * return 返回操作结果，bool型
      */
 	markMessageAsRead(msgid,isread);
     /** 
      * 标记会话中所有消息的已读状态
      * isread bool，已读状态
-     * return 返回Promise对象，resolve参数为空
+     * return 返回操作结果，bool型
      */
 	markAllMessagesAsRead(isread);
 调用方法如下:
@@ -1041,7 +1060,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /** 
      * 获取会话中的消息计数
-     * return 消息计数
+     * return 消息计数,int
      */
     messagesCount()
 调用方法如下：
@@ -1052,7 +1071,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /** 
      * 获取会话中的未读消息计数
-     * return 未读消息计数
+     * return 未读消息计数,int
      */
     unreadMessagesCount()
 调用方法如下：
@@ -1176,12 +1195,6 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
 #### 发送CMD消息
 
-    /** 
-     * 创建图片消息体
-     * param1 图片文件路径，输入参数，字符串
-     * param2 图片缩略图路径，输入参数
-     * return 消息体EMFileMessageBody
-     */
     var cmdMsgBody = new easemob.EMCmdMessageBody("action");
     console.log("cmdMsgBody.type() = " + cmdMsgBody.type());
 
@@ -1301,11 +1314,31 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	  var banslist = chatroom.chatroomBans();
 	});
 #### 加入聊天室
+接口API说明如下：
 
-	chatroomManager.joinChatroom(chatroomid,error);
+    /** 
+     *  加入聊天室
+     * param chatroomid 聊天室ID
+     * param error 操作结果
+     * return Promise对象，该对象的resolve参数EMChatroom对象
+     */
+	joinChatroom(chatroomid,error);
+调用方法如下：
+
+    chatroomManager.joinChatroom(chatroomId, error).then((chatroom)=>{});
 #### 退出聊天室
-	
-	chatroomManager.leaveChatroom(chatroomId, error);
+接口API说明如下：
+
+    /** 
+     *  离开聊天室
+     * param chatroomid 聊天室ID
+     * param error 操作结果
+     * return Promise对象，该对象的resolve参数为空
+     */
+	leaveChatroom(chatroomid,error);
+调用方法如下：
+
+	chatroomManager.leaveChatroom(chatroomId, error).then(()=>{});
 ### 多设备管理监听
 当同一账号同时使用桌面端，移动端登录时，需要使用多设备管理监听事件，使用回调实现
 	

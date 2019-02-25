@@ -328,7 +328,7 @@ class MainView extends PureComponent {
 
 		// 获取好友列表
 		var error = new easemob.EMError();
-		var contacts = this.contactManager.getContactsFromServer(error);
+		var contacts = this.contactManager.allContacts(error);
 		console.log("error.errorCode:" + error.errorCode + "  description:" + error.description);
 		console.log("allContacts length:" + contacts.length);
 		contacts.map((item) => {

@@ -4,6 +4,7 @@ const EMError = require('./emerror');
 const EMMessage = require('./message/emmessage');
 const EMConversation = require('./emconversation');
 const EMCursorResult = require('./emcursorresult').EMCursorResult;
+const async = require('async');
 
 /**
  * Easemob EMChatManager implementation.
@@ -126,12 +127,21 @@ EMChatManager.prototype.getConversations = function () {
  * @return {Array}
  */
 EMChatManager.prototype.loadAllConversationsFromDB = function () {
-  var conversations = this._manager.loadAllConversationsFromDB();
-  var list = new Array(conversations.length);
-  for (var i = 0; i < conversations.length; i++) {
-    list[i] = new EMConversation(conversations[i]);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      var conversations = _manager.loadAllConversationsFromDB();
+      var list = new Array(conversations.length);
+      for (var i = 0; i < conversations.length; i++) {
+        list[i] = new EMConversation(conversations[i]);
+      }
+      return list;
+    }catch(err)
+    {
+      console.log(err);
+    }
   }
-  return list;
+  return f();
 };
 
 /**

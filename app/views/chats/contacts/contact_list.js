@@ -27,11 +27,12 @@ class MenuList extends Component {
 		} = this.props;
 		let contactManager = globals.contactManager;
 		let error = new globals.easemob.EMError();
-		contactManager.inviteContact(this.state.chatName,"welcome",error);
-		if(error.errorCode == 0)
-		   setNotice("好友申请发送成功");
-		else
-		   setNotice("好友申请发送失败：" + error.description);
+		contactManager.inviteContact(this.state.chatName,"welcome",error).then(() => {
+			if(error.errorCode == 0)
+			setNotice("好友申请发送成功");
+		 else
+			setNotice("好友申请发送失败：" + error.description);
+		});
 	}
 	onIdChange(event){
 		this.setState({

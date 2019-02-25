@@ -15,16 +15,19 @@ class MemberDetailView extends PureComponent {
 		const { selectConversationId, allMembersInfo,isSelectCovGroup,globals } = this.props;
 		const selectMember = allMembersInfo[selectConversationId];
 		const selectGroup = isSelectCovGroup;
-		var groupMembers = selectGroup ? [selectGroup.owner].concat(selectGroup.adminMembers).concat(selectGroup.members) : [];
+		//var groupMembers = selectGroup ? [selectGroup.owner].concat(selectGroup.adminMembers).concat(selectGroup.members) : [];
 		let isGroup = isSelectCovGroup == 1;
 		let conversation = globals.chatManager.conversationWithType(selectConversationId, isGroup);
 		let name;
 		console.log("isGroup:" + isGroup + "    isSelectCovGroup:" + isSelectCovGroup);
 		console.log("selectConversationId:" + selectConversationId);
+		var lenth;
 		if(isGroup)
 		{
 			var group = globals.groupManager.groupWithId(selectConversationId);
 			name = group.groupSubject();
+			lenth = group.groupMembersCount();
+			console.log("-----------------" + lenth);
 		}else
 			name = selectConversationId;
 		console.log("name:" + name);
@@ -33,14 +36,14 @@ class MemberDetailView extends PureComponent {
 			<div className="oa-conversation-top">
 				<div>
 					<HeadImageView
-						imgUrl={ (selectMember && selectMember.image) || (selectGroup && selectGroup.avatar) }
+						imgUrl={ "" }
 					/>
 					<span className="ellipsis selectName">
 						{
 							name
 						}
 					</span>
-					<span>{ isGroup && `（${groupMembers.length}）`}</span>
+					<span>{ isGroup && `（${lenth}）`}</span>
 				</div>
 				{
 					!isGroup && <CreateGroupView selectMember={ [{easemobName:selectConversationId}] } />

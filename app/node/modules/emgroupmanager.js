@@ -798,16 +798,7 @@ EMGroupManager.prototype.fetchGroupSharedFiles = function (groupId, pageNum, pag
  * @return {EMGroup}                The group.
  */
 EMGroupManager.prototype.downloadGroupSharedFile = function (groupId, filePath, fileId, callback, error) {
-  var _manager = this._manager;
-  async function f(){
-    try{
-      return new EMGroup(_manager.downloadGroupSharedFile(groupId, filePath, fileId, callback._callback, error._error));
-    }catch(err)
-    {
-      console.log(err);
-    }
-  }
-  return f();
+  return new EMGroup(this._manager.downloadGroupSharedFile(groupId, filePath, fileId, callback._callback, error._error));
 };
 
 /**

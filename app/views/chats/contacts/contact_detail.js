@@ -44,13 +44,14 @@ class MemberDetailView extends Component {
 		} = this.props;
 		var contactManager = globals.contactManager;
 		var error = new globals.easemob.EMError();
-		contactManager.deleteContact(selectMember.easemobName,error,true);
-		console.log("deletecontact:"+selectMember.easemobName);
-		if(error.errorCode != 0){
-			console.log("deletecontact fail:" + error.description);
-			return;
-		}
-		conversationOfSelect("");
+		contactManager.deleteContact(selectMember.easemobName,error,true).then(() => {
+			console.log("deletecontact:"+selectMember.easemobName);
+			if(error.errorCode != 0){
+				console.log("deletecontact fail:" + error.description);
+				return;
+			}
+			conversationOfSelect("");
+		});
 	}
 
 	render(){
