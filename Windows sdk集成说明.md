@@ -76,6 +76,7 @@ Windows sdk目录结构如下。使用时将sdk拷贝到工程目录下。
     // 返回退出结果EMError对象
 	ver error = emclient.logout();
 ### 用户注册
+接口API如下：
 
     /** 
      *  账户注册api，异步操作
@@ -191,11 +192,12 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 调用方法如下:
 
     var error = new easemob.EMError();
-    contactManager.getContactsFromDB(error);
+    contactManager.getContactsFromDB(error).then(allContacts => {
+      });;
 #### 添加好友
 接口API如下：
 
-	/** 
+    /** 
      *  添加好友api，异步操作
      * param username为对方用户名，输入参数
      * param message为欢迎信息，输入参数，对方收到好友申请时可以看到，
@@ -364,7 +366,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 创建群组
 创建群组时，需要先实例化一个群组设置对象，然后创建群组,接口API如下：
 
-	/**  
+    /**  
      * 实例化区群组设置
      * param1 组类型,int,0为只有群主可以邀请成员加入，1为群主和管理员都可以邀请成员加入，2为普通用户也可以邀请成员加入，但需要群主同意，3为成员可以随意邀请用户加入
      * param2 最大成员数
@@ -390,7 +392,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 解散群组
 接口API如下：
 
-	/**  
+    /**  
      * 解散群组api
      * param groupId 组ID，输入参数
      * param error 解散群组结果，输出参数，errorCode为0表示成功
@@ -425,7 +427,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 群组成员的邀请
 接口API如下：
 
-	/**  
+    /**  
      * 邀请成员入群，一次可邀请多个成员
      * param groupId 群组ID，输入参数，字符串
      * param members 邀请的成员，输入参数，字符串数组
@@ -810,7 +812,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 群组公告的管理
 接口API如下：
 
-	/**  
+    /**  
      * 设置群组公告
      * param groupId 群组ID，输入参数，字符串
      * param announcement 群组公告，输入参数，字符串
@@ -894,7 +896,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 获取会话列表
 接口API如下：
 
-	/** 
+    /** 
      * 获取会话列表
      * return 返回Promise对象，resolve参数为会话列表，EMConversation数组
      */
@@ -905,7 +907,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 根据会话ID获取会话
 接口API如下：
 
-	/** 
+    /** 
      * 获取会话
      * param conversationId 会话ID，输入参数，字符串
      * param type 会话类型，输入参数，0为单聊，1为群聊
@@ -924,7 +926,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 删除会话
 接口API如下：
 
-   	/** 根据ID删除会话
+    /** 根据ID删除会话
      * param conversationId 会话ID,输入参数
      * param isRemoveMessages 是否删除消息，ture为删除
      */
@@ -959,7 +961,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 插入消息
 接口API如下：
 
-	/**
+    /**
       * 不发送消息，只是插入到本地
       * param messagelist 要插入的消息列表，EMMessage数组
       * return 返回Promise对象，resolve参数为空
@@ -970,7 +972,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 #### 加载会话消息
 接口API如下：
 
-	/** 
+    /** 
      * 按照ID加载会话消息
      * param refMsgId 起始消息ID,输入参数，空为最新消息
      * param count 加载的消息数，输入参数
