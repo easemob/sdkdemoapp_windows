@@ -91,7 +91,7 @@ EMClient.prototype.createAccount = function (username, password) {
   var _emclient = this._emclient;
   async function f(){
     try{
-      new EMError(_emclient.createAccount(username, password));
+      return new EMError(_emclient.createAccount(username, password));
     }catch(err)
     {
       console.log(err);
