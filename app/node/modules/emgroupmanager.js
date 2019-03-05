@@ -137,7 +137,17 @@ EMGroupManager.prototype.fetchAllMyGroupsWithPage = function (pageNum, pageSize,
  * @return {EMCursorResult} cursor store the public groups.
  */
 EMGroupManager.prototype.fetchPublicGroupsWithCursor = function (cursor, pageSize, error) {
- return new EMCursorResult(this._manager.fetchPublicGroupsWithCursor(cursor, pageSize, error._error), 0);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      let cursor = new EMCursorResult(_manager.fetchPublicGroupsWithCursor(cursor, pageSize, error._error), 0);
+      return cursor.result();
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -147,7 +157,17 @@ EMGroupManager.prototype.fetchPublicGroupsWithCursor = function (cursor, pageSiz
  * @return {EMCursorResult} cursor store the public groups.
  */
 EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize, error) {
-  return new EMPageResult(this._manager.fetchPublicGroupsWithPage(pageNum, pageSize, error._error), 0);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      let pageresult = new EMPageResult(_manager.fetchPublicGroupsWithPage(pageNum, pageSize, error._error), 0);
+      return pageresult.result();
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
