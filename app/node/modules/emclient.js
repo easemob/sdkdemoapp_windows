@@ -8,11 +8,35 @@ const EMChatManager = require('./emchatmanager');
 const EMGroupManager = require('./emgroupmanager');
 const EMChatroomManager = require('./EMChatroomManager');
 const async = require('async');
+const fs = require("fs")
 /**
  * Easemob EMClient implementation.
  */
-function EMClient(chatConfigs) {
+function EMClient(chatConfigs,autoLogin) {
   this._emclient = easemobNode.createEMClient(chatConfigs._chatConfigs);
+  if(autoLogin)
+  {
+    console.log("autologin");
+    var _emclient = this._emclient;
+    // 异步读取
+    let configs = this.getChatConfigs();
+    fs.readFile(configs.getWorkPath() +'/easemobkey.json', function (err, data) {
+      console.log("filedata:" + data);
+    if (err) {
+        console.error(err);
+    }else{
+      let info = JSON.parse(data);
+      if(info.username && info.password)
+      {
+        let ret = new EMError(_emclient.login(info.username, info.password));
+        if(ret.errorCode ==0)
+           console.log("autologin success");
+        else
+           console.log("autologin fail:" + ret.description);
+      }
+    }
+  });
+  }
 }
 
 /**
@@ -22,6 +46,12 @@ function EMClient(chatConfigs) {
  * @return {EMError}
  */
 EMClient.prototype.login = function (username, password) {
+  let info = {username,password};
+  let configs = this.getChatConfigs();
+  fs.writeFile(configs.getWorkPath() + "/easemobkey.json",JSON.stringify(info),(err) => {
+    if(err)
+      console.log(err);
+  });
   return new EMError(this._emclient.login(username, password));
 };
 
@@ -40,6 +70,12 @@ EMClient.prototype.loginWithToken = function (username, token) {
  * @return {void}
  */
 EMClient.prototype.logout = function () {
+  let configs = this.getChatConfigs();
+  fs.unlink(configs.getWorkPath() + "/easemobkey.json",(err)=>{
+    if (err) {
+      return console.error(err);
+  }
+  });
   this._emclient.logout();
 };
 
