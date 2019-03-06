@@ -166,7 +166,9 @@ class TopNav extends Component {
 			break;
 		case "cancellation":
 			emclient.logout();
+			this.props.history.push('/index');
 			logout();
+			localStorage.clear();
 			break;
 		case "logout":
 			emclient.logout();

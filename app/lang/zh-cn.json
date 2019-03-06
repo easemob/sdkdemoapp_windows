@@ -2,10 +2,13 @@
     "app.title": "环信",
 
     "login.btn.label": "登录",
+    "register.btn.label": "注册",
     "login.account.hint": "用户名",
     "login.password.label": "密码",
-	"login.account.required": "用户名不能为空!",
-	"login.password.required": "密码不能为空!",
+    "login.nickName.label": "昵称",
+    "login.account.required": "用户名不能为空!",
+    "login.password.required": "密码不能为空!",
+    "login.nickName.required":"昵称不能为空!",
 
     "common.search": "搜索",
     "common.confirm": "确定",

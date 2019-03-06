@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import _ from "underscore";
 import moment from "moment";
 
+
 export const globals = (state = {}, { type, payload = {} }) => {
 	switch(type){
 	case "app/initGlobal":
@@ -20,10 +21,10 @@ export const networkConnection = (state = "", { type, payload = "" }) => {
 	}
 };
 
-export const userInfo = (state = null, { type, payload = {} }) => {
+export const userInfo = (state = JSON.parse(localStorage.getItem("userInfo") || null), { type, payload = {} }) => {
 	switch(type){
 	case "app/setLogin":
-		return payload;
+		return _.extend({}, state, payload);
 	case "app/setLogout":
 		return {};
 	case "app/changeUserInfo":
@@ -593,6 +594,17 @@ export const requests = (state = {}, { type, payload, meta }) => {
 	}
 };
 
+export const publicGroup = (state = [], { type, payload, meta }) => {
+	switch(type){
+	case "group/getPublicGroup":
+		return payload;
+	case "clear/getPublicGroup":
+		return payload;
+	default:
+		return state;
+	}
+};
+
 export default combineReducers({
 	globals,
 	networkConnection,
@@ -620,5 +632,6 @@ export default combineReducers({
 	conferenceMsg,
 	allContacts,
 	allGroupChats,
-	isSelectCovGroup
+	isSelectCovGroup,
+	publicGroup
 });

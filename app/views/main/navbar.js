@@ -21,8 +21,16 @@ class Navbar extends Component {
 	constructor(props){
 		super(props);
 		const { selectNavAction } = this.props;
+		let url = ROUTES.chats.recents.__;
 		this.handleClickNav = this.handleClickNav.bind(this);
-		selectNavAction(ROUTES.chats.recents.__);
+		navbarItems.forEach((item, index) => {
+			console.log(item);
+			if(window.location.hash.indexOf(item.to) > -1){
+				url = item.to;
+			}
+
+		})
+		selectNavAction(url);
 	}
 
 	handleClickNav(link){
@@ -68,7 +76,6 @@ class Navbar extends Component {
 						);
 					})
 				}
-				<Redirect path="/" to={ROUTES.chats.recents.__} />
 			</div>
 		);
 	}

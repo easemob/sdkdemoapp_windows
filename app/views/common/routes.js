@@ -19,6 +19,9 @@ export default {
 			id: id => (`/chats/groups/${id}`)
 		}
 	},
+	user: {
+		register: "/register"
+	},
 	exts: {
 		_: "/exts",
 		app: {
