@@ -65,6 +65,13 @@ Windows sdk目录结构如下。使用时将sdk拷贝到工程目录下。
 登录接口返回值ret为EMError对象，登录成功则ret的errorCode为0，否则可以用description获取错误信息
 登录后获取用户信息方法如下：
 
+	var loginInfo = emclient.getLoginInfo();
+    console.log("loginInfo.loginUser = " + loginInfo.loginUser());
+    console.log("loginInfo.loginPassword = " + loginInfo.loginPassword());
+    console.log("loginInfo.loginToken = " + loginInfo.loginToken());
+### 用户退出
+
+
     // 获取用户信息，包括用户名，密码，token
 	var loginInfo = emclient.getLoginInfo();
     console.log("loginInfo.loginUser = " + loginInfo.loginUser());
@@ -309,6 +316,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 调用方法如下：
 
 	contactManager.removeFromBlackList('jwfan2', error).then(()=>{});
+	contactManager.removeFromBlackList('jwfan2', error);
 #### 监听联系人变更
 通过注册回调函数，监听联系人的变动，代码如下
 
@@ -356,6 +364,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	contactManager.removeContactListener(listener);
 ### 群组管理
 群组操作包括组的创建、销毁，根据ID获取组，组成员的邀请、移除、退出，获取用户所在的所有组、公开组，公开组的加入，成员的禁言、解禁，修改组信息（组名、描述），屏蔽群组消息、取消屏蔽群组消息，接受群邀请，拒绝群邀请，接受加入群邀请，拒绝加入群邀请，群主变更，群管理员的添加与移除，群组文件的上传、下载、列表获取、删除，群组公告的获取、设置，以及组设置变更的监听。
+
 
 好友管理模块为EMGroupManager，由EMClient模块加载时主动创建，可以使用EMClient模块的getGroupManager方法获取，代码如下
 
@@ -416,6 +425,25 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     // 获取群成员
     console.log("members:"+group.groupMembers().join(' || '));
     // 获取群设置对象
+#### 创建群组
+
+	var groupManager = emclient.getGroupManager();
+	// 组设置，4个参数分别为组类型（0,1,2,3），最大成员数，邀请是否需要确认，扩展信息
+	var setting = new easemob.EMMucSetting(1, 20, false, "test");
+	var group = groupManager.createGroup("subject","description","welcome message",setting,["jwfan1", "jwfan2"], error);
+#### 解散群组
+
+	// 参数1为组ID
+	groupManager.destroyGroup("55139673112577", error);
+#### 根据ID获取组
+
+	console.log("group.groupId" + group.groupId());
+    console.log("group.groupSubject" + group.groupSubject());
+    console.log("group.groupDescription" + group.groupDescription());
+    console.log("group.groupOwner" + group.groupOwner());
+    console.log("group.groupMembersCount" + group.groupMembersCount());
+    console.log("group.groupMemberType" + group.groupMemberType());
+    console.log("members:"+group.groupMembers().join(' || '));
     var set = group.groupSetting();
     console.log("set.style() = " + set.style());
     console.log("set.maxUserCount() = " + set.maxUserCount());
@@ -870,6 +898,177 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 		console.log("onMemberJoinedGroup:"+groupId+" member:"+member);
 	});
 
+#### 获取群组信息
+
+	var groupId = group.groupId();
+#### 群组成员的邀请、移除
+
+	// 邀请成员入群，一次可邀请多个成员
+	var groupId = group.groupId();
+	groupManager.addGroupMembers(groupId, ["jwfan3", "jwfan4"], "hahaha", error);
+	// 将成员踢出群，同样可踢出多人
+	groupManager.removeGroupMembers(groupId, ["jwfan3", "jwfan4"], error);
+#### 退出群组
+
+	groupManager.leaveGroup(groupId,error);
+#### 获取用户所在的所有组
+
+	var groupList = groupManager.fetchAllMyGroups(error);
+#### 获取公开群组
+	
+	var publicGroupList = groupManager.fetchPublicGroupsWithPage(1,20,error).result();
+    console("publicgroup lenth:"+ publicGroupList.length + " publicgroup:" + publicGroupList);
+#### 加入公开群组
+
+	groupManager.joinPublicGroup(groupId,error);
+#### 获取群组中的成员列表
+
+	// 使用 || 间隔输出成员列表
+	var members = group.groupMembers();
+    console.log(members.join(' || '));
+#### 接受群邀请
+
+	groupManager.acceptInvitationFromGroup(groupId,inviter,error);
+#### 拒绝群邀请
+
+	groupManager.declineInvitationFromGroup(groupId,inviter,error);
+#### 接受加入群邀请
+
+	groupManager.acceptJoinGroupApplication(groupId,from,error);
+#### 拒绝加入群邀请
+
+	groupManager.declineJoinGroupApplication(groupId,from,"decline reason",error);
+
+#### 成员禁言
+
+	groupManager.blockGroupMembers(groupId, members, error, "reason");
+#### 获取禁言成员列表
+
+	// 分页获取
+	groupManager.fetchGroupBans(groupId, 1, 20, error);
+#### 取消成员禁言
+
+	groupManager.unblockGroupMembers(groupId, members, error);
+#### 修改群信息
+
+	// 修改群标题
+	groupManager.changeGroupSubject(groupId, "new Subject", error);
+	// 修改群描述
+	emGroup = groupManager.changeGroupDescription(groupId, "new Description", error);
+	
+#### 屏蔽群组消息
+
+	groupManager.blockGroupMessage(groupId, error);
+#### 取消屏蔽群组消息
+
+	groupManager.unblockGroupMessage(groupId, error);
+#### 群主变更
+
+	groupManager.transferGroupOwner(groupId, member, error);
+#### 添加管理员
+
+	groupManager.addGroupAdmin(groupId, member, error);
+#### 删除管理员
+
+	groupManager.removeGroupAdmin(groupId, member, error);
+#### 上传群文件
+
+	// 设置回调函数显示上传进度和结果
+	var emUploadCallback = new easemob.EMCallback();
+    console.log("create upload emCallback success");
+
+    emUploadCallback.onSuccess(() => {
+        console.log("upload emCallback call back success");
+        return true;
+    });
+    emUploadCallback.onFail((error) => {
+        console.log("upload emCallback call back fail");
+        console.log(error.description);
+        console.log(error.errorCode);
+        return true;
+    });
+    emUploadCallback.onProgress((progress) => {
+        if (progress >= 98) {
+            console.log("upload call back progress " + progress);
+        }
+    });
+	groupManager.uploadGroupSharedFile(groupId, filepath, emUploadCallback, error);
+#### 获取群文件列表
+	
+	// 分页获取
+	var filelist = groupManager.fetchGroupSharedFiles(groupId, 1, 20, error);
+#### 下载群文件
+
+	var emDownloadCallback = new easemob.EMCallback();
+    console.log("create download emCallback success");
+
+    emDownloadCallback.onSuccess(() => {
+        console.log("download emCallback call back success");
+        return true;
+    });
+    emDownloadCallback.onFail((error) => {
+        console.log("download emCallback call back fail");
+        console.log(error.description);
+        console.log(error.errorCode);
+        return true;
+    });
+    emDownloadCallback.onProgress((progress) => {
+        if (progress >= 98) {
+            console.log("download call back progress " + progress);
+        }
+    });
+
+    var group = groupManager.downloadGroupSharedFile(groupid, filelocalpath, sharedFile.fileId(), emDownloadCallback, error);
+#### 删除群文件
+
+	groupManager.deleteGroupSharedFile(groupId, sharedFile.fileId(), error);
+#### 群组公告的管理
+
+	// 设置群组公告
+	groupManager.updateGroupAnnouncement(groupId, "new announcement",error);
+	// 获取群公告
+	var announcement = groupManager.fetchGroupAnnouncement(groupId, error);
+#### 组变更的监听
+
+	groupManager = emclient.getGroupManager();
+	groupListener = new easemob.EMGroupManagerListener(groupManager);
+	// 添加群管理员时触发(只有是自己时才能收到通知)
+	// group : 发生操作的群组
+	// admin : 被提升的群管理员
+	groupListener.onAddAdminFromGroup((groupId, admin) => {
+		console.log("onAddAdminFromGroup:"+groupId+" admin:"+admin);
+	});
+
+	// 删除群管理员时触发(只有是自己时才能收到通知)
+	// group : 发生操作的群组
+	// admin : 被删除的群管理员（群管理员变成普通群成员）
+	groupListener.onRemoveAdminFromGroup((groupId, admin) => {
+		console.log("onRemoveAdminFromGroup:"+groupId+" admin:"+admin);
+	});
+
+	// 转让群主的时候触发
+	// group : 发生操作的群组
+	// newOwner : 新群主
+	// oldOwner : 原群主
+	groupListener.onAssignOwnerFromGroup((groupId, newOwner, oldOwner) => {
+		console.log("onAssignOwnerFromGroup:"+groupId+" newOwner:"+newOwner + " oldOwner:" + oldOwner);
+	});
+
+	// 我接收到自动进群时被触发
+	// group : 发生操作的群组
+	// inviter : 邀请人
+	// inviteMessage : 邀请信息
+	groupListener.onAutoAcceptInvitationFromGroup((groupId, inviter, inviteMessage)=>{
+		console.log("onAutoAcceptInvitationFromGroup:"+groupId+" inviter:"+inviter + " inviteMessage:" + inviteMessage);
+		});
+
+	// 成员加入群组时触发
+	// group : 发生操作的群组
+	// member : 加入群组的成员名称
+	groupListener.onMemberJoinedGroup((groupId, member)=>{
+		console.log("onMemberJoinedGroup:"+groupId+" member:"+member);
+	});
+
 	// 成员离开群组时触发
 	// group : 发生操作的群组
 	// member : 离开群组的成员名称
@@ -884,6 +1083,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 		console.log("onLeaveGroup:"+groupId+" reason:"+reason);
 	});
 	groupManager.addListener(groupListener);
+
 ### 会话管理
 会话管理功能包括获取会话、获取会话属性、删除会话、获取会话消息、删除会话消息、获取会话消息计数等功能。
 
@@ -1140,6 +1340,16 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      */
 	var textSendMsg = easemob.createSendMessage("jwfan", "jwfan1", textMsgBody);
 	// 消息可以设置扩展属性，用户界面可通过自定义属性，实现自定义等功能
+
+### 发送消息
+
+发送文本、文件、图片等消息（单聊/群聊通用）。
+#### 发送文本消息
+
+    //创建消息体
+	var textMsgBody = new easemob.EMTextMessageBody("wahhahahaha");
+	var textSendMsg = easemob.createSendMessage("jwfan", "jwfan1", textMsgBody);
+	// 消息可以设置扩展属性，用户界面可通过自定义属性，实现“@”等功能
 	textSendMsg.setAttribute("data", 120);
     data = textSendMsg.getAttribute("data");
 	// 设置消息类型,0为单聊，1为群聊，2为聊天室
@@ -1168,6 +1378,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	chatManager.sendMessage(textMsg);
 #### 发送文件
 
+
     /** 
      * 创建文件消息体
      * param1 文件路径，输入参数，字符串
@@ -1175,6 +1386,9 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      */
 	var fileMsgBody = new easemob.EMFileMessageBody("/Users/jiangwei/Code/fanjiangwei7/emclient-linux/testapp/file.txt");
     // 创建消息
+
+	//创建消息体
+	var fileMsgBody = new easemob.EMFileMessageBody("/Users/jiangwei/Code/fanjiangwei7/emclient-linux/testapp/file.txt", 5);
     var fileMsg = easemob.createSendMessage("jwfan", "jwfan1", fileMsgBody);
     //setCallback(callback) 设置消息回调函数，通过回调函数显示消息发送成功失败，以及附件上传百分比
     //callback easemob.EMCallback的实例，设置onSuccess、onFail和onProgress三个回调函数。
@@ -1235,7 +1449,6 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	chatManager = emclient.getChatManager();
 	listener = new easemob.EMChatManagerListener();
     chatManager.addListener(listener);
-
 	// 收到会话消息
 	listener.onReceiveMessages((messages) => {
 		console.log("onReceiveMessages messages.length = " + messages.length);
@@ -1292,6 +1505,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     } 
 	});
 	// addListener(listener) 添加消息回调监听，从监听中获取接收消息。
+	chatManager.addListener(listener);
 ### 聊天室管理
 聊天室只能有服务端创建，客户端只可以查询、加入和退出聊天室
 
@@ -1348,6 +1562,14 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     // 设置回调
     // 收到其他设备的会话操作
+
+	chatroomManager.joinChatroom(chatroomid,error);
+#### 退出聊天室
+	
+	chatroomManager.leaveChatroom(chatroomId, error);
+### 多设备管理监听
+	
+	var listener = new easemob.EMMultiDevicesListener();
 	listener.onContactMultiDevicesEvent((operation, target, ext) => {
       console.log('operation = ' + operation);
       console.log('target = ' + target);
@@ -1360,3 +1582,18 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       console.log('target = ' + target);
       console.log('usernames = ' + usernames);
 	});
+
+
+	var ret = emclient.login("jwfan", "jwfan");
+	console.log(ret.errorCode);
+	console.log(ret.description);
+
+	emclient.addMultiDevicesListener(listener);
+
+	setTimeout(function() {
+      emclient.removeMultiDevicesListener(listener);
+      emclient.clearAllMultiDevicesListeners();
+      emclient.logout();
+      console.log("logout");
+	}, 1000 * 60 * 2);
+

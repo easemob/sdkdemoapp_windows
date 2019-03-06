@@ -7,6 +7,7 @@ const EMCallback = require('./emcallback');
 const EMMucSharedFile = require('./emmucsharedfile');
 const async = require('async');
 
+
 /**
  * Easemob EMGroupManager implementation.
  */
