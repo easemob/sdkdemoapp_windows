@@ -1,10 +1,17 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
+import {Route, Redirect} from 'react-router-dom';
 import * as actionCreators from "@/stores/actions";
 import Lang from "@/lang";
 import * as selectors from "@/stores/selectors";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
+import { Link } from "react-router-dom";
+import { utils } from "@/utils/utils";
 const session = require("electron").remote.session;
+// const fs = require("fs-extra");
+// const { remote } = require("electron");
+// let configDir = remote.app.getPath("userData");
+// const easemob = require('../../node/index');
 var checkedVal;
 class LoginForm extends PureComponent {
 	constructor(props){
@@ -13,6 +20,7 @@ class LoginForm extends PureComponent {
 			userName: "",
 			password: "",
 		};
+		const { logout } = this.props;
 		this.getCookie();
 
 		this.handleChangeUserName = this.handleChangeUserName.bind(this);
@@ -81,7 +89,7 @@ class LoginForm extends PureComponent {
 	}
 
 	handleLogin(){
-		const { requestLogin, setNotice } = this.props.reduxProps;
+		const { requestLogin, setNotice, logout, globalAction, globals } = this.props.reduxProps;
 		// 记住密码 写 cookie
 		if(checkedVal){
 			this.handleSetCookie("userName", this.state.userName);
@@ -92,12 +100,47 @@ class LoginForm extends PureComponent {
 			this.handleRemoveCookie();
 		}
 		if(navigator.onLine){
-			requestLogin(this.state.userName, this.state.password, "PC");
+			var userInfo = {
+				"user":{
+					"easemobName":this.state.userName,
+					"id":1,
+					"easemobPwd":this.state.password,
+					"os":"PC",
+					"appkey":"easemob-demo#chatdemoui",
+					"tenantId":9,
+					"image":""
+				}
+			};
+			if(globals.emclient){
+				this.emclient = globals.emclient;
+			}
+			else{
+				this.emclient = utils.initEmclient();
+			}
+
+
+			this.ret = this.emclient.login( this.state.userName, this.state.password);
+			console.log(`loginCode:${this.ret.errorCode}`);
+			if(this.ret.errorCode != 0){
+				setNotice(`登录失败，${this.ret.errorCode}`);
+				this.emclient.logout();
+				logout();
+				return false;
+			}
+			//这个放到成功里
+			globalAction({
+				emclient: this.emclient
+			});
+			localStorage.setItem("userInfo", JSON.stringify(userInfo));
+			requestLogin(userInfo);
+			this.props.reduxProps.history.push("/chats/recents");
 		}
 		else{
 			setNotice("当前网络不可用，请检查网络状态", "fail");
 		}
+
 	}
+
 
 	render(){
 		const { getFieldDecorator } = this.props.form;
@@ -148,6 +191,9 @@ class LoginForm extends PureComponent {
 						{ Lang.string("login.btn.label") }
 					</Button>
 				</FormItem>
+				<Link to="/register">
+					注册
+				</Link>
 			</Form>
 		);
 	}
@@ -165,6 +211,6 @@ class Login extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	loginRequest: selectors.getRequest(state, "login"),
+	globals: state.globals,
 });
 export default connect(mapStateToProps, actionCreators)(Login);

@@ -49,11 +49,6 @@ class MemberSettingView extends PureComponent {
 						<HeadImageView imgUrl={ memberInfo.image } />
 						<div className="member-name">{ memberInfo.realName || memberInfo.username || memberInfo.easemobName }</div>
 					</div>
-					<div>
-						<div><span>性别:</span>{ memberInfo.gender }</div>
-						<div><span>邮箱:</span>{ memberInfo.email }</div>
-						<div><span>电话:</span>{ memberInfo.mobilephone }</div>
-					</div>
 				</div>
 				{/* <div>聊天置顶</div> */}
 				<div className="operate-member" onClick={ this.handleClearRecord }>清空聊天记录</div>

@@ -44,7 +44,7 @@ class LoginView extends PureComponent {
 					</div>
 					<div className="app-login center-content">
 						<section>
-							<Login />
+							<Login {...this.props}/>
 							{
 								areRequestsPending
 									? <Spin tip="Loading..." />

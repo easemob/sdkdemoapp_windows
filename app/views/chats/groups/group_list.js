@@ -5,6 +5,7 @@ import { withRouter, Route, Link, NavLink } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
 import _ from "underscore";
 import HeadImageView from "@/views/common/head_image";
+import AddGroup from "./add_group";
 const SubMenu = Menu.SubMenu;
 
 // const NavLink = ({ item }) => (
@@ -23,18 +24,23 @@ class GroupList extends Component {
 	}
 
 	handleClick(e){
-		const { selectOfGroup, groupChats } = this.props;
-		selectOfGroup(groupChats[e.key]);
+		const { selectOfGroup } = this.props;
+		selectOfGroup({
+			"easemobGroupId":e.key
+		});
 	}
 
 	render(){
 		const {
-			groupChats,
 			selectGroup,
-			networkConnection
+			networkConnection,
+			allGroupChats,
+			globals
 		} = this.props;
+		let arrGroupChats = allGroupChats.allGroups || [];
 		return (
 			<div className="oa-main-list oa-conversation-list">
+				<AddGroup />
 				{
 					networkConnection
 						? <div className="network-state">网络连接已断开</div>
@@ -42,22 +48,22 @@ class GroupList extends Component {
 				}
 				<Menu
 					onClick={ this.handleClick }
-					onOpenChange={ this.handleOpenChange }
 					style={ { width: 300, border: "none" } }
 					selectedKeys={ selectGroup.easemobGroupId ? [selectGroup.easemobGroupId] : [] }
-					mode="inline"
+					// mode="inline"
 				>
 					{
-						_.map(groupChats, (group) => {
+						arrGroupChats.map((groupId) => {
+							var groupManager = globals.groupManager;
+							var group = groupManager.groupWithId(groupId);
 							return (
-								<Menu.Item key={ group.easemobGroupId }>
+								<Menu.Item key={ group.groupId() }>
 									<HeadImageView
-										imgUrl={ group.avatar }
-										name={ group.chatName }
+										name={ group.groupSubject() }
 									/>
 									<div className="item-top">
 										<span className="ellipsis item-name">
-											{ group.chatName }
+											{ group.groupSubject() }
 										</span>
 									</div>
 								</Menu.Item>);
@@ -70,8 +76,9 @@ class GroupList extends Component {
 }
 
 const mapStateToProps = state => ({
-	groupChats: state.groupChats,
 	selectGroup: state.selectGroup,
-	networkConnection: state.networkConnection
+	networkConnection: state.networkConnection,
+	allGroupChats: state.allGroupChats,
+	globals: state.globals
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(GroupList));

@@ -87,13 +87,6 @@ class GroupMembersView extends Component {
 			if(count === 2 && item.key != userInfo.user.easemobName){
 				conversation = globals.chatManager.conversationWithType(selectMember.easemobName, 0);
 				messages = conversation.loadMoreMessagesByMsgId("", 20,0);
-				extInfo = {
-					avatar: selectMember.image,
-					nick: selectMember.realName,
-					userid: selectMember.id
-				};
-				// // 设置扩展消息
-				conversation.setExtField(JSON.stringify(extInfo));
 				conversationOfSelect(selectMember.easemobName);
 				msgsOfConversation({ id: selectMember.easemobName, msgs: messages, conversation });
 			}
@@ -106,10 +99,9 @@ class GroupMembersView extends Component {
 		const {
 			selectConversationId,
 			userInfo,
-			globals,
-			groupChats
+			globals
 		} = this.props;
-		var owner = groupChats[selectConversationId].owner;
+		var owner = globals.groupManager.groupWithId(selectConversationId).groupOwner();
 		if(owner == userInfo.user.easemobName){
 			this.setState({ select: item.key });
 		}
@@ -120,13 +112,15 @@ class GroupMembersView extends Component {
 		const {
 			globals,
 			setOwnerAction,
-			selectConversationId,
-			groupChats,
+			selectConversationId
 		} = this.props;
 		const error = new globals.easemob.EMError();
 		// 转让群主
-		var group = globals.groupManager.transferGroupOwner(selectConversationId, newOwner, error);
-		groupChats[selectConversationId] && setOwnerAction({ id: selectConversationId, owner: newOwner, group: groupChats[selectConversationId] });
+		var group = globals.groupManager.transferGroupOwner(selectConversationId, newOwner, error).then(group => {
+			if(error.errorCode != 0)
+			  console.log("transferGroupOwner fail:" + error.description);
+		});
+		this.setState(this.state);
 		// console.log(`transferGroupOwner error.errorCode = ${error.errorCode}`);
 		// console.log(`transferGroupOwner error.description = ${error.description}`);
 		// console.log(`group.groupOwner() = ${group.groupOwner()}`);
@@ -139,14 +133,16 @@ class GroupMembersView extends Component {
 			globals,
 			selectConversationId,
 			setAdminAction,
-			groupChats,
 		} = this.props;
 		const error = new globals.easemob.EMError();
-		var group = globals.groupManager.addGroupAdmin(selectConversationId, member, error);
+		globals.groupManager.addGroupAdmin(selectConversationId, member, error).then(group => {
+			if(error.errorCode != 0)
+			  console.log("addGroupAdmin fail:" + error.description);
+		});
+		this.setState(this.state);
 		// console.log(`addGroupAdmin error.errorCode = ${error.errorCode}`);
 		// console.log(`addGroupAdmin error.description = ${error.description}`);
 		// console.log(`group.groupAdmins() = ${group.groupAdmins()}`);
-		setAdminAction({ id: selectConversationId, adminMember: member, group: groupChats[selectConversationId] });
 	}
 
 	// 取消管理员
@@ -155,15 +151,17 @@ class GroupMembersView extends Component {
 		const {
 			globals,
 			selectConversationId,
-			cancelAdminAction,
-			groupChats
+			cancelAdminAction
 		} = this.props;
 		const error = new globals.easemob.EMError();
-		var group = globals.groupManager.removeGroupAdmin(selectConversationId, member, error);
+		globals.groupManager.removeGroupAdmin(selectConversationId, member, error).then(group => {
+			if(error.errorCode != 0)
+			  console.log("removeGroupAdmin fail:" + error.description);
+		});
+		this.setState(this.state);
 		// console.log(`removeGroupAdmin error.description = ${error.description}`);
 		// console.log(`group.groupAdmins() = ${group.groupAdmins()}`);
 		// console.log(`group.groupOwner() = ${group.groupOwner()}`);
-		cancelAdminAction({ id: selectConversationId, adminMember: member, group: groupChats[selectConversationId] });
 
 	}
 
@@ -199,17 +197,18 @@ class GroupMembersView extends Component {
 			addMembers,
 			cancelCreateGroupAction,
 			cancelEditGroupAction,
-			memberInfo,
 			setNotice
 		} = this.props;
 		var easemob = globals.easemob;
 		var error = new easemob.EMError();
 		// 现在的群成员 + 群主 + 添加的群成员 <= 500
-		var count = memberInfo.length + 1 + addMembers.length;
+		var count = globals.groupManager.groupWithId(selectConversationId).groupMembersCount() + 1 + addMembers.length;
 		if(count <= 500){
 			cancelCreateGroupAction();
 			cancelEditGroupAction();
-			this.groupManager.addGroupMembers(selectConversationId, addMembers, "", error);
+			this.groupManager.addGroupMembers(selectConversationId, addMembers, "", error).then(group => {
+				
+			});
 			console.log(`selectConversationId${selectConversationId}`);
 			console.log(`addMembers${addMembers}`);
 			console.log(addMembers.length);
@@ -228,13 +227,13 @@ class GroupMembersView extends Component {
 	showEditGroupMember(){
 		const {
 			membersIdOfEditGroup,
-			groupChats,
 			selectConversationId,
-			allMembersInfo
+			allMembersInfo,
+			globals
 		} = this.props;
-		var group = groupChats[selectConversationId];
+		var group = globals.groupManager.groupWithId(selectConversationId);
 		var memberInfoOfGroup;
-		var groupAllMembers = [group.owner].concat(group.adminMembers).concat(group.members);
+		var groupAllMembers = [group.groupOwner()].concat(group.groupAdmins()).concat(group.groupMembers());
 		// 群组所有成员
 		return (
 			<Modal
@@ -268,9 +267,6 @@ class GroupMembersView extends Component {
 												}
 											</div>
 											{
-												// member.easemobName == selectConversationId ||
-												// groupChats[selectConversationId].members.indexOf(member.easemobName) >= 0 ||
-												// (groupChats[selectConversationId].adminMembers || []).indexOf(member.easemobName) >= 0
 												_.filter(groupAllMembers, item => item == member).length
 													? null
 													: <div className="cancel-member" onClick={ () => { this.handleCancleSelectMember(member);  } }>
@@ -320,13 +316,16 @@ class GroupMembersView extends Component {
 			globals,
 			removeMemberAction,
 			removeMembers,
-			groupChats,
 			cancelRemoveGroupAction
 		} = this.props;
 		var easemob = globals.easemob;
 		var error = new easemob.EMError();
 		// groupManager.removeGroupMembers(group.groupId(), ["jwfan3", "jwfan4"], error);
-		this.groupManager.removeGroupMembers(selectConversationId, removeMembers, error);
+		console.log("removemembers:" + removeMembers);
+		this.groupManager.removeGroupMembers(selectConversationId, removeMembers, error).then(group => {
+			if(error.errorCode != 0)
+			console.log(`removeGroupMembers error.description = ${error.description}`);
+		});
 		// console.log(`selectConversationId${selectConversationId}`);
 		// console.log(`removeMembers${removeMembers}`);
 		// console.log(`this.group: ${this.group}`);
@@ -335,7 +334,6 @@ class GroupMembersView extends Component {
 		// this.groupManager.fetchGroupMembers();
 		// console.log(this.group.groupMembers());
 		cancelRemoveGroupAction();
-		removeMemberAction({ id: selectConversationId, members: removeMembers, group: groupChats[selectConversationId]  });
 		this.setState({
 			visibleRemoveDialog: false,
 		});
@@ -347,11 +345,12 @@ class GroupMembersView extends Component {
 	showRemoveGroupMember(){
 		const {
 			selectConversationId,
-			memberInfo,
 			membersIdOfDeleteGroup,
-			allMembersInfo
+			allMembersInfo,
+			globals
 		} = this.props;
 		var memberInfoOfGroup;
+		var memberInfo = globals.groupManager.groupWithId(selectConversationId).groupMembers();
 		return (
 			<Modal
 				title="删除群成员"
@@ -406,20 +405,23 @@ class GroupMembersView extends Component {
 	// 群主管理员
 	showMemberInfo(member){
 		const {
-			adminMembers,
-			owner
+			selectConversationId,
+			globals
 		} = this.props;
-		if(owner == member.easemobName){
+		var group = globals.groupManager.groupWithId(selectConversationId);
+		var owner = group.groupOwner();
+		var adminMembers = group.groupAdmins();
+		if(owner == member){
 			return <div className="member-operate"><Icon type="team" title="群主" /></div>;
 		}
-		else if(adminMembers.indexOf(member.easemobName) >= 0){
-			if(this.state.select == member.easemobName){
+		else if(adminMembers.indexOf(member) >= 0){
+			if(this.state.select == member){
 				return (
 					<div className="member-operate">
-						<span onClick={ e => this.handleCancelAdmin(member.easemobName) }>
+						<span onClick={ e => this.handleCancelAdmin(member) }>
 							<Icon type="user-delete" title="取消管理员" />
 						</span>
-						<span onClick={ e => this.handleSetOwner(member.easemobName) }>
+						<span onClick={ e => this.handleSetOwner(member) }>
 							<Icon type="team" title="设为群主" />
 						</span>
 					</div>
@@ -429,8 +431,8 @@ class GroupMembersView extends Component {
 			return <div className="member-operate"><Icon type="user" title="管理员" /></div>;
 
 		}
-		return this.state.select == member.easemobName
-			? <div className="member-operate" onClick={ e => this.handleSetAdmin(member.easemobName) }><Icon type="user-add" title="设为管理员" /></div>
+		return this.state.select == member
+			? <div className="member-operate" onClick={ e => this.handleSetAdmin(member) }><Icon type="user-add" title="设为管理员" /></div>
 			: <div className="member-operate"></div>;
 
 	}
@@ -440,13 +442,14 @@ class GroupMembersView extends Component {
 			userInfo,
 			selectConversationId,
 			allMembersInfo,
-			adminMembers,
-			groupChats,
+			globals
 		} = this.props;
 		// 是否为群主
-		var group = groupChats[selectConversationId];
-		var owner = groupChats[selectConversationId].owner;
+		var group = globals.groupManager.groupWithId(selectConversationId);
+		var owner = group.groupOwner();
 		var memberInfoOfGroup;
+		var adminMembers = group.groupAdmins();
+		var members = group.groupMembers();
 		// var allMembers = [];
 
 		// 把群主加到成员列表里
@@ -456,7 +459,7 @@ class GroupMembersView extends Component {
 			<div className="oa-main-list oa-conversation-list conversation-group-list">
 				{
 					// 创建群时开放允许普通成员邀请成员开关，则普通成员也可添加成员
-					owner == userInfo.user.easemobName || adminMembers.indexOf(userInfo.user.easemobName) >= 0 || groupChats[selectConversationId].allowinvites
+					owner == userInfo.user.easemobName || adminMembers.indexOf(userInfo.user.easemobName) >= 0
 						? <div className="operate-members" onClick={ this.handleShowAddDialog }>
 							添加群成员
 						</div>
@@ -483,7 +486,7 @@ class GroupMembersView extends Component {
 					onClick={ this.handleClick }
 				>
 					{
-						_.map([group.owner].concat(group.adminMembers).concat(group.members), (member) => {
+						_.map([owner].concat(adminMembers).concat(members), (member) => {
 							memberInfoOfGroup = allMembersInfo[member];
 							return (
 								<Menu.Item key={ member }>
@@ -494,15 +497,13 @@ class GroupMembersView extends Component {
 										<div className="item-top">
 											<span className="ellipsis item-name">
 												{
-													memberInfoOfGroup
-														? memberInfoOfGroup.realName || memberInfoOfGroup.username || memberInfoOfGroup.easemobName
-														: member
+													member
 												}
 											</span>
 										</div>
 									</div>
 									{
-										memberInfoOfGroup && this.showMemberInfo(memberInfoOfGroup)
+										this.showMemberInfo(member)
 									}
 								</Menu.Item>
 							);
@@ -518,14 +519,10 @@ class GroupMembersView extends Component {
 
 const mapStateToProps = state => ({
 	globals: state.globals,
-	groupChats: state.groupChats,
 	selectGroup: state.selectGroup,
 	selectConversationId: state.selectConversationId,
 	allMembersInfo: state.allMembersInfo,
 	userInfo: state.userInfo,
-	owner: selectors.getGroupOwner(state),
-	memberInfo: selectors.getGroupMembers(state),
-	adminMembers: selectors.getGroupAdminMembers(state),
 	addMembers: selectors.getAddMembers(state),
 	removeMembers: selectors.getRemoveMembers(state),
 	membersIdOfEditGroup: selectors.membersIdArray(state),

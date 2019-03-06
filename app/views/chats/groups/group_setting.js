@@ -8,10 +8,11 @@ var _const = require("@/views/common/domain");
 class GroupSettingView extends Component {
 	constructor(props){
 		super(props);
-		const { selectConversationId, groupChats } = this.props;
+		const { selectConversationId,globals } = this.props;
+		var group = globals.groupManager.groupWithId(selectConversationId);
 		this.state = {
-			chatName: groupChats[selectConversationId].chatName,
-			avatarUrl: groupChats[selectConversationId].avatar,
+			chatName: group.groupSubject(),
+			avatarUrl: "",
 			previewVisible: false,
 			previewImage: "",
 			fileList: [
@@ -19,7 +20,7 @@ class GroupSettingView extends Component {
 					uid: -1,
 					name: "",
 					status: "done",
-					url: groupChats[selectConversationId].avatar ? `${_const.domain}${groupChats[selectConversationId].avatar}` : `${require("@/views/config/img/default_avatar.png")}`,
+					url: `${require("@/views/config/img/default_avatar.png")}`
 				}
 			],
 
@@ -73,7 +74,9 @@ class GroupSettingView extends Component {
 		} = this.props;
 		var groupManager = globals.groupManager;
 		var error = new globals.easemob.EMError();
-		groupManager.leaveGroup(selectConversationId, error);
+		groupManager.leaveGroup(selectConversationId, error).then(() => {
+			
+		});
 		leaveGroupAction(selectConversationId);
 	}
 
@@ -81,10 +84,17 @@ class GroupSettingView extends Component {
 	handleDissolveGroup(){
 		const {
 			selectConversationId,
-			userInfo,
-			requestDestoryGroup,
+			globals,
+			destoryGroup
 		} = this.props;
-		requestDestoryGroup(userInfo.user.tenantId, selectConversationId);
+		let groupManager = globals.groupManager;
+		let error = new globals.easemob.EMError();
+		groupManager.destroyGroup(selectConversationId,error).then(() => {
+			if(error.errorCode == 0)
+			{
+				destoryGroup(selectConversationId);
+			}
+		});
 	}
 
 	handleChangeChatName(event){
@@ -94,7 +104,7 @@ class GroupSettingView extends Component {
 	}
 
 	handleChangeAvatar({ fileList, file }){
-		const { setNotice, selectConversationId, groupChats } = this.props;
+		const { setNotice, selectConversationId } = this.props;
 		this.setState({ fileList });
 		if(file.status == "done"){
 			this.setState({ avatarUrl: file.response.url });
@@ -107,7 +117,7 @@ class GroupSettingView extends Component {
 						uid: -1,
 						name: "",
 						status: "done",
-						url: groupChats[selectConversationId].avatar ? `${_const.domain}${groupChats[selectConversationId].avatar}` : `${require("@/views/config/img/default_avatar.png")}`,
+						url: `${require("@/views/config/img/default_avatar.png")}`,
 					}
 				] });
 			}
@@ -127,22 +137,18 @@ class GroupSettingView extends Component {
 
 	handleSave(){
 		const {
-			requestChantGroupInfo,
 			userInfo,
 			selectConversationId,
+			conversationOfSelect,
 			globals
 		} = this.props;
-		requestChantGroupInfo(
-			userInfo.user.tenantId,
-			selectConversationId,
-			{
-				chatName: this.state.chatName.substring(0, 20),
-				avatar: this.state.avatarUrl
-			},
-			globals.easemob,
-			userInfo.user.easemobName,
-			globals
-		);
+		let groupManager = globals.groupManager;
+		const error = new globals.easemob.EMError();
+		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20),error).then(group => {
+
+		});
+		conversationOfSelect("");
+		conversationOfSelect(selectConversationId);
 	}
 
 
@@ -177,12 +183,22 @@ class GroupSettingView extends Component {
 		const groupManager = globals.groupManager;
 		const error = new globals.easemob.EMError();
 		if(checked){
-			groupManager.blockGroupMessage(selectConversationId, error);
+			groupManager.blockGroupMessage(selectConversationId, error).then(group => {
+				if(error.errorCode == 0)
+				{
+					console.log(`blockGroupMessage error.description = ${error.description}`);
+				}
+			});
 			// console.log(`blockGroupMessage error.errorCode = ${error.errorCode}`);
 			// console.log(`blockGroupMessage error.description = ${error.description}`);
 		}
 		else{
-			groupManager.unblockGroupMessage(selectConversationId, error);
+			groupManager.unblockGroupMessage(selectConversationId, error).then(group => {
+				if(error.errorCode == 0)
+				{
+					console.log(`unblockGroupMessage error.description = ${error.description}`);
+				}
+			});
 			// console.log(`unblockGroupMessage error.errorCode = ${error.errorCode}`);
 			// console.log(`unblockGroupMessage error.description = ${error.description}`);
 		}
@@ -331,7 +347,6 @@ class GroupSettingView extends Component {
 }
 
 const mapStateToProps = state => ({
-	groupChats: state.groupChats,
 	selectGroup: state.selectGroup,
 	globals: state.globals,
 	selectConversationId: state.selectConversationId,

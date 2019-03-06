@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import _ from "underscore";
 import moment from "moment";
 
+
 export const globals = (state = {}, { type, payload = {} }) => {
 	switch(type){
 	case "app/initGlobal":
@@ -20,10 +21,10 @@ export const networkConnection = (state = "", { type, payload = "" }) => {
 	}
 };
 
-export const userInfo = (state = null, { type, payload = {} }) => {
+export const userInfo = (state = JSON.parse(localStorage.getItem("userInfo") || null), { type, payload = {} }) => {
 	switch(type){
 	case "app/setLogin":
-		return payload;
+		return _.extend({}, state, payload);
 	case "app/setLogout":
 		return {};
 	case "app/changeUserInfo":
@@ -64,110 +65,6 @@ export const allMembersInfo = (state = {}, { type, payload = {} }) => {
 		return _.extend({}, state, members);
 	case "app/setLogout":
 		return {};
-	default:
-		return state;
-	}
-};
-export const rootOrgId = (state = -1, { type, payload = {} }) => {
-	switch(type){
-	case "app/getRootOrg":
-		return payload[0].id;
-	default:
-		return state;
-	}
-};
-export const orgTree = (state = {}, { type, payload = {} }) => {
-	let payloadVal;
-	let temp;
-	let idx;
-	let changeChild;
-	var children;
-	var tempObj = {};
-	switch(type){
-	case "app/getRootOrg":
-		return _.extend({}, state, { [payload[0].id]: payload[0] });
-	case "app/getChildOrg":
-		tempObj = {};
-		children = [];
-		payloadVal = _.values(payload)[0];
-		if(payloadVal.length){
-			temp = state[payloadVal[0].parentId];
-			temp.children = temp.children ? temp.children.concat(payloadVal) : payloadVal;
-			children = temp.children ? temp.children.concat(payloadVal) : payloadVal;
-			_.map(children, (child) => {
-				tempObj[child.id] = child;
-			});
-			temp.children = _.values(tempObj);
-			let result = _.extend({}, payload, { [payloadVal[0].parentId]: temp });
-			_.forEach(payloadVal, function(item){
-				result[item.id] = item;
-			});
-			return _.extend({}, state, result);
-		}
-		return state;
-	case "app/membersOfOrg":
-		tempObj = {};
-		children = [];
-		payloadVal = _.values(payload)[0];
-		if(payloadVal.length){
-			temp = state[payloadVal[0].organizationId];
-			if(temp){
-				children = temp.children ? temp.children.concat(payloadVal) : payloadVal;
-				_.map(children, (child) => {
-					tempObj[child.id] = child;
-				});
-				temp.children = _.values(tempObj);
-				return _.extend({}, state, { [payloadVal[0].organizationId]: temp });
-			}
-			return state;
-		}
-		return state;
-
-	// 新增成员
-	case "app/addMemberInfo":
-		temp = _.clone(state[payload.organizationId]);
-		temp.children = temp.children || [];
-		temp.children.push(payload);
-		return _.extend({}, state, { [temp.id]: temp });
-	// 新增部门
-	case "app/addOrg":
-		temp = _.clone(state);
-		temp[payload.parentId].children = temp[payload.parentId].children || [];
-		temp[payload.parentId].children.push(payload);
-		return _.extend({}, state, temp);
-	// 修改部门
-	case "app/changeOrg":
-		temp = _.clone(state);
-		if(temp){
-			_.map(temp[payload.parentId].children, (child, index) => {
-				if(child.id == payload.id){
-					idx = index;
-				}
-			});
-			if(temp[payload.parentId].children){
-
-				changeChild = temp[payload.parentId].children[idx];
-				if(changeChild.children){
-					payload.children = changeChild.children;
-				}
-				temp[payload.parentId].children.splice(idx, 1, payload);
-				temp[payload.id] = payload;
-				return temp;
-			}
-			return state;
-		}
-		return state;
-	// 删除部门
-	case "app/removeOrg":
-		temp = _.clone(state);
-		_.map(temp[payload.parentId].children, (child, index) => {
-			if(child.id == payload.id){
-				idx = index;
-			}
-		});
-		idx > -1 && temp[payload.parentId].children.splice(idx, 1);
-		temp[payload.id] && delete temp[payload.id];
-		return temp;
 	default:
 		return state;
 	}
@@ -393,20 +290,6 @@ export const membersOfDeleteGroup = (state = [], { type, payload = [] }) => {
 		return _.filter(state, (item) => { return item.easemobName != payload.easemobName;});
 	case "app/cancelDeleteGroup":
 	case "app/inveitMembers":
-		return [];
-	default:
-		return state;
-	}
-};
-
-// 群视频邀请的成员
-export const membersOfVideoGroup = (state = [], { type, payload = [] }) => {
-	switch(type){
-	case "app/selectVideoMembersOfGroup":
-		return state.concat(payload);
-	case "app/cancelVideoMembersOfGroup":
-		return _.filter(state, (item) => { return item.easemobName != payload.easemobName;});
-	case "app/cancelVideoGroup":
 		return [];
 	default:
 		return state;
@@ -640,6 +523,62 @@ const conferenceMsg = (state = {}, { type, payload }) => {
 	}
 };
 
+export const allContacts = (state = {}, { type, payload }) => {
+	switch(type){
+	case "app/setcontacts":
+		return payload;
+	case "app/addcontacts":
+		state.contacts.push(payload);
+		return state;
+	case "app/removecontacts":
+	{
+		state.contacts = state.contacts.filter((contact) => {
+			if(contact != payload)
+			  return contact;
+		});
+		return state;
+	}
+	default:
+		return state;
+	}
+};
+
+export const allGroupChats = (state = {}, { type, payload }) => {
+	switch(type){
+	case "app/setgroupchats":
+		return payload;
+	case "app/leaveGroup":
+	case "app/destoryGroup":
+	{
+		state.allGroups = state.allGroups.filter((groupId) => {
+			if(groupId != payload)
+			  return groupId;
+		});
+		return state;
+	}
+	case "app/createGroup":
+	{
+		state.allGroups.push(payload.easemobGroupId);
+		return state;
+	}
+	case "app/setLogout":
+		return {};
+	default:
+		return state;
+	}
+};
+
+export const isSelectCovGroup = (state = {}, { type, payload }) => {
+	switch(type){
+	case "app/isSelectCovGroup":
+		return payload;
+	case "app/setLogout":
+		return {};
+	default:
+		return state;
+	}
+};
+
 // action payload 就附带上了我们异步工具中的所有变量了
 // 并没有删除记录的处理，不需要！
 export const requests = (state = {}, { type, payload, meta }) => {
@@ -655,13 +594,22 @@ export const requests = (state = {}, { type, payload, meta }) => {
 	}
 };
 
+export const publicGroup = (state = [], { type, payload, meta }) => {
+	switch(type){
+	case "group/getPublicGroup":
+		return payload;
+	case "clear/getPublicGroup":
+		return payload;
+	default:
+		return state;
+	}
+};
+
 export default combineReducers({
 	globals,
 	networkConnection,
 	userInfo,
 	requests,
-	orgTree,
-	rootOrgId,
 	selectMember,
 	hashOrgAndMember,
 	selectConversationId,
@@ -675,12 +623,15 @@ export default combineReducers({
 	membersOfCreateGroup,
 	membersOfEditGroup,
 	membersOfDeleteGroup,
-	membersOfVideoGroup,
 	groupChats,
 	selectGroup,
 	searchConcatMembers,
 	searchGroups,
 	groupAtMsgs,
 	searchMemberOfCreateGroup,
-	conferenceMsg
+	conferenceMsg,
+	allContacts,
+	allGroupChats,
+	isSelectCovGroup,
+	publicGroup
 });

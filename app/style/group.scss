@@ -60,7 +60,7 @@
 
 	.oa-group-create-setting{
 		.selected-members-container{
-			height: 220px;
+			height: 320px;
 		}
 		.ant-switch{
 			margin-left: 20px;
@@ -93,3 +93,35 @@
 		margin: 10px 0 100px;
 	}
 }
+
+.add_group_modal{
+	.public_group_list{
+		height: 320px;
+		overflow-y: auto;
+		overflow-x:hidden;
+		.ant-menu-item{
+			display: flex;
+			align-items: center;
+			color: #555;
+		    padding: 5px 10px!important;
+		    height: auto!important;
+		    line-height: 30px!important;
+			.member-img{
+				width: 40px;
+			    height: 40px;
+			    margin-right: 10px;
+			    max-width: 174px;
+			}
+			.item-top{
+				width: calc(100% - 50px);
+		    	max-width: 174px;
+		    	>span{
+		    		height: 25px;
+		    		display: block;
+		    	}
+			}
+		}
+	}
+}
+
+

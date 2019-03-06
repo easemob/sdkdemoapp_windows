@@ -2,6 +2,7 @@
 
 const easemobNode = require('./../load');
 const EMError = require('./emerror');
+const async = require('async');
 
 /**
  * Easemob EMContactManager implementation.
@@ -44,7 +45,16 @@ EMContactManager.prototype.allContacts = function (error) {
  * @return {Array} String array
  */
 EMContactManager.prototype.getContactsFromServer = function (error) {
-  return this._manager.getContactsFromServer(error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.getContactsFromServer(error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -64,7 +74,16 @@ EMContactManager.prototype.getContactsFromDB = function (error) {
  * @return {void}
  */
 EMContactManager.prototype.inviteContact = function (username, message, error) {
-  this._manager.inviteContact(username, message, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.inviteContact(username, message, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -74,8 +93,17 @@ EMContactManager.prototype.inviteContact = function (username, message, error) {
  * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.deleteContact = function (username, message, error) {
-  this._manager.deleteContact(username, message, error._error);
+EMContactManager.prototype.deleteContact = function (username, error,keepConversation) {
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.deleteContact(username, error._error,keepConversation);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -85,7 +113,16 @@ EMContactManager.prototype.deleteContact = function (username, message, error) {
  * @return {void}
  */
 EMContactManager.prototype.acceptInvitation = function (username, error) {
-  this._manager.acceptInvitation(username, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.acceptInvitation(username, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -95,7 +132,16 @@ EMContactManager.prototype.acceptInvitation = function (username, error) {
  * @return {void}
  */
 EMContactManager.prototype.declineInvitation = function (username, error) {
-  this._manager.declineInvitation(username, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.declineInvitation(username, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -104,7 +150,7 @@ EMContactManager.prototype.declineInvitation = function (username, error) {
  * @return {Array} String array
  */
 EMContactManager.prototype.blacklist = function (error) {
-  return this._manager.blacklist(error._error);
+  return this._manager._manager.blacklist(error._error);
 };
 
 /**
@@ -113,7 +159,16 @@ EMContactManager.prototype.blacklist = function (error) {
  * @return {Array} String array
  */
 EMContactManager.prototype.getBlackListFromServer = function (error) {
-  return this._manager.getBlackListFromServer(error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.getBlackListFromServer(error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -122,7 +177,16 @@ EMContactManager.prototype.getBlackListFromServer = function (error) {
  * @return {Array} String array
  */
 EMContactManager.prototype.getBlackListFromDB = function (error) {
-  return this._manager.getBlackListFromDB(error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.getBlackListFromDB(error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -132,7 +196,16 @@ EMContactManager.prototype.getBlackListFromDB = function (error) {
  * @return {void}
  */
 EMContactManager.prototype.saveBlackList = function (blacklist, error) {
-  this._manager.saveBlackList(blacklist, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.saveBlackList(blacklist, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -144,7 +217,16 @@ EMContactManager.prototype.saveBlackList = function (blacklist, error) {
  * @return {void}
  */
 EMContactManager.prototype.addToBlackList = function (username, both, error) {
-  this._manager.addToBlackList(username, both, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.addToBlackList(username, both, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -154,7 +236,16 @@ EMContactManager.prototype.addToBlackList = function (username, both, error) {
  * @return {void}
  */
 EMContactManager.prototype.removeFromBlackList = function (username, error) {
-  this._manager.removeFromBlackList(username, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.removeFromBlackList(username, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**

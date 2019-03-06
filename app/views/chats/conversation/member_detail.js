@@ -12,27 +12,41 @@ class MemberDetailView extends PureComponent {
 	}
 
 	render(){
-		const { selectConversationId, allMembersInfo, groupChats } = this.props;
+		const { selectConversationId, allMembersInfo,isSelectCovGroup,globals } = this.props;
 		const selectMember = allMembersInfo[selectConversationId];
-		const selectGroup = groupChats[selectConversationId];
-		var groupMembers = selectGroup ? [selectGroup.owner].concat(selectGroup.adminMembers).concat(selectGroup.members) : [];
+		const selectGroup = isSelectCovGroup;
+		//var groupMembers = selectGroup ? [selectGroup.owner].concat(selectGroup.adminMembers).concat(selectGroup.members) : [];
+		let isGroup = isSelectCovGroup == 1;
+		let conversation = globals.chatManager.conversationWithType(selectConversationId, isGroup);
+		let name;
+		console.log("isGroup:" + isGroup + "    isSelectCovGroup:" + isSelectCovGroup);
+		console.log("selectConversationId:" + selectConversationId);
+		var lenth;
+		if(isGroup)
+		{
+			var group = globals.groupManager.groupWithId(selectConversationId);
+			name = group.groupSubject();
+			lenth = group.groupMembersCount();
+			console.log("-----------------" + lenth);
+		}else
+			name = selectConversationId;
+		console.log("name:" + name);
 		return (
 
 			<div className="oa-conversation-top">
 				<div>
 					<HeadImageView
-						imgUrl={ (selectMember && selectMember.image) || (selectGroup && selectGroup.avatar) }
+						imgUrl={ "" }
 					/>
 					<span className="ellipsis selectName">
 						{
-							(selectMember && (selectMember.realName || selectMember.username || selectMember.easemobName)) ||
-							(selectGroup && `${selectGroup.chatName}`)
+							name
 						}
 					</span>
-					<span>{ selectGroup && `（${groupMembers.length}）`}</span>
+					<span>{ isGroup && `（${lenth}）`}</span>
 				</div>
 				{
-					selectMember && <CreateGroupView selectMember={ [selectMember] } />
+					!isGroup && <CreateGroupView selectMember={ [{easemobName:selectConversationId}] } />
 				}
 			</div>
 		);
@@ -43,6 +57,7 @@ class MemberDetailView extends PureComponent {
 const mapStateToProps = state => ({
 	allMembersInfo: state.allMembersInfo,
 	selectConversationId: state.selectConversationId,
-	groupChats: state.groupChats,
+	isSelectCovGroup:state.isSelectCovGroup,
+	globals: state.globals,
 });
 export default connect(mapStateToProps, actionCreators)(MemberDetailView);

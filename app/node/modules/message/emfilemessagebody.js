@@ -12,8 +12,11 @@ const easemobNode = require('./../../load');
  * }
  */
 
-function EMFileMessageBody(localPath, type) {
-  this._body = new easemobNode.EMFileMessageBody(localPath, type);
+function EMFileMessageBody(localPath) {
+  if (typeof(localPath) == "object") {
+    this._body = localPath; //this situation used from emmessage.bodies()
+  } else
+    this._body = new easemobNode.EMFileMessageBody(localPath);
 }
 
 /**

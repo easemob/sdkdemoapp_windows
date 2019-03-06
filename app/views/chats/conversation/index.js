@@ -14,9 +14,9 @@ import moment from "moment";
 class ConversationView extends PureComponent {
 
 	showInfo(){
-		const { selectConversationId, groupChats } = this.props;
+		const { isSelectCovGroup } = this.props;
 		// 群组
-		if(groupChats[selectConversationId]){
+		if(isSelectCovGroup){
 			return <GroupTabView />;
 		}
 		// 个人
@@ -50,6 +50,6 @@ class ConversationView extends PureComponent {
 }
 const mapStateToProps = state => ({
 	selectConversationId: state.selectConversationId,
-	groupChats: state.groupChats,
+	isSelectCovGroup:state.isSelectCovGroup
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(ConversationView));

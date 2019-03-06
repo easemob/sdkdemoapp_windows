@@ -32,7 +32,7 @@ class FormInput extends Component {
 	}
 
 	handleSubmit(e){
-		const { userInfo, requestChangeUserInfo, globals } = this.props.reduxProps;
+		const { userInfo, globals } = this.props.reduxProps;
 		const avatar = this.props.avatar;
 		const handleCancel = this.props.event;
 		var tenantId = userInfo.user.tenantId;
@@ -41,7 +41,6 @@ class FormInput extends Component {
 		this.props.form.validateFields((err, values) => {
 			if(!err){
 				values.image = avatar;
-				requestChangeUserInfo(tenantId, userId, values);
 				handleCancel();
 			}
 		});
@@ -52,37 +51,13 @@ class FormInput extends Component {
 		return (
 			<Form onSubmit={ this.handleSubmit }>
 				<FormItem
-					label="姓名:"
+					label="用户名:"
 					labelCol={ { span: 5 } }
 					wrapperCol={ { span: 19 } }
 				>
 					{getFieldDecorator("realName", {
 						rules: [{ required: true, message: "请输入姓名!" }],
 						initialValue: this.state.realName
-					})(
-						<Input />
-					)}
-				</FormItem>
-				<FormItem
-					label="手机:"
-					labelCol={ { span: 5 } }
-					wrapperCol={ { span: 19 } }
-				>
-					{getFieldDecorator("mobilephone", {
-						rules: [{ required: true, message: "请输入手机号!" }],
-						initialValue: this.state.mobilephone
-					})(
-						<Input />
-					)}
-				</FormItem>
-				<FormItem
-					label="邮箱:"
-					labelCol={ { span: 5 } }
-					wrapperCol={ { span: 19 } }
-				>
-					{getFieldDecorator("email", {
-						rules: [{ required: true, message: "请输入邮箱!" }],
-						initialValue: this.state.email
 					})(
 						<Input />
 					)}
@@ -122,7 +97,7 @@ class TopNav extends Component {
 					uid: -1,
 					name: "",
 					status: "done",
-					url: this.imgUrl(userInfo.user.image)
+					url: ""
 				}
 			],
 		};
@@ -191,7 +166,9 @@ class TopNav extends Component {
 			break;
 		case "cancellation":
 			emclient.logout();
+			this.props.history.push('/index');
 			logout();
+			localStorage.clear();
 			break;
 		case "logout":
 			emclient.logout();
@@ -243,7 +220,7 @@ class TopNav extends Component {
 					{/* 很奇怪，这个不能用头像组件，下拉菜单谈不出来 */}
 					{/* <HeadImageView imgUrl={ userInfo.user.image } /> */}
 					{/* <img src={ this.imgUrl(userInfo.user.image) } /> */}
-					<div className="member-img" style={ { width: "40px", height: "40px", borderRadious: "50%", backgroundImage: `url(${this.imgUrl(userInfo.user.image)})` } }></div>
+					<div className="member-img" style={ { width: "40px", height: "40px", borderRadious: "50%", backgroundImage: `url(${this.imgUrl("")})` } }></div>
 				</Dropdown>
 				<Modal
 					visible={ this.state.visible }
@@ -258,22 +235,6 @@ class TopNav extends Component {
 					bodyStyle={ { margin: 0 } }
 				>
 					<div className="user-avatar">
-						<Upload
-							action={ `${_const.domain}/v1/tenants/${userInfo.user.tenantId}/mediafile` }
-							listType="picture-card"
-							fileList={ fileList }
-							accept="image/*"
-							onPreview={ this.handlePreviewAvatar }
-							onChange={ this.handleChangeAvatar }
-						>
-							{fileList.length >= 1
-								? null
-								: <div>
-									<Icon type="plus" />
-									<div className="ant-upload-text">上传</div>
-								</div>
-							}
-						</Upload>
 						<Modal visible={ previewVisible } footer={ null } onCancel={ this.handleCancelAvatar }>
 							<img alt="example" style={ { width: "100%" } } src={ previewImage } />
 						</Modal>

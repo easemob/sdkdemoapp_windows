@@ -2,6 +2,7 @@
 
 const EMChatroom = require('./emchatroom');
 const {EMCursorResult, EMPageResult, EMStringCursorResult} = require('./emcursorresult');
+const async = require('async');
 
 /**
  * Easemob EMChatroomManager implementation.
@@ -152,7 +153,16 @@ EMChatroomManager.prototype.fetchChatroomMembers = function (chatroomId, cursor,
  * @return {EMChatroom}
  */
 EMChatroomManager.prototype.joinChatroom = function (chatroomId, error) {
-  return new EMChatroom(this._manager.joinChatroom(chatroomId, error._error));
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return new EMChatroom(_manager.joinChatroom(chatroomId, error._error));
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -162,7 +172,16 @@ EMChatroomManager.prototype.joinChatroom = function (chatroomId, error) {
  * @return {void}
  */
 EMChatroomManager.prototype.leaveChatroom = function (chatroomId, error) {
-  this._manager.leaveChatroom(chatroomId, error._error);
+  var _manager = this._manager;
+  async function f(){
+    try{
+      return _manager.leaveChatroom(chatroomId, error._error);
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**

@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Menu } from "antd";
+import { Menu,Input,Button } from "antd";
 import { withRouter } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
 import _ from "underscore";
+import { setNotice } from "../../../stores/actions";
 const SubMenu = Menu.SubMenu;
 
 
@@ -16,6 +17,27 @@ class MenuList extends Component {
 		};
 		this.handleClick = this.handleClick.bind(this);
 		this.handleOpenChange = this.handleOpenChange.bind(this);
+		this.addContact = this.addContact.bind(this);
+		this.onIdChange = this.onIdChange.bind(this);
+	}
+	addContact(e){
+		const {
+			globals,
+			setNotice
+		} = this.props;
+		let contactManager = globals.contactManager;
+		let error = new globals.easemob.EMError();
+		contactManager.inviteContact(this.state.chatName,"welcome",error).then(() => {
+			if(error.errorCode == 0)
+			setNotice("好友申请发送成功");
+		 else
+			setNotice("好友申请发送失败：" + error.description);
+		});
+	}
+	onIdChange(event){
+		this.setState({
+			chatName: $.trim(event.target.value),
+		});
 	}
 
 	formSubmenusChild(obj){
@@ -34,7 +56,6 @@ class MenuList extends Component {
 	handleClick(e){
 		const key = e.key;
 		const {
-			requestChildOrg,
 			requestMembersOfOrg,
 			keyOfCurrentOpenMenu,
 			memberOfSelect,
@@ -44,15 +65,7 @@ class MenuList extends Component {
 		} = this.props;
 		const tenantId = userInfo ? userInfo.user.tenantId : 9;
 		this.setState({ currentMenuId: key });
-		keyOfCurrentOpenMenu(key);
-		const selectMemberOrOrg = orgTree[key];
-		if(selectMemberOrOrg){
-			requestChildOrg(tenantId, key);
-			requestMembersOfOrg(tenantId, key);
-		}
-		else{
-			memberOfSelect(hashOrgAndMember[key]);
-		}
+		memberOfSelect({"easemobName":key});
 	}
 
 	handleOpenChange(keys){
@@ -62,28 +75,13 @@ class MenuList extends Component {
 
 	render(){
 		const {
-			orgTree,
-			rootOrgId,
 			openMenuKeys,
 			selectMember,
-			networkConnection
+			networkConnection,
+			allContacts
 		} = this.props;
-		const treeMenu = orgTree[rootOrgId];
-		let html =
-		treeMenu
-			?
-			treeMenu.children && treeMenu.children.length > 0
-				?
-				<SubMenu key={ treeMenu.id } title={ treeMenu.orgName }>
-					{
-						_.map(treeMenu.children, (obj) => {
-							return this.formSubmenusChild(obj);
-						})
-					}
-				</SubMenu>
-				: <Menu.Item key={ treeMenu.easemobName || treeMenu.username || treeMenu.id }> { treeMenu.orgName || treeMenu.realName || treeMenu.username } </Menu.Item>
-			:
-			null;
+		var arrContacs = allContacts.contacts;
+		console.log("arrContacs:" + allContacts.contacts);
 
 		return (
 			<div className="oa-main-list">
@@ -92,6 +90,10 @@ class MenuList extends Component {
 						? <div className="network-state">网络连接已断开</div>
 						: null
 				}
+				<div className="groupname">
+						<Input title="好友用户ID" onChange={(event) => {this.onIdChange(event)}}></Input>
+				</div>
+				<Button type="primary" onClick={ this.addContact }>添加好友</Button>
 				<Menu
 					onClick={ this.handleClick }
 					onOpenChange={ this.handleOpenChange }
@@ -100,7 +102,11 @@ class MenuList extends Component {
 					selectedKeys={ selectMember ? [`${selectMember.easemobName}`, `${selectMember.username}`] : [] }
 					mode="inline"
 				>
-					{ html }
+					{
+						arrContacs.map( (contact) => {
+							return <Menu.Item key={contact}>{contact}</Menu.Item>
+						})
+					}
 				</Menu>
 			</div>
 		);
@@ -108,11 +114,11 @@ class MenuList extends Component {
 }
 
 const mapStateToProps = state => ({
-	orgTree: state.orgTree,
-	rootOrgId: state.rootOrgId,
 	hashOrgAndMember: state.hashOrgAndMember,
 	openMenuKeys: state.openMenuKeys,
 	selectMember: state.selectMember,
-	userInfo: state.userInfo
+	userInfo: state.userInfo,
+	allContacts: state.allContacts,
+	globals: state.globals
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MenuList));
