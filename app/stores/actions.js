@@ -374,4 +374,14 @@ export const requestLogin = (payload) => (
 		type: "app/setLogin",
 		payload
 	}
-);
+)
+
+export const getPublicGroupList = payload => ({
+	type: "group/getPublicGroup",
+	payload
+});
+
+export const clearPublicGroupList = payload => ({
+	type: "clear/getPublicGroup",
+	payload
+})

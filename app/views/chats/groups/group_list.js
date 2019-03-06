@@ -5,6 +5,7 @@ import { withRouter, Route, Link, NavLink } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
 import _ from "underscore";
 import HeadImageView from "@/views/common/head_image";
+import AddGroup from "./add_group";
 const SubMenu = Menu.SubMenu;
 
 // const NavLink = ({ item }) => (
@@ -36,9 +37,10 @@ class GroupList extends Component {
 			allGroupChats,
 			globals
 		} = this.props;
-		let arrGroupChats = allGroupChats.allGroups;
+		let arrGroupChats = allGroupChats.allGroups || [];
 		return (
 			<div className="oa-main-list oa-conversation-list">
+				<AddGroup />
 				{
 					networkConnection
 						? <div className="network-state">网络连接已断开</div>
@@ -46,10 +48,9 @@ class GroupList extends Component {
 				}
 				<Menu
 					onClick={ this.handleClick }
-					onOpenChange={ this.handleOpenChange }
 					style={ { width: 300, border: "none" } }
 					selectedKeys={ selectGroup.easemobGroupId ? [selectGroup.easemobGroupId] : [] }
-					mode="inline"
+					// mode="inline"
 				>
 					{
 						arrGroupChats.map((groupId) => {

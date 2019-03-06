@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Route, withRouter } from "react-router-dom";
+import { Route, withRouter, Switch } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
 import ROUTES from "../common/routes";
 import ContactView from "../chats/contacts";
@@ -17,6 +17,7 @@ const mainViews = [
 class Container extends Component {
 	constructor(props){
 		super(props);
+		console.log("container");
 		this.state = {
 			conId: ""
 		};
@@ -43,12 +44,17 @@ class Container extends Component {
 		globals.chatManager.sendMessage(cmdMessage);
 	}
 
-	componentWillMount(){
-	}
+	// componentWillMount(props){
+	// 	const { userInfo } = this.props;
+	// 	if(!userInfo && userInfo.user && userInfo.user.id){
+	// 		return <Redirect to="/chats/recents" />;
+	// 	}
+	// }
 
 	render(){
 		return (
 			<div className="app-main-container dock">
+			<Switch>
 				{
 					mainViews.map((item) => {
 						return (
@@ -60,6 +66,7 @@ class Container extends Component {
 							/>);
 					})
 				}
+			</Switch>
 			</div>
 		);
 	}

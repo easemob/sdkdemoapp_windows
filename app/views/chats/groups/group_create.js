@@ -280,7 +280,7 @@ class CreateGroupView extends PureComponent {
 			allMembersInfo
 		} = this.props;
 		const { previewVisible, previewImage, fileList } = this.state;
-		var groupMemberInfoData = selectMember ? [userInfo.user].concat(selectMember) : [userInfo.user];
+		var groupMemberInfoData = userInfo ? (selectMember ? [userInfo.user].concat(selectMember) : [userInfo.user]) : [];
 		var groupMemberIds = _.pluck(groupMemberInfoData, "easemobName");
 		var memberInfoOfGroup;
 		return (
@@ -288,59 +288,61 @@ class CreateGroupView extends PureComponent {
 				<div className="add-members" onClick={ this.handleCreatGroup }>
 					<Icon type="plus-square-o" />
 				</div>
-				<Modal
-					title="新建群"
-					visible={ this.state.visible }
-					onCancel={ this.handleCancel }
-					mask={ false }
-					footer={ null }
-					style={ { top: 0 } }
-					width={ 700 }
-				>
-					<div className="oa-group">
-						<div className="oa-group-setting oa-group-create-setting">
-							<div>当前已选择{ membersIdOfCreateGroup.length + 1}人</div>
-							<div className="selected-members-container">
-								<div className="select-member" >
-									<HeadImageView imgUrl={ "" }></HeadImageView>
-									<div className="member-name">{ userInfo && userInfo.user.easemobName }</div>
-								</div>
-								{
-									_.map(membersIdOfCreateGroup, (member) => {
-										memberInfoOfGroup = allMembersInfo[member];
-										return (
-											<div className="select-member" key={ member }>
-												<HeadImageView imgUrl={ memberInfoOfGroup ? memberInfoOfGroup.image : "" }></HeadImageView>
-												<div className="member-name">
+				{userInfo ? 
+					<Modal
+						title="新建群"
+						visible={ this.state.visible }
+						onCancel={ this.handleCancel }
+						mask={ false }
+						footer={ null }
+						style={ { top: 0 } }
+						width={ 700 }
+					>
+						<div className="oa-group">
+							<div className="oa-group-setting oa-group-create-setting">
+								<div>当前已选择{ membersIdOfCreateGroup.length + 1}人</div>
+								<div className="selected-members-container">
+									<div className="select-member" >
+										<HeadImageView imgUrl={ "" }></HeadImageView>
+										<div className="member-name">{ userInfo && userInfo.user.easemobName }</div>
+									</div>
+									{
+										_.map(membersIdOfCreateGroup, (member) => {
+											memberInfoOfGroup = allMembersInfo[member];
+											return (
+												<div className="select-member" key={ member }>
+													<HeadImageView imgUrl={ memberInfoOfGroup ? memberInfoOfGroup.image : "" }></HeadImageView>
+													<div className="member-name">
+														{
+															memberInfoOfGroup
+																? memberInfoOfGroup.realName || memberInfoOfGroup.username || memberInfoOfGroup.easemobName
+																: member
+														}
+													</div>
 													{
-														memberInfoOfGroup
-															? memberInfoOfGroup.realName || memberInfoOfGroup.username || memberInfoOfGroup.easemobName
-															: member
+														member == selectConversationId
+															? null
+															: <div className="cancel-member" onClick={ () => { this.handleCancleSelectMember(member);  } }>
+																<Icon type="close" />
+															</div>
 													}
-												</div>
-												{
-													member == selectConversationId
-														? null
-														: <div className="cancel-member" onClick={ () => { this.handleCancleSelectMember(member);  } }>
-															<Icon type="close" />
-														</div>
-												}
 
-											</div>
-										);
-									})
-								}
+												</div>
+											);
+										})
+									}
+								</div>
+								<WrappedHorizontalLoginForm reduxProps={ this.props } createGroup={ this.createGroup } />
 							</div>
-							<WrappedHorizontalLoginForm reduxProps={ this.props } createGroup={ this.createGroup } />
+							<div className="oa-group-member">
+								<MenuList
+									selectMemberData={ membersIdOfCreateGroup }
+									groupMemberData={ groupMemberIds }
+								/>
+							</div>
 						</div>
-						<div className="oa-group-member">
-							<MenuList
-								selectMemberData={ membersIdOfCreateGroup }
-								groupMemberData={ groupMemberIds }
-							/>
-						</div>
-					</div>
-				</Modal>
+					</Modal> : null
+				}
 			</div>
 		);
 
