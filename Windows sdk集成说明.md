@@ -693,8 +693,8 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	changeGroupDescription(groupId, newDescription, error)
 调用方法如下:
 
-	groupManager.changeGroupSubject(groupId, "new Subject", error).then((group) =>{},(error) => {});
-    groupManager.changeGroupDescription(groupId, "new Description", error).then((group) =>{},(error) => {});
+	groupManager.changeGroupSubject(groupId, "new Subject", error).then((res) =>{},(error) => {});
+    groupManager.changeGroupDescription(groupId, "new Description", error).then((res) =>{},(error) => {});
 	
 #### 屏蔽群组消息
 接口API如下：

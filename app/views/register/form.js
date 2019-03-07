@@ -32,15 +32,15 @@ class RegisterForm extends PureComponent {
 		const { form } = this.props;
 		form.validateFields((err, fieldsValue) => {
 			this.emclient = utils.initEmclient();
-			this.emclient.createAccount(fieldsValue.userName, fieldsValue.password).then((error) => {
-			    if(error.errorCode == 0){
+			this.emclient.createAccount(fieldsValue.userName, fieldsValue.password).then((res) => {
+			    if(res.code == 0){
 			    	globalAction({
 						emclient: this.emclient
 					});
 			        setNotice("注册成功!");
 			    }
 			    else{
-			        setNotice("注册失败:" + error.description, "fail");
+			        setNotice("注册失败:" + res.description, "fail");
 			    }
 		    }, (err) => {
 		    	console.log(err, 9999);
