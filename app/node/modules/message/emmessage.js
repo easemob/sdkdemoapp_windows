@@ -41,7 +41,11 @@ const EMCmdMessageBody = require('./emcmdmessagebody');
  * COMMAND = 6      // Command message body
  * }
  */
-
+/**
+ * EMMessage constructor.
+ * @constructor
+ * @param {Object} message
+ */
 function EMMessage(message) {
   this._message = message;
   this._callback = null;
@@ -354,7 +358,7 @@ EMMessage.prototype.addBody = function (body) {
  * Add a extend attribute to message.
  * Note: Supported types: Bool Number and String.
  * @param {String} attribute
- * @param {Bool or Number or String} value
+ * @param {Bool | Number | String} value
  * @return {void}
  */
 EMMessage.prototype.setAttribute = function (attribute, value) {
@@ -365,7 +369,7 @@ EMMessage.prototype.setAttribute = function (attribute, value) {
  * Get extend attribute of message.
  * Note: Supported types: Bool Number and String.
  * @param {String} attribute
- * @return {Bool or Number or String}
+ * @return {Bool | Number | String}
  */
 EMMessage.prototype.getAttribute = function (attribute) {
   return this._message.getAttribute(attribute);

@@ -7,11 +7,15 @@ const EMCallback = require('./emcallback');
 const EMMucSharedFile = require('./emmucsharedfile');
 const async = require('async');
 
-
 /**
  * Easemob EMGroupManager implementation.
  */
 
+/**
+ * EMGroupManager constructor.
+ * @constructor
+ * @param {Object} manager
+ */
 function EMGroupManager(manager) {
   this._manager = manager;
 }
@@ -61,88 +65,35 @@ function createGroupList(list) {
 
 /**
  * Get groups for login user from cache, or from local database if not in cache.
- * @param {EMError} error
  * @return {Array} EMGroup array.
  */
-EMGroupManager.prototype.allMyGroups = function (error) {
-  var _manager = this._manager;
-  async function f(){
-    try{
-      return createGroupList(_manager.allMyGroups(error._error));
-    }catch(err)
-    {
-      console.log(err);
-    }
-  }
-  return f();
-};
-
-/**
- * Get groups for login user from local database.
- * @return {Array} EMGroup array.
- */
-EMGroupManager.prototype.loadAllMyGroupsFromDB = function () {
-  var _manager = this._manager;
-  async function f(){
-    try{
-      return createGroupList(_manager.loadAllMyGroupsFromDB());
-    }catch(err)
-    {
-      console.log(err);
-    }
-  }
-  return f();
+EMGroupManager.prototype.allMyGroups = function () {
+  let error = new EMError();
+  let grouplist = createGroupList(this._manager.allMyGroups(error._error));
+  return {
+    code:error.errorCode,
+    description:error.description,
+    data:grouplist
+  };
 };
 
 /**
  * Fetch all groups for login user from server.
  * Note: Groups in memory will be updated.
- * @param {EMError} error
  * @return {Array} EMGroup array.
  */
-EMGroupManager.prototype.fetchAllMyGroups = function (error) {
+EMGroupManager.prototype.fetchAllMyGroups = function () {
 
   var _manager = this._manager;
   async function f(){
     try{
-      return createGroupList(_manager.fetchAllMyGroups(error._error));
-    }catch(err)
-    {
-      console.log(err);
-    }
-  }
-  return f();
-};
-
-/**
- * Fetch all groups for login user from server with page.
- * Note: If PageNum=1, then will start from the first page of pagination.
- * @return {Array} EMGroup array.
- */
-EMGroupManager.prototype.fetchAllMyGroupsWithPage = function (pageNum, pageSize, error) {
-  var _manager = this._manager;
-  async function f(){
-    try{
-      return createGroupList(_manager.fetchAllMyGroupsWithPage(pageNum, pageSize, error._error));
-    }catch(err)
-    {
-      console.log(err);
-    }
-  }
-  return f();
-};
-
-/**
- * Fetch app's public groups with cursor.
- * Note: User can input empty string as cursor at the first time.
- * @return {EMCursorResult} cursor store the public groups.
- */
-EMGroupManager.prototype.fetchPublicGroupsWithCursor = function (cursor, pageSize, error) {
-  var _manager = this._manager;
-  async function f(){
-    try{
-      let cursor = new EMCursorResult(_manager.fetchPublicGroupsWithCursor(cursor, pageSize, error._error), 0);
-      return cursor.result();
+      let error = new EMError();
+      let grouplist = createGroupList(_manager.fetchAllMyGroups(error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:grouplist
+      };
     }catch(err)
     {
       console.log(err);
@@ -157,12 +108,17 @@ EMGroupManager.prototype.fetchPublicGroupsWithCursor = function (cursor, pageSiz
  * If PageNum=1, then will start from the first page of pagination.
  * @return {EMCursorResult} cursor store the public groups.
  */
-EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize, error) {
+EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize) {
   var _manager = this._manager;
   async function f(){
     try{
+      let error = new EMError();
       let pageresult = new EMPageResult(_manager.fetchPublicGroupsWithPage(pageNum, pageSize, error._error), 0);
-      return pageresult.result();
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:pageresult.result()
+      };
     }catch(err)
     {
       console.log(err);
@@ -179,15 +135,20 @@ EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize
  * @param {String} welcomeMessage   Welcoming message that will be sent to invited user.
  * @param {String} setting          Group's setting.
  * @param {Array} members           Group's members. String array.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group created.
  */
-EMGroupManager.prototype.createGroup = function (subject, description, welcomeMessage, setting, members, error) {
+EMGroupManager.prototype.createGroup = function (subject, description, welcomeMessage, setting, members) {
   
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.createGroup(subject, description, welcomeMessage, setting._setting, members, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.createGroup(subject, description, welcomeMessage, setting._setting, members, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -200,14 +161,19 @@ EMGroupManager.prototype.createGroup = function (subject, description, welcomeMe
  * Join a public group.
  * Note: The group's style must be PUBLIC_JOIN_OPEN, or will return error.
  * @param {String} groupId    Group ID.
- * @param {EMError} error     EMError used for output.
  * @return {EMGroup}          The group joined.
  */
-EMGroupManager.prototype.joinPublicGroup = function (groupId, error) {
+EMGroupManager.prototype.joinPublicGroup = function (groupId) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.joinPublicGroup(groupId, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.joinPublicGroup(groupId, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -222,14 +188,19 @@ EMGroupManager.prototype.joinPublicGroup = function (groupId, error) {
  * @param {String} groupId        Group ID.
  * @param {String} nickName       user's nickname in the group.
  * @param {String} message        requesting message, that will be sent to group owner.
- * @param {EMError} error         EMError used for output.
  * @return {EMGroup}              The group to join.
  */
-EMGroupManager.prototype.applyJoinPublicGroup = function (groupId, nickName, message, error) {
+EMGroupManager.prototype.applyJoinPublicGroup = function (groupId, nickName, message) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.applyJoinPublicGroup(groupId, nickName, message, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.applyJoinPublicGroup(groupId, nickName, message, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -242,14 +213,18 @@ EMGroupManager.prototype.applyJoinPublicGroup = function (groupId, nickName, mes
  * Leave a group.
  * Note: Group owner cannot leave the group.
  * @param {String} groupId        Group ID.
- * @param {EMError} error         EMError used for output.
  * @return {void}
  */
-EMGroupManager.prototype.leaveGroup = function (groupId, error) {
+EMGroupManager.prototype.leaveGroup = function (groupId) {
   var _manager = this._manager;
   async function f(){
     try{
+      let error = new EMError();
       _manager.leaveGroup(groupId, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -262,14 +237,18 @@ EMGroupManager.prototype.leaveGroup = function (groupId, error) {
  * Destroy a group.
  * Note: Only group owner can destroy the group.
  * @param {String} groupId        Group ID.
- * @param {EMError} error         EMError used for output.
  * @return {void}
  */
 EMGroupManager.prototype.destroyGroup = function (groupId, error) {
   var _manager = this._manager;
   async function f(){
     try{
+      let error = new EMError();
       _manager.destroyGroup(groupId, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -284,14 +263,19 @@ EMGroupManager.prototype.destroyGroup = function (groupId, error) {
  * @param {String} groupId          Group ID
  * @param {Array} members           string members array, Invited users.
  * @param {String} welcomeMessage   Welcome message that will be sent to invited user.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.addGroupMembers = function (groupId, members, welcomeMessage, error) {
+EMGroupManager.prototype.addGroupMembers = function (groupId, members, welcomeMessage) {
   var _manager = this._manager;
   async function f(){
     try{
-      new EMGroup(_manager.addGroupMembers(groupId, members, welcomeMessage, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.addGroupMembers(groupId, members, welcomeMessage, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -306,14 +290,19 @@ EMGroupManager.prototype.addGroupMembers = function (groupId, members, welcomeMe
  * ONLY group owner can remove both admin and members.
  * @param {String} groupId          Group ID.
  * @param {Array} members           string members array, Removed members.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.removeGroupMembers = function (groupId, members, error) {
+EMGroupManager.prototype.removeGroupMembers = function (groupId, members) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.removeGroupMembers(groupId, members, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.removeGroupMembers(groupId, members, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -328,15 +317,21 @@ EMGroupManager.prototype.removeGroupMembers = function (groupId, members, error)
  * ONLY group owner can block both admin and members.
  * @param {String} groupId          Group ID.
  * @param {Array} members           string members array,  Blocked members.
- * @param {EMError} error           EMError used for output.
+
  * @param {String} reason           The reason of blocking members.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.blockGroupMembers = function (groupId, members, error, reason) {
+EMGroupManager.prototype.blockGroupMembers = function (groupId, members, reason) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.blockGroupMembers(groupId, members, error._error, reason));
+      let error = new EMError();
+      let group = new EMGroup(_manager.blockGroupMembers(groupId, members, error._error, reason));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -437,11 +432,17 @@ EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension,
  * @param {Bool} fetchMembers       Whether get group's members.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.fetchGroupSpecification = function (groupId, error, fetchMembers) {
+EMGroupManager.prototype.fetchGroupSpecification = function (groupId, fetchMembers) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.fetchGroupSpecification(groupId, error._error, fetchMembers));
+      let error = new EMError();
+      let group = new EMGroup(_manager.fetchGroupSpecification(groupId, error._error, fetchMembers));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -456,14 +457,19 @@ EMGroupManager.prototype.fetchGroupSpecification = function (groupId, error, fet
  * @param {String} groupId          Group ID.
  * @param {String} cursor           Page's cursor.
  * @param {Number} pageSize         Page size. ex. 20 for 20 objects.
- * @param {EMError} error           EMError used for output.
  * @return {EMStringCursorResult}   the cursor store the list of group members.
  */
-EMGroupManager.prototype.fetchGroupMembers = function (groupId, cursor, pageSize, error) {
+EMGroupManager.prototype.fetchGroupMembers = function (groupId, cursor, pageSize) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMStringCursorResult(_manager.fetchGroupMembers(groupId, cursor, pageSize, error._error));
+      let error = new EMError();
+      let memberlist = new EMStringCursorResult(_manager.fetchGroupMembers(groupId, cursor, pageSize, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:memberlist.result()
+      };
     }catch(err)
     {
       console.log(err);
@@ -473,19 +479,25 @@ EMGroupManager.prototype.fetchGroupMembers = function (groupId, cursor, pageSize
 };
 
 /**
- * Change group's extension.
- * Note: Only group's owner can change group's extension.
+ * Get group's bans member list
+ * Note: User can input empty string as cursor at the first time
  * @param {String} groupId          Group ID.
- * @param {Number} pageNum          page number of pagination.
+ * @param {Number} pageNum          Page's cursor.
  * @param {Number} pageSize         Page size. ex. 20 for 20 objects.
- * @param {EMError} error           EMError used for output.
- * @return {Array}                  The blacklist of the group.
+ * @return {EMStringCursorResult}   the cursor store the list of group members.
  */
-EMGroupManager.prototype.fetchGroupBans = function (groupId, pageNum, pageSize, error) {
+
+EMGroupManager.prototype.fetchGroupBans = function (groupId, pageNum, pageSize) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.fetchGroupBans(groupId, pageNum, pageSize, error._error);
+      let error = new EMError();
+      let grouplist = new EMStringCursorResult(_manager.fetchGroupBans(groupId, pageNum, pageSize, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:grouplist.result()
+      };
     }catch(err)
     {
       console.log(err);
@@ -497,14 +509,19 @@ EMGroupManager.prototype.fetchGroupBans = function (groupId, pageNum, pageSize, 
 /**
  * Search for a public group.
  * @param {String} groupId          Group ID to be found.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group with specified id.
  */
-EMGroupManager.prototype.searchPublicGroup = function (groupId, error) {
+EMGroupManager.prototype.searchPublicGroup = function (groupId) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.searchPublicGroup(groupId, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.searchPublicGroup(groupId, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -517,14 +534,19 @@ EMGroupManager.prototype.searchPublicGroup = function (groupId, error) {
  * Block group message.
  * Note: Owner cannot block the group message.
  * @param {String} groupId          Group ID.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.blockGroupMessage = function (groupId, error) {
+EMGroupManager.prototype.blockGroupMessage = function (groupId) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.blockGroupMessage(groupId, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.blockGroupMessage(groupId, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -536,14 +558,19 @@ EMGroupManager.prototype.blockGroupMessage = function (groupId, error) {
 /**
  * Unblock group message.
  * @param {String} groupId          Group ID.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.unblockGroupMessage = function (groupId, error) {
+EMGroupManager.prototype.unblockGroupMessage = function (groupId) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.unblockGroupMessage(groupId, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.unblockGroupMessage(groupId, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -557,14 +584,19 @@ EMGroupManager.prototype.unblockGroupMessage = function (groupId, error) {
  * Note: Only group's owner and admin can approval user's request to join group.
  * @param {String} groupId          Group ID.
  * @param {String} user             The user that made the request.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.acceptJoinGroupApplication = function (groupId, user, error) {
+EMGroupManager.prototype.acceptJoinGroupApplication = function (groupId, user) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.acceptJoinGroupApplication(groupId, user, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.acceptJoinGroupApplication(groupId, user, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -578,14 +610,19 @@ EMGroupManager.prototype.acceptJoinGroupApplication = function (groupId, user, e
  * Note: Only group's owner and admin can decline user's request to join group.
  * @param {String} groupId          Group ID.
  * @param {String} user             The user that made the request.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.declineJoinGroupApplication = function (groupId, user, reason, error) {
+EMGroupManager.prototype.declineJoinGroupApplication = function (groupId, user, reason) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.declineJoinGroupApplication(groupId, user, reason, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.declineJoinGroupApplication(groupId, user, reason, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -598,14 +635,19 @@ EMGroupManager.prototype.declineJoinGroupApplication = function (groupId, user, 
  * accept invitation to join a group.
  * @param {String} groupId          Group ID.
  * @param {String} inviter          Inviter
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group user has accepted.
  */
-EMGroupManager.prototype.acceptInvitationFromGroup = function (groupId, inviter, error) {
+EMGroupManager.prototype.acceptInvitationFromGroup = function (groupId, inviter) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.acceptInvitationFromGroup(groupId, inviter, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.acceptInvitationFromGroup(groupId, inviter, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -619,14 +661,19 @@ EMGroupManager.prototype.acceptInvitationFromGroup = function (groupId, inviter,
  * @param {String} groupId          Group ID.
  * @param {String} inviter          Inviter.
  * @param {String} reason           The decline reason.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group user has accepted.
  */
-EMGroupManager.prototype.declineInvitationFromGroup = function (groupId, inviter, reason, error) {
+EMGroupManager.prototype.declineInvitationFromGroup = function (groupId, inviter, reason) {
   var _manager = this._manager;
   async function f(){
     try{
-      _manager.declineInvitationFromGroup(groupId, inviter, reason, error._error);
+      let error = new EMError();
+      let group = new EMGroup(_manager.declineInvitationFromGroup(groupId, inviter, reason, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -640,14 +687,19 @@ EMGroupManager.prototype.declineInvitationFromGroup = function (groupId, inviter
  * Note: Only group owner can transfer ownership
  * @param {String} groupId          Group ID of the current owner.
  * @param {String} newOwner         Group ID of the new owner.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group user has accepted.
  */
-EMGroupManager.prototype.transferGroupOwner = function (groupId, newOwner, error) {
+EMGroupManager.prototype.transferGroupOwner = function (groupId, newOwner) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.transferGroupOwner(groupId, newOwner, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.transferGroupOwner(groupId, newOwner, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -661,14 +713,19 @@ EMGroupManager.prototype.transferGroupOwner = function (groupId, newOwner, error
  * Note: Only group owner can add admin.
  * @param {String} groupId          Group ID.
  * @param {String} admin            New group admin.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.addGroupAdmin = function (groupId, admin, error) {
+EMGroupManager.prototype.addGroupAdmin = function (groupId, admin) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.addGroupAdmin(groupId, admin, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.addGroupAdmin(groupId, admin, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -682,14 +739,19 @@ EMGroupManager.prototype.addGroupAdmin = function (groupId, admin, error) {
  * Note: ONLY group owner can remove admin, not other admin.
  * @param {String} groupId          Group ID.
  * @param {String} admin            Group admin member.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.removeGroupAdmin = function (groupId, admin, error) {
+EMGroupManager.prototype.removeGroupAdmin = function (groupId, admin) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.removeGroupAdmin(groupId, admin, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.removeGroupAdmin(groupId, admin, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -704,14 +766,19 @@ EMGroupManager.prototype.removeGroupAdmin = function (groupId, admin, error) {
  * @param {String} groupId          Group ID.
  * @param {Array}  members          Group's mute members.
  * @param {Number} muteDuration     mute duration in milliseconds.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.muteGroupMembers = function (groupId, members, muteDuration, error) {
+EMGroupManager.prototype.muteGroupMembers = function (groupId, members, muteDuration) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.muteGroupMembers(groupId, members, muteDuration, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.muteGroupMembers(groupId, members, muteDuration, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -724,14 +791,19 @@ EMGroupManager.prototype.muteGroupMembers = function (groupId, members, muteDura
  * remove group muted members.
  * @param {String} groupId          Group ID.
  * @param {Array}  members          mute members to be removed.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
 EMGroupManager.prototype.unmuteGroupMembers = function (groupId, members, error) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.unmuteGroupMembers(groupId, members, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.unmuteGroupMembers(groupId, members, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -745,14 +817,19 @@ EMGroupManager.prototype.unmuteGroupMembers = function (groupId, members, error)
  * @param {String} groupId          Group ID.
  * @param {Number} pageNum          mute members to be removed.
  * @param {Number} pageSizePage     size. ex. 20 for 20 objects.
- * @param {EMError} error           EMError used for output.
  * @return {Array} object list. The list of mute users. object like { "key" : name, "value" : 111 }.
  */
-EMGroupManager.prototype.fetchGroupMutes = function (groupId, pageNum, pageSize, error) {
+EMGroupManager.prototype.fetchGroupMutes = function (groupId, pageNum, pageSize) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.fetchGroupMutes(groupId, pageNum, pageSize, error._error);
+      let error = new EMError();
+      let dataArray = _manager.fetchGroupMutes(groupId, pageNum, pageSize, error._error)
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:dataArray
+      };
     }catch(err)
     {
       console.log(err);
@@ -766,14 +843,19 @@ EMGroupManager.prototype.fetchGroupMutes = function (groupId, pageNum, pageSize,
  * @param {String} groupId          Group ID.
  * @param {String} filePath         file path to be uploaded to on server. Can be used for file downloading later.
  * @param {EMCallback} callback     EMCallback contains onProgress of file uploading progress.
- * @param {EMError} error           Check this EMError for upload success/failure. If !error, then it's uploaded successfully.
  * @return {Array} EMMucSharedFile list. 
  */
-EMGroupManager.prototype.uploadGroupSharedFile = function (groupId, filePath, callback, error) {
+EMGroupManager.prototype.uploadGroupSharedFile = function (groupId, filePath, callback) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMMucSharedFile(_manager.uploadGroupSharedFile(groupId, filePath, callback._callback, error._error));
+      let error = new EMError();
+      let sharedFile = new EMMucSharedFile(_manager.uploadGroupSharedFile(groupId, filePath, callback._callback, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:sharedFile
+      };
     }catch(err)
     {
       console.log(err);
@@ -787,19 +869,23 @@ EMGroupManager.prototype.uploadGroupSharedFile = function (groupId, filePath, ca
  * @param {String} groupId          Group ID.
  * @param {Number} pageNum          page number of pagination.
  * @param {Number} pageSize         Page size. ex. 20 for 20 objects.
- * @param {EMError} error           EMError used for output.
  * @return {Array} EMMucSharedFile list. 
  */
-EMGroupManager.prototype.fetchGroupSharedFiles = function (groupId, pageNum, pageSize, error) {
+EMGroupManager.prototype.fetchGroupSharedFiles = function (groupId, pageNum, pageSize) {
   var _manager = this._manager;
   async function f(){
     try{
+      let error = new EMError();
       var result = _manager.fetchGroupSharedFiles(groupId, pageNum, pageSize, error._error);
       var sharedFiles = new Array(result.length);
       for (var i = 0; i < result.length; i++) {
         sharedFiles[i] = new EMMucSharedFile(result[i]);
       }
-      return sharedFiles;
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:sharedFiles
+      };
     }catch(err)
     {
       console.log(err);
@@ -815,11 +901,25 @@ EMGroupManager.prototype.fetchGroupSharedFiles = function (groupId, pageNum, pag
  * @param {String} filePath         store file to this path.
  * @param {String} fileId           shared file id.
  * @param {EMCallback} callback     EMCallback contains onProgress of file uploading progress.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.downloadGroupSharedFile = function (groupId, filePath, fileId, callback, error) {
-  return new EMGroup(this._manager.downloadGroupSharedFile(groupId, filePath, fileId, callback._callback, error._error));
+EMGroupManager.prototype.downloadGroupSharedFile = function (groupId, filePath, fileId, callback) {
+  var _manager = this._manager;
+  async function f(){
+    try{
+      let error = new EMError();
+      let group = new EMGroup(_manager.downloadGroupSharedFile(groupId, filePath, fileId, callback._callback, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
@@ -827,14 +927,19 @@ EMGroupManager.prototype.downloadGroupSharedFile = function (groupId, filePath, 
  * Note: ONLY group's admin and owner or file uploader can delete shared file.
  * @param {String} groupId          Group ID.
  * @param {String} fileId           shared file id.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.deleteGroupSharedFile = function (groupId, fileId, error) {
+EMGroupManager.prototype.deleteGroupSharedFile = function (groupId, fileId) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.deleteGroupSharedFile(groupId, fileId, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.deleteGroupSharedFile(groupId, fileId, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -847,14 +952,19 @@ EMGroupManager.prototype.deleteGroupSharedFile = function (groupId, fileId, erro
  * fetch group's announcement.
  * Note: Only group's members can fetch group's announcement.
  * @param {String} groupId          Group ID.
- * @param {EMError} error           EMError used for output.
  * @return {String}                 The group's announcement in string.
  */
-EMGroupManager.prototype.fetchGroupAnnouncement = function (groupId, error) {
+EMGroupManager.prototype.fetchGroupAnnouncement = function (groupId) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.fetchGroupAnnouncement(groupId, error._error)
+      let error = new EMError();
+      let announcement = _manager.fetchGroupAnnouncement(groupId, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:announcement
+      };
     }catch(err)
     {
       console.log(err);
@@ -867,14 +977,19 @@ EMGroupManager.prototype.fetchGroupAnnouncement = function (groupId, error) {
  * Update group's announcement.
  * @param {String} groupId          Group ID.
  * @param {String} newAnnouncement  a new group announcement.
- * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.updateGroupAnnouncement = function (groupId, newAnnouncement, error) {
+EMGroupManager.prototype.updateGroupAnnouncement = function (groupId, newAnnouncement) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.updateGroupAnnouncement(groupId, newAnnouncement, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.updateGroupAnnouncement(groupId, newAnnouncement, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);

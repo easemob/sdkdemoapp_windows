@@ -10,6 +10,11 @@ const async = require('async');
  * Easemob EMChatManager implementation.
  */
 
+/**
+ * EMChatManager constructor.
+ * @constructor
+ * @param {Object} chatManager
+ */
 function EMChatManager(chatManager) {
   this._manager = chatManager;
 }
@@ -38,7 +43,8 @@ EMChatManager.prototype.sendReadAckForMessage = function (message) {
  * @param {EMError} error
  * @return {void}
  */
-EMChatManager.prototype.recallMessage = function (message, error) {
+EMChatManager.prototype.recallMessage = function (message) {
+  let error = new EMError();
   this._manager.recallMessage(message._message, error._error);
 };
 
@@ -187,13 +193,28 @@ EMChatManager.prototype.insertMessages = function (list) {
  * fetch conversation roam messages from server.
  * @param {String} conversationId
  * @param {Number} type
- * @param {Error} error
  * @param {Number} pageSize
  * @param {String} startMsgId
  * @return {EMCursorResult} cursor store the roam messages from the server.
  */
-EMChatManager.prototype.fetchHistoryMessages = function (conversationId, type, error, pageSize, startMsgId) {
-  return new EMCursorResult(this._manager.fetchHistoryMessages(conversationId, type, error._error, pageSize, startMsgId), 2);
+EMChatManager.prototype.fetchHistoryMessages = function (conversationId, type, pageSize, startMsgId) {
+  var _manager = this._manager;
+  async function f(){
+    try{
+      let error = new EMError();
+      let cursorresult = new EMCursorResult(_manager.fetchHistoryMessages(conversationId, type, error._error, pageSize, startMsgId), 2);
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:cursorresult.result()
+      };
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
+  return 
 };
 
 /**

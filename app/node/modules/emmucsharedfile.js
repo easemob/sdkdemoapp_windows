@@ -6,6 +6,15 @@ const easemobNode = require('./../load');
  * Easemob EMMucSharedFile implementation.
  */
 
+/**
+ * EMMucSetting constructor.
+ * @constructor
+ * @param {String} fileId 
+ * @param {String} fileName 
+ * @param {String} fileOwner 
+ * @param {Number} create 
+ * @param {Number} fileSize 
+ */
 function EMMucSharedFile(fileId, fileName, fileOwner, create, fileSize) {
   if (typeof(fileId) == "object") {
     this._sharedfile = fileId;

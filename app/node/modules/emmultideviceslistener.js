@@ -10,6 +10,10 @@ const emMultiDevicesListenerCount = 2;
  * Easemob EMMultiDevicesListener implementation.
  */
 
+/**
+ * EMMultiDevicesListener constructor.
+ * @constructor
+ */
 function EMMultiDevicesListener() {
   var self = this;
   self._eventEmitter = new EventEmitter();

@@ -12,6 +12,14 @@ const easemobNode = require('./../load');
  * }
  */
 
+/**
+ * EMMucSetting constructor.
+ * @constructor
+ * @param {Number} style 
+ * @param {Number} maxUserCount 
+ * @param {Bool} inviteNeedConfirm 
+ * @param {String} extension 
+ */
 function EMMucSetting(style, maxUserCount, inviteNeedConfirm, extension) {
   if (typeof(style) == "object") {
     this._setting = style;

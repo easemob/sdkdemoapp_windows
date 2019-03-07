@@ -50,15 +50,20 @@ class SearchView extends Component {
 		var groupMembers = [];
 		var me = this;
 		this.easemob = globals.easemob;
-		this.error = new this.easemob.EMError();
 		// 如果是群组，需要从 sdk 获取群信息跟新 reuducer，(除了头像、昵称、是否允许普通成员邀请群成员)
 		if(isSelectCovGroup){
 			group = globals.groupManager.groupWithId(key);
 			if(group.groupMembers().length == 0){
-				globals.groupManager.fetchGroupSpecification(key, me.error).then(group => {
+				globals.groupManager.fetchGroupSpecification(key).then(res => {
 					
+				},(error) => {
+
 				});
-				globals.groupManager.fetchGroupMembers(key, "", 500, me.error);
+				globals.groupManager.fetchGroupMembers(key, "", 500).then((res) => {
+
+				},(error) => {
+
+				});
 			}
 			groupInfo = {
 				owner: group.groupOwner(),

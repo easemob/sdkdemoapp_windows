@@ -12,6 +12,11 @@ const easemobNode = require('./../../load');
  * }
  */
 
+/**
+ * File message body constructor.
+ * @constructor
+ * @param {String} localPath The file path
+ */
 function EMFileMessageBody(localPath) {
   if (typeof(localPath) == "object") {
     this._body = localPath; //this situation used from emmessage.bodies()

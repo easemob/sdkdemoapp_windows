@@ -5,6 +5,15 @@ const easemobNode = require('./../load');
 /**
  * Easemob EMChatconfigs implementation.
  */
+
+/**
+ * EMCallback constructor.
+ * @constructor
+ * @param {string} resourcePath
+ * @param {string} workPath
+ * @param {string} appKey
+ * @param {Number} deviceId
+ */
 function EMChatConfigs(resourcePath, workPath, appKey, deviceId) {
   if (arguments.length > 1) {
     this._chatConfigs = new easemobNode.EMChatConfigs(resourcePath, workPath, appKey, deviceId);

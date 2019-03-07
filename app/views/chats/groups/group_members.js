@@ -114,11 +114,10 @@ class GroupMembersView extends Component {
 			setOwnerAction,
 			selectConversationId
 		} = this.props;
-		const error = new globals.easemob.EMError();
 		// 转让群主
-		var group = globals.groupManager.transferGroupOwner(selectConversationId, newOwner, error).then(group => {
-			if(error.errorCode != 0)
-			  console.log("transferGroupOwner fail:" + error.description);
+		globals.groupManager.transferGroupOwner(selectConversationId, newOwner, error).then(res => {
+			if(res.code != 0)
+			  console.log("transferGroupOwner fail:" + res.description);
 		});
 		this.setState(this.state);
 		// console.log(`transferGroupOwner error.errorCode = ${error.errorCode}`);
@@ -134,10 +133,9 @@ class GroupMembersView extends Component {
 			selectConversationId,
 			setAdminAction,
 		} = this.props;
-		const error = new globals.easemob.EMError();
-		globals.groupManager.addGroupAdmin(selectConversationId, member, error).then(group => {
-			if(error.errorCode != 0)
-			  console.log("addGroupAdmin fail:" + error.description);
+		globals.groupManager.addGroupAdmin(selectConversationId, member).then(res => {
+			if(res.code != 0)
+			  console.log("addGroupAdmin fail:" + res.description);
 		});
 		this.setState(this.state);
 		// console.log(`addGroupAdmin error.errorCode = ${error.errorCode}`);
@@ -153,10 +151,9 @@ class GroupMembersView extends Component {
 			selectConversationId,
 			cancelAdminAction
 		} = this.props;
-		const error = new globals.easemob.EMError();
-		globals.groupManager.removeGroupAdmin(selectConversationId, member, error).then(group => {
-			if(error.errorCode != 0)
-			  console.log("removeGroupAdmin fail:" + error.description);
+		globals.groupManager.removeGroupAdmin(selectConversationId, member).then(res => {
+			if(res.code != 0)
+			  console.log("removeGroupAdmin fail:" + res.description);
 		});
 		this.setState(this.state);
 		// console.log(`removeGroupAdmin error.description = ${error.description}`);
@@ -206,14 +203,14 @@ class GroupMembersView extends Component {
 		if(count <= 500){
 			cancelCreateGroupAction();
 			cancelEditGroupAction();
-			this.groupManager.addGroupMembers(selectConversationId, addMembers, "", error).then(group => {
-				
+			this.groupManager.addGroupMembers(selectConversationId, addMembers, "").then(res => {
+				console.log(`selectConversationId${selectConversationId}`);
+				console.log(`addMembers${addMembers}`);
+				console.log(addMembers.length);
+				console.log(`addGroupMembers error.errorCode = ${res.code}`);
+				console.log(`addGroupMembers error.description = ${res.description}`);
 			});
-			console.log(`selectConversationId${selectConversationId}`);
-			console.log(`addMembers${addMembers}`);
-			console.log(addMembers.length);
-			console.log(`addGroupMembers error.errorCode = ${error.errorCode}`);
-			console.log(`addGroupMembers error.description = ${error.description}`);
+			
 
 			this.setState({
 				visible: false
@@ -319,12 +316,11 @@ class GroupMembersView extends Component {
 			cancelRemoveGroupAction
 		} = this.props;
 		var easemob = globals.easemob;
-		var error = new easemob.EMError();
 		// groupManager.removeGroupMembers(group.groupId(), ["jwfan3", "jwfan4"], error);
 		console.log("removemembers:" + removeMembers);
-		this.groupManager.removeGroupMembers(selectConversationId, removeMembers, error).then(group => {
-			if(error.errorCode != 0)
-			console.log(`removeGroupMembers error.description = ${error.description}`);
+		this.groupManager.removeGroupMembers(selectConversationId, removeMembers).then(res => {
+			if(res.code != 0)
+			  console.log(`removeGroupMembers error.description = ${res.description}`);
 		});
 		// console.log(`selectConversationId${selectConversationId}`);
 		// console.log(`removeMembers${removeMembers}`);

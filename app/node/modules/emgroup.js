@@ -7,6 +7,11 @@ const EMMucSharedFile = require('./emmucsharedfile');
  * Easemob EMGroup implementation.
  */
 
+/**
+ * EMError constructor.
+ * @constructor
+ * @param {Object} group
+ */
 function EMGroup(group) {
   this._group = group;
 }

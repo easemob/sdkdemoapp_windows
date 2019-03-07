@@ -61,7 +61,15 @@ class MainView extends PureComponent {
 			else{
 				this.emclient = utils.initEmclient();
 			}
-			this.emclient.login( userInfo.user.easemobName, userInfo.user.easemobPwd);
+			this.emclient.login( userInfo.user.easemobName, userInfo.user.easemobPwd).then((res) => {
+				console.log(`loginCode:${res.code}`);
+			if(res.code != 0){
+				setNotice(`登录失败，${res.code}`);
+				this.emclient.logout();
+				logout();
+				return false;
+			}
+		});
 			this.log = new easemob.EMLog();
 			this.error = new easemob.EMError();
 
@@ -159,9 +167,13 @@ class MainView extends PureComponent {
 					let con = confirm(username + "请求添加好友,是否同意");
 					if (con == true) {
 						console.log("agree invite");
-					  this.contactManager.acceptInvitation(username, error);
+						this.contactManager.acceptInvitation(username).then((res) => {
+							console.log("acceptInvitation:" + res.code);
+						});
 					} else {
-					  contactManager.declineInvitation(username, error);
+						contactManager.declineInvitation(username).then((res) => {
+							console.log("acceptInvitation:" + res.code);
+						});
 					}
 				},500);
 				
@@ -319,24 +331,27 @@ class MainView extends PureComponent {
 			// }
 
 			// 获取好友列表
-			var error = new easemob.EMError();
-			var contacts = this.contactManager.allContacts(error);
-			console.error("error.errorCode:" + error.errorCode + "  description:" + error.description,);
-			console.log("allContacts length:" + contacts.length);
-			contacts.map((item) => {
-				console.log(item);
-			})
-			setAllContacts({contacts});
+		var res = this.contactManager.allContacts();
+		console.log("error.errorCode:" + res.code + "  description:" + res.description);
+		console.log("allContacts length:" + res.data.length);
+		res.data.map((item) => {
+			console.log(item);
+		})
+		setAllContacts({contacts:res.data});
 
-			// 获取用户所在的组
-			this.groupManager.fetchAllMyGroups(error).then(groups => {
-				let allGroups = [];
-				groups.map((group) => {
-					allGroups.push(group.groupId());
-				});
-				setGroupChats({allGroups});
+		// 获取用户所在的组
+		this.groupManager.fetchAllMyGroups().then(res => {
+			if(res.code != 0)
+			{
+				console.log("fetchMyGroup fail:" + res.description);
+			}
+			let allGroups = [];
+			res.data.map((group) => {
+				allGroups.push(group.groupId());
 			});
-			
+			setGroupChats({allGroups});
+		});
+		
 
 
 			// this.chatManager.getConversations();// 获取缓存中的会话列表
@@ -738,18 +753,18 @@ class MainView extends PureComponent {
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
 			if(conversationType == 1 && (!conversations[conversationId])){
-				this.groupManager.fetchAllMyGroups(error).then(groups => {
+				this.groupManager.fetchAllMyGroups().then(res => {
 					let allGroups = [];
-					groups.map((group) => {
+					res.data.map((group) => {
 						allGroups.push(group.groupId());
 					});
 					setGroupChats({allGroups});
 			    });
 		    }
 			else if(conversationType == 0 && (!allMembersInfo[conversationId])){
-				this.groupManager.fetchAllMyGroups(error).then(groups => {
+				this.groupManager.fetchAllMyGroups().then(res => {
 					let allGroups = [];
-					groups.map((group) => {
+					res.data.map((group) => {
 						allGroups.push(group.groupId());
 			        });
 			        setGroupChats({allGroups});

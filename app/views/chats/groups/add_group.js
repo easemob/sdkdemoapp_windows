@@ -41,10 +41,9 @@ class AddGroup extends Component {
 		const { globals, publicGroup, getPublicGroupList } = this.props;
 		const { page } = this.state;
 		this.easemob = globals.easemob;
-		this.error = new this.easemob.EMError();
-		globals.groupManager.fetchPublicGroupsWithPage(page + 1, 5, this.error)
+		globals.groupManager.fetchPublicGroupsWithPage(page + 1, 5)
 		.then(( res ) => {
-			getPublicGroupList(publicGroup.concat(res));
+			getPublicGroupList(publicGroup.concat(res.data));
 			this.setState({
 				page: page + 1,
 				moreLoading: false
@@ -79,9 +78,9 @@ class AddGroup extends Component {
 			.then((res) => {
 				if(error.errorCode == 0){
 					globals.groupManager.fetchAllMyGroups(error)
-					.then((groups) => {
+					.then((res) => {
 						let allGroups = [];
-						groups.map((group) => {
+						res.code == 0 && res.data.map((group) => {
 							allGroups.push(group.groupId());
 						});
 						setGroupChats({ allGroups });

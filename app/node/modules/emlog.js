@@ -1,31 +1,78 @@
 const easemobNode = require('./../load');
 const log = new easemobNode.EMLog();
 
+/**
+ * EMLog constructor.
+ * @constructor
+ * @param {Object} manager
+ */
 function EMLog(){
-    //log输出
+    this._isDisplayOnConsole = false;
+    /**
+     * output log
+     * @param {String} info
+     */
     this.Log = function(info){
+        if(this._isDisplayOnConsole)
+          console.log(info);
         log.Log(info);
     };
-    //debug等级日志输出
+    /**
+     * output Debug log
+     * @param {String} info
+     */
     this.Debug = function(info){
+        if(this._isDisplayOnConsole)
+          console.log(info);
         log.Debug(info);
     };
-    //warn等级日志输出
+    /**
+     * output Warn log
+     * @param {String} info
+     */
     this.Warn = function(info){
+        if(this._isDisplayOnConsole)
+          console.log(info);
         log.Warn(info);
     };
-    //error等级日志输出
+    /**
+     * output Error log
+     * @param {String} info
+     */
     this.Error = function(info){
+        if(this._isDisplayOnConsole)
+          console.log(info);
         log.Error(info);
     };
-    //设置日志等级，0为debug，1为warn,2为error
+    /**
+     * set log level
+     * @param {Number} level
+     */
     this.setLogLevel = function(level){
         log.setLogLevel(level);
     };
-    //获取日志等级
+    /**
+     * get log level
+     * @return {Number}
+     */
     this.getLogLevel = function(level){
         return log.getLogLevel();
     };
+    /**
+     * set weather display on console
+     * @param {Bool} isDisplayOnConsole
+     */
+    this.setIsDisplayOnConsole = function(isDisplayOnConsole){
+        this._isDisplayOnConsole = isDisplayOnConsole;
+    };
+    /**
+     * get weather display on console
+     * @return {Bool}
+     */
+    this.getIsDisplayOnConsole = function(){
+        return this._isDisplayOnConsole;
+    }
+
 }
 
 module.exports = EMLog;

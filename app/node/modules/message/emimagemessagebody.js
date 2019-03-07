@@ -5,7 +5,12 @@ const easemobNode = require('./../../load');
 /**
  * Easemob EMImageMessageBody implementation.
  */
-
+/**
+ * Image message body constructor.
+ * @constructor
+ * @param {Number} width The width of image
+ * @param {Number} height The height of image
+ */
 function EMImageSize(width, height) {
   this._size = new easemobNode.EMImageSize(width, height);
   Object.defineProperties(this, {

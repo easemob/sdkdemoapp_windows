@@ -7,6 +7,11 @@ const EMChatroom = require('./emchatroom')
  * Easemob EMStringCursorResult implementation.
  */
 
+/**
+ * EMStringCursorResult constructor.
+ * @constructor
+ * @param {Object} cursor
+ */
 function EMStringCursorResult(cursor) {
   this._cursor = cursor;
 }

@@ -5,7 +5,13 @@ const easemobNode = require('./../../load');
 /**
  * Easemob EMLocationMessageBody implementation.
  */
-
+/**
+ * Location message body constructor.
+ * @constructor
+ * @param {Number} latitude
+ * @param {Number} longitude
+ * @param {String} address
+ */
 function EMLocationMessageBody(latitude, longitude, address) {
   if (typeof(latitude) == "object") {
     this._body = latitude; //this situation used from emmessage.bodies()

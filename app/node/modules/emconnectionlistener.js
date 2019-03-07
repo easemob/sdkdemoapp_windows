@@ -11,6 +11,10 @@ const emConnectionListenerCount = 3;
  * Easemob EMConnectionListener implementation.
  */
 
+/**
+ * EMConnectionListener constructor.
+ * @constructor
+ */
 function EMConnectionListener() {
   var self = this;
   self._eventEmitter = new EventEmitter();

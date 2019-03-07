@@ -5,7 +5,12 @@ const easemobNode = require('./../../load');
 /**
  * Easemob EMVoiceMessageBody implementation.
  */
-
+/**
+ * Voice message body constructor.
+ * @constructor
+ * @param {String} localPath
+ * @param {Number} duration
+ */
 function EMVoiceMessageBody (localPath, duration) {
   this._body = new easemobNode.EMVoiceMessageBody(localPath, duration);
 }

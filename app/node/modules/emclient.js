@@ -12,6 +12,12 @@ const fs = require("fs")
 /**
  * Easemob EMClient implementation.
  */
+
+/**
+ * EMClient constructor.
+ * @constructor
+ * @param {Object} chatConfigs EMChatConfigs
+ */
 function EMClient(chatConfigs,autoLogin) {
   this._emclient = easemobNode.createEMClient(chatConfigs._chatConfigs);
   if(autoLogin)
@@ -19,7 +25,7 @@ function EMClient(chatConfigs,autoLogin) {
     console.log("autologin");
     var _emclient = this._emclient;
     // 异步读取
-    let configs = this.getChatConfigs();
+    let configs = new EMChatConfigs(_emclient.getChatConfigs());
     fs.readFile(configs.getWorkPath() +'/easemobkey.json', function (err, data) {
       console.log("filedata:" + data);
     if (err) {
@@ -43,16 +49,29 @@ function EMClient(chatConfigs,autoLogin) {
  * Login with username and password.
  * @param {String} username
  * @param {String} password
- * @return {EMError}
+ * @return {result}
  */
 EMClient.prototype.login = function (username, password) {
-  let info = {username,password};
-  let configs = this.getChatConfigs();
-  fs.writeFile(configs.getWorkPath() + "/easemobkey.json",JSON.stringify(info),(err) => {
-    if(err)
+  var _emclient = this._emclient;
+  async function f(){
+    try{
+      let error = new EMError(_emclient.login(username, password));
+      let info = {username,password};
+      let configs = new EMChatConfigs(_emclient.getChatConfigs());
+      fs.writeFile(configs.getWorkPath() + "/easemobkey.json",JSON.stringify(info),(err) => {
+      if(err)
+        console.log(err);
+    });
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
+    }catch(err)
+    {
       console.log(err);
-  });
-  return new EMError(this._emclient.login(username, password));
+    }
+  }
+  return f();
 };
 
 /**
@@ -62,21 +81,47 @@ EMClient.prototype.login = function (username, password) {
  * @return {EMError}
  */
 EMClient.prototype.loginWithToken = function (username, token) {
-  return new EMError(this._emclient.loginWithToken(username, token));
+  var _emclient = this._emclient;
+  async function f(){
+    try{
+      let error = new EMError(_emclient.loginWithToken(username, token));
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
+    }catch(err)
+    {
+      console.log(err);
+    }
+  }
+  return f();
 };
 
 /**
  * Logout current user.
- * @return {void}
+ * @return {EMError}
  */
 EMClient.prototype.logout = function () {
-  let configs = this.getChatConfigs();
-  fs.unlink(configs.getWorkPath() + "/easemobkey.json",(err)=>{
-    if (err) {
-      return console.error(err);
+  var _emclient = this._emclient;
+  async function f(){
+    try{
+      _emclient.logout();
+      let configs = new EMChatConfigs(_emclient.getChatConfigs());
+      fs.unlink(configs.getWorkPath() + "/easemobkey.json",(err)=>{
+        if (err) {
+          return console.error(err);
+        }
+      });
+      return {
+        code:0,
+        description:""
+      };
+    }catch(err)
+    {
+      console.log(err);
+    }
   }
-  });
-  this._emclient.logout();
+  return f();
 };
 
 /**
@@ -87,7 +132,12 @@ EMClient.prototype.logout = function () {
  * @return {EMLoginInfo}
  */
 EMClient.prototype.getLoginInfo = function () {
-  return this._emclient.getLoginInfo();
+  let logininfo = this._emclient.getLoginInfo();
+  return {
+    loginUser:logininfo.loginUser(),
+    loginPassword:logininfo.loginPassword(),
+    loginToken:logininfo.loginToken()
+  }
 };
 
 /**
@@ -96,7 +146,11 @@ EMClient.prototype.getLoginInfo = function () {
  * @return {EMError}
  */
 EMClient.prototype.changeAppkey = function (appKey) {
-  return new EMError(this._emclient.changeAppkey(appKey));
+  let error = new EMError(this._emclient.changeAppkey(appKey));
+  return {
+    code:error.errorCode,
+    description:error.description
+  };
 };
 
 /**
@@ -127,7 +181,11 @@ EMClient.prototype.createAccount = function (username, password) {
   var _emclient = this._emclient;
   async function f(){
     try{
-      return new EMError(_emclient.createAccount(username, password));
+      let error = new EMError(_emclient.createAccount(username, password));
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);

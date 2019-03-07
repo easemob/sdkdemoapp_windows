@@ -32,23 +32,33 @@ EMContactManager.prototype.removeContactListener = function (listener) {
 
 /**
  * retrieve current user's friend list from server.
- * @param {Error} error
- * @return {Array} String array
+ * @return {Object}
  */
-EMContactManager.prototype.allContacts = function (error) {
-  return this._manager.allContacts(error._error);
+EMContactManager.prototype.allContacts = function () {
+  let error = new EMError();
+  let contactlist = this._manager.allContacts(error._error);
+  return {
+    code:error.errorCode,
+    description:error.description,
+    data:contactlist
+  };
 };
 
 /**
  * retrieve current user's friend list from server.
- * @param {Error} error
- * @return {Array} String array
+ * @return {Object}
  */
-EMContactManager.prototype.getContactsFromServer = function (error) {
+EMContactManager.prototype.getContactsFromServer = function () {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.getContactsFromServer(error._error);
+      let error = new EMError();
+      let contactlist = _manager.getContactsFromServer(error._error);
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:contactlist
+      }
     }catch(err)
     {
       console.log(err);
@@ -59,25 +69,34 @@ EMContactManager.prototype.getContactsFromServer = function (error) {
 
 /**
  * invite contact to be friend, need contact accept.
- * @param {Error} error
- * @return {Array} String array
+ * @return {Object} String array
  */
-EMContactManager.prototype.getContactsFromDB = function (error) {
-  return this._manager.getContactsFromDB(error._error);
+EMContactManager.prototype.getContactsFromDB = function () {
+  let error = new EMError();
+  let contactlist = this._manager.getContactsFromDB(error._error);
+  return {
+    code:error.errorCode,
+    description:error.description,
+    data:contactlist
+  };
 };
 
 /**
  * invite contact to be friend, need contact accept.
  * @param {String} username
  * @param {String} message
- * @param {Error} error
- * @return {void}
+ * @return {Object}
  */
-EMContactManager.prototype.inviteContact = function (username, message, error) {
+EMContactManager.prototype.inviteContact = function (username, message) {
+  let error = new EMError();
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.inviteContact(username, message, error._error);
+      _manager.inviteContact(username, message, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -90,14 +109,18 @@ EMContactManager.prototype.inviteContact = function (username, message, error) {
  * invite contact to be friend, need contact accept.
  * @param {String} username
  * @param {String} message
- * @param {Error} error
- * @return {void}
+ * @return {Object}
  */
-EMContactManager.prototype.deleteContact = function (username, error,keepConversation) {
+EMContactManager.prototype.deleteContact = function (username,keepConversation) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.deleteContact(username, error._error,keepConversation);
+      let error = new EMError();
+      _manager.deleteContact(username, error._error,keepConversation);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -109,14 +132,18 @@ EMContactManager.prototype.deleteContact = function (username, error,keepConvers
 /**
  * accept contact's invitation.
  * @param {String} username
- * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.acceptInvitation = function (username, error) {
+EMContactManager.prototype.acceptInvitation = function (username) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.acceptInvitation(username, error._error);
+      let error = new EMError();
+      _manager.acceptInvitation(username, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -128,14 +155,18 @@ EMContactManager.prototype.acceptInvitation = function (username, error) {
 /**
  * decline contact's invitation.
  * @param {String} username
- * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.declineInvitation = function (username, error) {
+EMContactManager.prototype.declineInvitation = function (username) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.declineInvitation(username, error._error);
+      let error = new EMError();
+      _manager.declineInvitation(username, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -146,41 +177,33 @@ EMContactManager.prototype.declineInvitation = function (username, error) {
 
 /**
  * retrieve black list from memory.
- * @param {Error} error
  * @return {Array} String array
  */
-EMContactManager.prototype.blacklist = function (error) {
-  return this._manager._manager.blacklist(error._error);
+EMContactManager.prototype.blacklist = function () {
+  let error = new EMError();
+  let memberlist = this._manager._manager.blacklist(error._error);
+  return {
+    code:error.errorCode,
+    description:error.description,
+    data:memberlist
+  }
 };
 
 /**
  * retrieve black list from server.
- * @param {Error} error
  * @return {Array} String array
  */
-EMContactManager.prototype.getBlackListFromServer = function (error) {
+EMContactManager.prototype.getBlackListFromServer = function () {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.getBlackListFromServer(error._error);
-    }catch(err)
-    {
-      console.log(err);
-    }
-  }
-  return f();
-};
-
-/**
- * retrieve black list from local database.
- * @param {Error} error
- * @return {Array} String array
- */
-EMContactManager.prototype.getBlackListFromDB = function (error) {
-  var _manager = this._manager;
-  async function f(){
-    try{
-      return _manager.getBlackListFromDB(error._error);
+      let error = new EMError();
+      let memberlist = _manager.getBlackListFromServer(error._error);
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:memberlist
+      };
     }catch(err)
     {
       console.log(err);
@@ -192,14 +215,18 @@ EMContactManager.prototype.getBlackListFromDB = function (error) {
 /**
  * save black list.
  * @param {Array} blacklist String array
- * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.saveBlackList = function (blacklist, error) {
+EMContactManager.prototype.saveBlackList = function (blacklist) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.saveBlackList(blacklist, error._error);
+      let error = new EMError();
+      _manager.saveBlackList(blacklist, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -212,15 +239,18 @@ EMContactManager.prototype.saveBlackList = function (blacklist, error) {
  * add contact to blacklist.
  * Note: both whether both side will be blocked, if true user also can not subscribe contact's presense. both = false is not work yet, current behaviour is both side conmunication will be blocded.
  * @param {String} username
- * @param {Bool} both
- * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.addToBlackList = function (username, both, error) {
+EMContactManager.prototype.addToBlackList = function (username) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.addToBlackList(username, both, error._error);
+      let error = new EMError();
+      _manager.addToBlackList(username,true, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
@@ -232,14 +262,18 @@ EMContactManager.prototype.addToBlackList = function (username, both, error) {
 /**
  * remove contact from black list.
  * @param {String} username
- * @param {Error} error
  * @return {void}
  */
-EMContactManager.prototype.removeFromBlackList = function (username, error) {
+EMContactManager.prototype.removeFromBlackList = function (username) {
   var _manager = this._manager;
   async function f(){
     try{
-      return _manager.removeFromBlackList(username, error._error);
+      let error = new EMError();
+      _manager.removeFromBlackList(username, error._error);
+      return {
+        code:error.errorCode,
+        description:error.description
+      };
     }catch(err)
     {
       console.log(err);
