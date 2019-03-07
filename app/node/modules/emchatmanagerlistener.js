@@ -29,6 +29,10 @@ function createEMConversationList(array) {
   return conversationList;
 }
 
+/**
+ * EMChatManagerListener constructor.
+ * @constructor
+ */
 function EMChatManagerListener() {
   var self = this;
   self._eventEmitter = new EventEmitter();

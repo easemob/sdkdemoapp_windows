@@ -12,6 +12,10 @@ const emCallbackCount = 3;
  * Easemob EMCallback implementation.
  */
 
+ /**
+ * EMCallback constructor.
+ * @constructor
+ */
 function EMCallback() {
   var self = this;
   self._eventEmitter = new EventEmitter();

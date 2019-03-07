@@ -11,6 +11,10 @@ const emChatroomManagerListenerCount = 9;
  * Easemob EMChatroomManagerListener implementation.
  */
 
+/**
+ * EMChatroomManagerListener constructor.
+ * @constructor
+ */
 function EMChatroomManagerListener() {
   var self = this;
   self._eventEmitter = new EventEmitter();

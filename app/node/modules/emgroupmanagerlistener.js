@@ -11,6 +11,11 @@ const emGroupManagerListenerCount = 19;
  * Easemob EMGroupManagerListener implementation.
  */
 
+/**
+ * EMGroupManagerListener constructor.
+ * @constructor
+ * @param {Object} manager
+ */
 function EMGroupManagerListener(manager) {
   var self = this;
   self._manager = manager;

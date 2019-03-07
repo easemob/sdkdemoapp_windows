@@ -8,6 +8,11 @@ const async = require('async');
  * Easemob EMChatroomManager implementation.
  */
 
+/**
+ * EMChatroomManager constructor.
+ * @constructor
+ * @param {Object} manager
+ */
 function EMChatroomManager(manager) {
   this._manager = manager;
 }

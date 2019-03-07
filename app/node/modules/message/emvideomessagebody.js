@@ -5,7 +5,12 @@ const easemobNode = require('./../../load');
 /**
  * Easemob EMVideoMessageBody implementation.
  */
-
+/**
+ * Video size constructor.
+ * @constructor
+ * @param {Number} width
+ * @param {Number} height
+ */
 function EMVideoSize (width, height) {
   this._size = new easemobNode.EMVideoSize(width, height);
   Object.defineProperties(this, {
@@ -28,6 +33,12 @@ function EMVideoSize (width, height) {
   });
 }
 
+/**
+ * Video message body constructor.
+ * @constructor
+ * @param {String} localPath
+ * @param {String} thumbnailLocalPath
+ */
 function EMVideoMessageBody(localPath, thumbnailLocalPath) {
   this._body = new easemobNode.EMVideoMessageBody(localPath, thumbnailLocalPath);
 }

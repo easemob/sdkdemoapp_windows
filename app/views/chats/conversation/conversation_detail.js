@@ -16,7 +16,6 @@ class ConversationDetailView extends Component {
 	constructor(props){
 		super(props);
 		const { globals, setNotice } = this.props;
-		const error = new globals.easemob.EMError();
 		var me = this;
 		// this.recallMsg = {};
 		this.handleClick = this.handleClick.bind(this);
@@ -31,7 +30,7 @@ class ConversationDetailView extends Component {
 		ipcRenderer.on("recallMessage", () => {
 			if(!!(moment().format("x") - this.recallMsg.timestamp() < 60 * 2 * 1000)){
 				me.onRecallMessages(me.recallMsg);
-				globals.chatManager.recallMessage(me.recallMsg, error);
+				globals.chatManager.recallMessage(me.recallMsg);
 			}
 			else{
 				setNotice("撤回失败，时间已超过 2 分钟", "fail");

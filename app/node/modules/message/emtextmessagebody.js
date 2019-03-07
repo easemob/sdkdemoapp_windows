@@ -5,7 +5,11 @@ const easemobNode = require('./../../load');
 /**
  * Easemob EMTextMessageBody implementation.
  */
-
+/**
+ * Text message body constructor.
+ * @constructor
+ * @param {String} text
+ */
 function EMTextMessageBody(text) {
   if (typeof(text) == "object") {
     this._body = text; //this situation used from emmessage.bodies()

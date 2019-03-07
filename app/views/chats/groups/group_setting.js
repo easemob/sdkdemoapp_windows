@@ -73,9 +73,9 @@ class GroupSettingView extends Component {
 			leaveGroupAction,
 		} = this.props;
 		var groupManager = globals.groupManager;
-		var error = new globals.easemob.EMError();
-		groupManager.leaveGroup(selectConversationId, error).then(() => {
-			
+		groupManager.leaveGroup(selectConversationId).then((res) => {
+			if(res.code != 0)
+			  console.log("leave group fail:" + res.description);
 		});
 		leaveGroupAction(selectConversationId);
 	}
@@ -88,9 +88,8 @@ class GroupSettingView extends Component {
 			destoryGroup
 		} = this.props;
 		let groupManager = globals.groupManager;
-		let error = new globals.easemob.EMError();
-		groupManager.destroyGroup(selectConversationId,error).then(() => {
-			if(error.errorCode == 0)
+		groupManager.destroyGroup(selectConversationId).then((res) => {
+			if(res.code == 0)
 			{
 				destoryGroup(selectConversationId);
 			}
@@ -143,9 +142,9 @@ class GroupSettingView extends Component {
 			globals
 		} = this.props;
 		let groupManager = globals.groupManager;
-		const error = new globals.easemob.EMError();
-		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20),error).then(group => {
-
+		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20)).then(res => {
+			if(res.code != 0)
+			  console.log("leave group fail:" + res.description);
 		});
 		conversationOfSelect("");
 		conversationOfSelect(selectConversationId);
@@ -181,22 +180,21 @@ class GroupSettingView extends Component {
 	handleChangeMessageFrom(checked){
 		const { globals, selectConversationId } = this.props;
 		const groupManager = globals.groupManager;
-		const error = new globals.easemob.EMError();
 		if(checked){
-			groupManager.blockGroupMessage(selectConversationId, error).then(group => {
-				if(error.errorCode == 0)
+			groupManager.blockGroupMessage(selectConversationId).then(res => {
+				if(res.code == 0)
 				{
-					console.log(`blockGroupMessage error.description = ${error.description}`);
+					console.log(`blockGroupMessage error.description = ${res.description}`);
 				}
 			});
 			// console.log(`blockGroupMessage error.errorCode = ${error.errorCode}`);
 			// console.log(`blockGroupMessage error.description = ${error.description}`);
 		}
 		else{
-			groupManager.unblockGroupMessage(selectConversationId, error).then(group => {
-				if(error.errorCode == 0)
+			groupManager.unblockGroupMessage(selectConversationId, error).then(res => {
+				if(res.code == 0)
 				{
-					console.log(`unblockGroupMessage error.description = ${error.description}`);
+					console.log(`unblockGroupMessage error.description = ${res.description}`);
 				}
 			});
 			// console.log(`unblockGroupMessage error.errorCode = ${error.errorCode}`);

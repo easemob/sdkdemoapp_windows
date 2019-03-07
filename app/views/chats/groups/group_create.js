@@ -227,20 +227,20 @@ class CreateGroupView extends PureComponent {
 			var groupManager = globals.groupManager;
 			// 组设置，4个参数分别为组类型（0,1,2,3），最大成员数，邀请是否需要确认，扩展信息
 			var setting = new globals.easemob.EMMucSetting(1, 20, false, "test");
-			let error = new globals.easemob.EMError();
 			console.log("membersIdArray:" + membersIdArray);
 			console.log("membersId:" + membersId);
-			groupManager.createGroup(groupName,description,"welcome message",setting,membersIdArray, error).then((group)=>{
-				console.log(group, error, 2);
-				if(error.errorCode == 0)
+			groupManager.createGroup(groupName,description,"welcome message",setting,membersIdArray).then((res)=>{
+				console.log(res, 2);
+				if(res.code == 0)
 				{
+					let group = res.data;
 					let conversation = globals.chatManager.conversationWithType(group.groupId(),1);
 					//createGroup({"easemobGroupId":group.groupId(),"convesation":conversation});
 					createAGroup({easemobGroupId:group.groupId(),conversation});
 					setSelectConvType(1);
 					console.log("createGroup success:" + group.groupId());
 				}else
-					console.log("createGroup fail!errorDescription:" + error.description);
+					console.log("createGroup fail!errorDescription:" + res.description);
 				cancelCreateGroupAction();
 			});
 			console.log(3);

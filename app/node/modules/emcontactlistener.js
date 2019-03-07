@@ -10,6 +10,10 @@ const emContactListenerCount = 5;
  * Easemob EMContactListener implementation.
  */
 
+/**
+ * EMContactListener constructor.
+ * @constructor
+ */
 function EMContactListener() {
   var self = this;
   self._eventEmitter = new EventEmitter();

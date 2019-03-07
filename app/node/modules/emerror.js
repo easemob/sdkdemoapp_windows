@@ -86,6 +86,12 @@ const easemobNode = require('./../load');
  * }
  */
 
+/**
+ * EMError constructor.
+ * @constructor
+ * @param {Number} errorCode
+ * @param {String} description
+ */
 function EMError(errorCode, description) {
   if (arguments.length == 2) {
     this._error = new easemobNode.EMError(errorCode, description);

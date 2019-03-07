@@ -20,6 +20,11 @@ const EMMessage = require('./message/emmessage');
  * }
  */
 
+/**
+ * EMConversation constructor.
+ * @constructor
+ * @param {Object} conversation
+ */
 function EMConversation(conversation) {
   this._conversation = conversation;
 }
@@ -45,7 +50,7 @@ EMConversation.prototype.conversationType = function () {
  * Remove a message from DB and cache.
  * Note: It's user's responsibility to confirm removed message belongs to the conversation.
  * Better to use message to remove message instead of message id.
- * @param {EMMessage or String} message EMMessage is the message to remove, String is message Id. 
+ * @param {EMMessage|String} message EMMessage is the message to remove, String is message Id. 
  * @return {Bool}
  */
 EMConversation.prototype.removeMessage = function (message) {

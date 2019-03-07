@@ -8,6 +8,7 @@ const easemobNode = require('./../../load');
 
 /**
  * Command message body constructor.
+ * @constructor
  * @param {String} action
  */
 function EMCmdMessageBody(action) {

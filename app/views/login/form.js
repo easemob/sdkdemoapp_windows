@@ -118,15 +118,16 @@ class LoginForm extends PureComponent {
 				this.emclient = utils.initEmclient();
 			}
 
-
-			this.ret = this.emclient.login( this.state.userName, this.state.password);
-			console.log(`loginCode:${this.ret.errorCode}`);
-			if(this.ret.errorCode != 0){
-				setNotice(`登录失败，${this.ret.errorCode}`);
+			this.emclient.login( this.state.userName, this.state.password).then((res) => {
+				console.log(`loginCode:${res.code}`);
+			if(res.code != 0){
+				setNotice(`登录失败，${res.code}`);
 				this.emclient.logout();
 				logout();
 				return false;
 			}
+		});
+			
 			//这个放到成功里
 			globalAction({
 				emclient: this.emclient

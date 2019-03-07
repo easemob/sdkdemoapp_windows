@@ -171,8 +171,10 @@ class TopNav extends Component {
 			localStorage.clear();
 			break;
 		case "logout":
-			emclient.logout();
-			logout();
+			emclient.logout().then((res) => {
+				logout();
+			})
+			
 			break;
 		default:
 			break;

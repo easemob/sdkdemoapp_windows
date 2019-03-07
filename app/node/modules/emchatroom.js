@@ -6,6 +6,11 @@ const EMMucSetting = require('./emmucsetting');
  * Easemob EMChatroom implementation.
  */
 
+/**
+ * EMChatroom constructor.
+ * @constructor
+ * @param {Object} chatroom
+ */
 function EMChatroom(chatroom) {
   this._chatroom = chatroom;
 }
