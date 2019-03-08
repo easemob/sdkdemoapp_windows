@@ -88,7 +88,7 @@ SDK 采用模块化设计，每一模块的功能相对独立和完善，用户�
      *  密码登录api,异步操作
      * param username为用户名，输入,String
      * param password为密码，输入,String
-     * return 返回Promise对象，response参数为[登录结果](#Result)
+     * return 返回Promise对象，response参数为#Result
      */
     login(username, password)
 调用用方法如下：
@@ -104,7 +104,7 @@ SDK 采用模块化设计，每一模块的功能相对独立和完善，用户�
      *  token登录api,异步操作
      * param username 用户名，输入,String
      * param token 用户token,输入,String
-     * return 返回Promise对象，response参数为[登录结果](#Result)
+     * return 返回Promise对象，response参数为#Result
      */
     loginWithToken(username, token)
 调用方法如下：
@@ -136,7 +136,7 @@ SDK 采用模块化设计，每一模块的功能相对独立和完善，用户�
      *  账户注册api，异步操作
      * param username 用户名，输入,String
      * param password 密码，输入,String
-     * return Promise对象，该对象的response参数为[Result](#Result)
+     * return Promise对象，该对象的response参数为Result
      */
     createAccount(username, password);
 调用方法如下：
@@ -214,7 +214,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /** 
      *  获取当前缓存中的好友列表，若缓存中没有则从数据库中获取
-     * return 返回[ContactListResult](#ContactListResult)
+     * return 返回ContactListResult
      */
     allContacts()
 调用方法如下
@@ -227,7 +227,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /** 
      *  从服务端拉取好友列表,异步操作
-     * return 返回Promise对象，response参数为[ContactListResult](#ContactListResult)
+     * return 返回Promise对象，response参数为ContactListResult
      */
     getContactsFromServer()；
 调用方法如下：
@@ -256,7 +256,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      *  从好友列表移除好友api，异步操作
      * param username 移除目标好友的用户名，输入参数
      * param keepConversation 移除好友后，是否保留会话，输入参数，布尔型，true为保留，false为不保留
-     * return Promise对象，response参数[Result](#Result)
+     * return Promise对象，response参数Result
      */
     deleteContact(username,keepConversation);
 调用方法如下：
@@ -269,7 +269,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      *  用户收到好友申请后的操作，同意好友申请,异步操作
      * param username 发起好友申请的用户名，输入参数
-     * return Promise对象，response参数为[Result](#Result)
+     * return Promise对象，response参数为Result
      */
     acceptInvitation(username);
 调用方法如下：
@@ -282,7 +282,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      * 用户收到好友申请后的操作,拒绝好友申请,异步操作
      * param username 发起好友申请的用户名，输入参数
-     * return Promise对象，response参数为[Result](#Result)
+     * return Promise对象，response参数为Result
      */
     declineInvitation(username)
 调用方法如下：
@@ -294,7 +294,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /**  
      * 从本地获取用户的黑名单列表，黑名单的用户无法发送消息
-     * return [ContactListResult](#ContactListResult) 黑名单列表，data为String数组
+     * return ContactListResult黑名单列表，data为String数组
      */
     blacklist();
 调用方法如下：
@@ -305,7 +305,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /**  
      * 从服务器获取用户的黑名单列表，黑名单的用户无法发送消息
-     * return Promise对象，response参数为[ContactListResult](#ContactListResult) 
+     * return Promise对象，response参数为ContactListResult
      */
     getBlackListFromServer();
 调用方法如下：
@@ -317,7 +317,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      *  设置用户的黑名单列表,异步操作
      * param blacklist 输入参数，黑名单列表，StringArray,["ID1","ID2"]
-     * return Promise对象，response参数为[Result](#Result)
+     * return Promise对象，response参数为Result
      */
     saveBlackList(blacklist);
 调用方法如下：
@@ -329,7 +329,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      *  添加用户到黑名单列表,异步操作
      * param username 输入参数，要添加的黑名单用户名，String
-     * return Promise对象，response参数为[Result](#Result)
+     * return Promise对象，response参数为Result
      */
     addToBlackList(username);
 调用方法如下：
@@ -341,7 +341,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /**  
      * 从黑名单列表移除用户,异步操作
      * param username 输入参数，要从黑名单移除的用户名，String
-     * return Promise对象，response参数为[Result](#Result)
+     * return Promise对象，response参数为Result
      */
     removeFromBlackList(username);
 调用方法如下：
@@ -420,7 +420,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       * param welcomeMessage 欢迎信息，输入参数，String
       * param setting 群组设置，输入参数，Object
       * param members 群组初始成员，输入参数，StringArray
-      * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+      * return 返回Promise对象，response参数为GroupResult
       */
     createGroup(subject, description, welcomeMessage, setting, members)
 调用方法如下:
@@ -432,7 +432,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /**  
      * 解散群组api
      * param groupId 组ID，输入参数
-     * return 返回Promise对象，response参数为[Result](#Result)
+     * return 返回Promise对象，response参数为Result
      */
     destroyGroup(groupId);
 调用方法如下:
@@ -454,7 +454,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /**  
      * 服务器获取用户所有的组
-     * return 返回Promise对象，response参数为[GroupListResult](GroupListResult)
+     * return 返回Promise对象，response参数为GroupListResult
      */
     fetchAllMyGroups()
 调用方法如下:
@@ -492,7 +492,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param groupId 群组ID，输入参数，String
      * param members 邀请的成员，输入参数，StringArray,["ID1","ID2"]
      * param welcomeMessage 欢迎信息，输入参数，String
-     * 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * 返回Promise对象，response参数为GroupResult
      */
     addGroupMembers(groupId, members, welcomeMessage);
 调用方法如下:
@@ -506,7 +506,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      *  将成员踢出群，同样可踢出多人
      * param groupId 群组ID，输入参数，String
      * param members 踢出的成员，输入参数，StringArray,["ID1","ID2"]
-     * 返回Promise对象，response参数为[Result](#Result)
+     * 返回Promise对象，response参数为Result
      */
     removeGroupMembers(groupId, members, error);
 调用方法如下:
@@ -518,7 +518,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      *  成员主动退出群组
      * param groupId 群组ID，输入参数，String
-     * 返回Promise对象，response参数为[Result](#Result)
+     * 返回Promise对象，response参数为Result
      */
     leaveGroup(groupId)
 调用方法如下:
@@ -531,7 +531,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 分页获取公开群组
      * param pageNum 第几页，输入参数，Number，0表示不分页，获取所有公开组，1为分页起始
      * param pageSize 每页计数，输入参数，Number,最大200
-     * return 返回Promise对象，response参数为[GroupListResult](GroupListResult)
+     * return 返回Promise对象，response参数为GroupListResult
      */
     fetchPublicGroupsWithPage(pageNum, pageSize);
 调用方法如下:
@@ -544,7 +544,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /**  
      * 根据群ID查找公开群
      * param1 groupId 群组ID，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     searchPublicGroup(groupId);
 调用方法如下:
@@ -557,7 +557,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      *  加入PUBLIC_JOIN_OPEN类型公开群组
      * param groupId 群组ID，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     joinPublicGroup(groupId,error)
 调用方法如下:
@@ -570,7 +570,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      *  申请加入applyJoinPublicGroup类型公开群组,需要群主或管理员同意
      * param groupId 群组ID，输入参数，String
      * param nickname 用户在群内的昵称，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     applyJoinPublicGroup(groupId,nickname,message)
 调用方法如下:
@@ -583,7 +583,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 接受群组发来的入群邀请
      * param groupId 群组ID，输入参数，String
      * param inviter 邀请人，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     acceptInvitationFromGroup(groupId,inviter)
 调用方法如下:
@@ -596,7 +596,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 拒绝群组发来的入群邀请
      * param groupId 群组ID，输入参数，String
      * param inviter 邀请人，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     declineInvitationFromGroup(groupId,inviter)
 调用方法如下:
@@ -609,7 +609,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 同意成员的入群邀请，由群主操作
      * param groupId 群组ID，输入参数，String
      * param from 入群申请人，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     acceptJoinGroupApplication(groupId,from)
 调用方法如下:
@@ -623,7 +623,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param groupId 群组ID，输入参数，String
      * param from 入群申请人，输入参数，String
      * param reason 拒绝原因，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     declineJoinGroupApplication(groupId,from,reason)
 调用方法如下:
@@ -638,7 +638,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param groupId 群组ID，输入参数，String
      * param members 成员列表，输入参数，String数组
      * param reason 禁言原因，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     blockGroupMembers(groupId,members,reason)
 调用方法如下:
@@ -652,7 +652,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param groupId 群组ID，输入参数，String
      * param pageNum 第几页，输入参数，Number，1为起始页
      * param pageSize 每页计数，输入参数，Number，最大200
-     * return 返回Promise对象，response参数为[GroupListResult](#GroupListResult)
+     * return 返回Promise对象，response参数为GroupListResult
      */
     fetchGroupBans(groupId,pageNum, pageSize)
 调用方法如下:
@@ -665,7 +665,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 取消禁言成员
      * param groupId 群组ID，输入参数，String
      * param members 成员列表，输入参数，StringArray
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     unblockGroupMembers(groupId, members)
 调用方法如下:
@@ -693,8 +693,8 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 	changeGroupDescription(groupId, newDescription, error)
 调用方法如下:
 
-	groupManager.changeGroupSubject(groupId, "new Subject", error).then((res) =>{},(error) => {});
-    groupManager.changeGroupDescription(groupId, "new Description", error).then((res) =>{},(error) => {});
+	groupManager.changeGroupSubject(groupId, "new Subject", error).then((group) =>{},(error) => {});
+    groupManager.changeGroupDescription(groupId, "new Description", error).then((group) =>{},(error) => {});
 	
 #### 屏蔽群组消息
 接口API如下：
@@ -702,7 +702,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /**  
      * 屏蔽群组消息
      * param groupId 群组ID，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
 	blockGroupMessage(groupId)
 调用方法如下:
@@ -714,7 +714,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /**  
      * 取消屏蔽群组消息
      * param groupId 群组ID，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
 	unblockGroupMessage(groupId)
 调用方法如下:
@@ -727,7 +727,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 转移群主，只有群主能操作
      * param groupId 群组ID，输入参数，String
      * param member 新群主用户名，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
 	transferGroupOwner(groupId, member)
 调用方法如下:
@@ -740,7 +740,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 将普通群成员提升为管理员
      * param groupId 群组ID，输入参数，String
      * param member 成员用户名，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
 	addGroupAdmin(groupId, member)
 调用方法如下:
@@ -753,7 +753,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 将管理员降级为普通成员
      * param groupId 群组ID，输入参数，String
      * param member 管理员用户名，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
 	removeGroupAdmin(groupId, member)
 调用方法如下:
@@ -790,7 +790,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param groupId 群组ID，输入参数，String
      * param filepath 文件路径，输入参数，String
      * param emUploadCallback 设置回调，输入
-     * 返回Promise对象，response参数为[SharedFileResult](#SharedFileResult)
+     * 返回Promise对象，response参数为SharedFileResult
      */
     uploadGroupSharedFile(groupId, filepath, emUploadCallback)
 调用方法如下:
@@ -804,7 +804,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param groupId 群组ID，输入参数，String
      * param pageNum 当前页数，从1开始
      * param pageSize 每页计数，最大200
-     * return 返回Promise对象，response参数为[SharedFileListResult](#SharedFileListResult)
+     * return 返回Promise对象，response参数为SharedFileListResult
      */
     fetchGroupSharedFiles(groupId, pageNum, pageSize)
 调用方法如下:
@@ -842,7 +842,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param filePath 文件本地存储路径，输入参数，String
      * param fileId 文件ID，输入参数，由文件列表数组获取
      * param callback 设置回调，输入
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     downloadGroupSharedFile(groupId, filePath, fileId, callback)
 调用方法如下:
@@ -856,7 +856,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 删除群文件
      * param groupId 群组ID，输入参数，String
      * param fileId 文件ID，输入参数，由文件列表获取
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     deleteGroupSharedFile(groupId, fileId)
 调用方法如下:
@@ -870,14 +870,14 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 设置群组公告
      * param groupId 群组ID，输入参数，String
      * param announcement 群组公告，输入参数，String
-     * return 返回Promise对象，response参数为[GroupResult](#GroupResult)
+     * return 返回Promise对象，response参数为GroupResult
      */
     updateGroupAnnouncement(groupId, announcement,error)
 
 	/**  
      * 获取群组公告
      * param groupId 群组ID，输入参数，String
-     * return 返回Promise对象，response参数为[AnnouncementResult](#AnnouncementResult)
+     * return 返回Promise对象，response参数为AnnouncementResult
      */
     fetchGroupAnnouncement(groupId)
 调用方法如下:
@@ -1003,7 +1003,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * param type 会话类型，1为群组，0为单聊
      * param pageSize 每页的消息计数
      * param startMsgId 起始消息ID
-     * return 返回Promise对象，response参数为[MessageListResult](#MessageListResult)
+     * return 返回Promise对象，response参数为MessageListResult
      */
     chatManager.fetchHistoryMessages(conversationId, type, pageSize, startMsgId)
 调用方法如下:
