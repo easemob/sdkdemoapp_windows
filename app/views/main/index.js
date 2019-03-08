@@ -153,16 +153,23 @@ class MainView extends PureComponent {
 			this.contactListener.onContactAdded((username) => {
 				const {addContact} = this.props;
 				console.log("onContactAdded username: " + username);
-				addContact(username);
+				var res = this.contactManager.allContacts();
+				res.data.map((item) => {
+					console.log(item);
+				})
+				setAllContacts({contacts:res.data});
 			});
 			this.contactListener.onContactDeleted((username) => {
 				const {removeContact} = this.props;
 				console.log("onContactDeleted username: " + username);
-				removeContact(username);
+				var res = this.contactManager.allContacts();
+				res.data.map((item) => {
+					console.log(item);
+				})
+				setAllContacts({contacts:res.data});
 			});
 			this.contactListener.onContactInvited((username, reason) => {
 				setTimeout(()=>{
-					var error = new easemob.EMError();
 					console.log("onContactInvited username: " + username + " reason: " + reason);
 					let con = confirm(username + "请求添加好友,是否同意");
 					if (con == true) {
@@ -176,10 +183,6 @@ class MainView extends PureComponent {
 						});
 					}
 				},500);
-				
-				
-				console.log("error.errorCode = " + error.errorCode);
-				console.log("error.description = " + error.description);
 			});
 			this.contactListener.onContactAgreed((username) => {
 				console.log("onContactAgreed username: " + username);
@@ -712,7 +715,7 @@ class MainView extends PureComponent {
 			var conversationId = message.conversationId();
 			var conversationOfMessages;
 			var conference = message.getAttribute("conference");
-			let logintoken = me.emclient.getLoginInfo().loginToken();
+			let logintoken = me.emclient.getLoginInfo().loginToken;
 			conversationOfMessages = messages[conversationId] || [];
 			msg = message.bodies()[0];
 			switch(msg.type()){

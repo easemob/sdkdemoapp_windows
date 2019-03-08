@@ -53,7 +53,7 @@ EMGroup.prototype.groupOwner = function () {
  * @return {EMMucSetting}
  */
 EMGroup.prototype.groupSetting = function () {
-  return new EMMucSetting(this._group.EMMucSetting());
+  return new EMMucSetting(this._group.groupSetting());
 };
 
 /**

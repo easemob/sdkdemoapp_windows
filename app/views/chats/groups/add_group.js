@@ -5,6 +5,7 @@ import { withRouter, Route, Link, NavLink } from "react-router-dom";
 import * as actionCreators from "@/stores/actions";
 import HeadImageView from "@/views/common/head_image";
 import _ from "underscore";
+import { userInfo } from "os";
 const Search = Input.Search;
 
 // const NavLink = ({ item }) => (
@@ -70,14 +71,13 @@ class AddGroup extends Component {
 	}
 
 	handleOk(){
-		const { globals, setNotice, setGroupChats, clearPublicGroupList } = this.props;
+		const { globals, setNotice, setGroupChats, clearPublicGroupList,userInfo } = this.props;
 		const { selectGroupId } = this.state;
-		const error = new globals.easemob.EMError();
 		if(selectGroupId){
-			globals.groupManager.joinPublicGroup(selectGroupId, error)
+			globals.groupManager.joinPublicGroup(selectGroupId)
 			.then((res) => {
-				if(error.errorCode == 0){
-					globals.groupManager.fetchAllMyGroups(error)
+				if(res.code == 0){
+					globals.groupManager.fetchAllMyGroups()
 					.then((res) => {
 						let allGroups = [];
 						res.code == 0 && res.data.map((group) => {
@@ -95,7 +95,24 @@ class AddGroup extends Component {
 					setNotice("加入群组成功");
 				}
 				else{
-					setNotice(`加入群组失败${error.description}`, "fail");
+					// 没有权限，需要使用applyjoinPublicGroup
+					if(res.code == 603){
+						globals.groupManager.applyJoinPublicGroup(selectGroupId,userInfo.user.easemobName,userInfo.user.easemobName + "申请入群")
+						.then((applyres) => {
+							if(applyres.code == 0){
+								clearPublicGroupList([]);
+								this.setState({
+									visible: false,
+									page: 0,
+									isSearch: false,
+									searchValue: ""
+								});
+								setNotice("入群申请发送成功");
+							}else
+							    setNotice("入群申请发送失败" + applyres.description,"fail");
+						})
+					}else
+					  setNotice(`加入群组失败${res.description}`, "fail");
 				}
 			});
 		}
@@ -106,10 +123,9 @@ class AddGroup extends Component {
 
 	onSearchGroup(value){
 		const { globals, setNotice } = this.props;
-		const error = new globals.easemob.EMError();
-		globals.groupManager.searchPublicGroup(value, error)
+		globals.groupManager.searchPublicGroup(value)
 		.then(( res ) => {
-			if(error.errorCode == 0){
+			if(res.code == 0){
 				this.setState({
 					isSearch: true,
 					searchResult: [res]
@@ -222,6 +238,7 @@ class AddGroup extends Component {
 
 const mapStateToProps = state => ({
 	publicGroup: state.publicGroup,
-	globals: state.globals
+	globals: state.globals,
+	userInfo: state.userInfo
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(AddGroup));

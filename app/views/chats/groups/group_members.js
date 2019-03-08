@@ -41,7 +41,6 @@ class GroupMembersView extends Component {
 		} = this.props;
 
 		this.easemob = globals.easemob;
-		this.error = new this.easemob.EMError();
 		this.groupManager = globals.groupManager;
 		// var me = this;
 		// var timer = setTimeout(function(){
@@ -115,14 +114,11 @@ class GroupMembersView extends Component {
 			selectConversationId
 		} = this.props;
 		// 转让群主
-		globals.groupManager.transferGroupOwner(selectConversationId, newOwner, error).then(res => {
+		globals.groupManager.transferGroupOwner(selectConversationId, newOwner).then(res => {
 			if(res.code != 0)
 			  console.log("transferGroupOwner fail:" + res.description);
 		});
 		this.setState(this.state);
-		// console.log(`transferGroupOwner error.errorCode = ${error.errorCode}`);
-		// console.log(`transferGroupOwner error.description = ${error.description}`);
-		// console.log(`group.groupOwner() = ${group.groupOwner()}`);
 	}
 
 	// 设置为管理员
@@ -138,9 +134,6 @@ class GroupMembersView extends Component {
 			  console.log("addGroupAdmin fail:" + res.description);
 		});
 		this.setState(this.state);
-		// console.log(`addGroupAdmin error.errorCode = ${error.errorCode}`);
-		// console.log(`addGroupAdmin error.description = ${error.description}`);
-		// console.log(`group.groupAdmins() = ${group.groupAdmins()}`);
 	}
 
 	// 取消管理员
@@ -156,9 +149,6 @@ class GroupMembersView extends Component {
 			  console.log("removeGroupAdmin fail:" + res.description);
 		});
 		this.setState(this.state);
-		// console.log(`removeGroupAdmin error.description = ${error.description}`);
-		// console.log(`group.groupAdmins() = ${group.groupAdmins()}`);
-		// console.log(`group.groupOwner() = ${group.groupOwner()}`);
 
 	}
 
@@ -197,7 +187,6 @@ class GroupMembersView extends Component {
 			setNotice
 		} = this.props;
 		var easemob = globals.easemob;
-		var error = new easemob.EMError();
 		// 现在的群成员 + 群主 + 添加的群成员 <= 500
 		var count = globals.groupManager.groupWithId(selectConversationId).groupMembersCount() + 1 + addMembers.length;
 		if(count <= 500){
