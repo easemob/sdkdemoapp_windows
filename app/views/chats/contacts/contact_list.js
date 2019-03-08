@@ -26,12 +26,11 @@ class MenuList extends Component {
 			setNotice
 		} = this.props;
 		let contactManager = globals.contactManager;
-		let error = new globals.easemob.EMError();
-		contactManager.inviteContact(this.state.chatName,"welcome",error).then(() => {
-			if(error.errorCode == 0)
+		contactManager.inviteContact(this.state.chatName,"welcome").then((res) => {
+		if(res.code == 0)
 			setNotice("好友申请发送成功");
-		 else
-			setNotice("好友申请发送失败：" + error.description);
+		else
+			setNotice("好友申请发送失败：" + res.description);
 		});
 	}
 	onIdChange(event){
@@ -104,6 +103,7 @@ class MenuList extends Component {
 				>
 					{
 						arrContacs.map( (contact) => {
+							console.log(contact);
 							return <Menu.Item key={contact}>{contact}</Menu.Item>
 						})
 					}

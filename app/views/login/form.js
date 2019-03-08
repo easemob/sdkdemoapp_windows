@@ -126,8 +126,6 @@ class LoginForm extends PureComponent {
 				logout();
 				return false;
 			}
-		});
-			
 			//这个放到成功里
 			globalAction({
 				emclient: this.emclient
@@ -135,6 +133,7 @@ class LoginForm extends PureComponent {
 			localStorage.setItem("userInfo", JSON.stringify(userInfo));
 			requestLogin(userInfo);
 			this.props.reduxProps.history.push("/chats/recents");
+		});
 		}
 		else{
 			setNotice("当前网络不可用，请检查网络状态", "fail");

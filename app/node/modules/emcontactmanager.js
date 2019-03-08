@@ -88,10 +88,10 @@ EMContactManager.prototype.getContactsFromDB = function () {
  * @return {Object}
  */
 EMContactManager.prototype.inviteContact = function (username, message) {
-  let error = new EMError();
   var _manager = this._manager;
   async function f(){
     try{
+      let error = new EMError();
       _manager.inviteContact(username, message, error._error);
       return {
         code:error.errorCode,

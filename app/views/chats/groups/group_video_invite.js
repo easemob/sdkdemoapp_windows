@@ -36,7 +36,7 @@ class GroupVideoInvite extends Component {
 
 	handleAudioAndVideo(){
 		const { userInfo, globals, conId, allMembersInfo, isSelectCovGroup } = this.props;
-		var logintoken = globals.emclient.getLoginInfo().loginToken();
+		var logintoken = globals.emclient.getLoginInfo().loginToken;
 		let isGroup = isSelectCovGroup;
 		audioAndVideo({
 			userInfo: JSON.stringify(userInfo),
