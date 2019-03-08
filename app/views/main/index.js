@@ -212,20 +212,22 @@ class MainView extends PureComponent {
 				console.log(`groupId = ${groupId}`);
 				console.log(`inviter = ${inviter}`);
 				console.log(`inviteMessage = ${inviteMessage}`);
-				// var error = new easemob.EMError();
-				me.onReceiveInviteFromGroup(groupId, inviter, inviteMessage);
 			
 				// acceptInvitationFromGroup(groupId, inviter, error) 同意加入群组
 				// groupId : 同意加入的群组id
 				// inviter : 邀请者
 				// error : 错误信息
 			
-				// var group = groupManager.acceptInvitationFromGroup(groupId, inviter, error);
-				// console.log(`error.errorCode = ${error.errorCode}`);
-				// console.log(`error.description = ${error.description}`);
-				// console.log(`group.groupId() = ${group.groupId()}`);
-				// console.log(`group.groupSubject() = ${group.groupSubject()}`);
-				// console.log(`group.groupDescription() = ${group.groupDescription()}`);
+				this.groupManager.acceptInvitationFromGroup(groupId, inviter).then(res => {
+					console.log(`error.errorCode = ${res.code}`);
+					console.log(`error.description = ${res.description}`);
+					if(res.code == 0)
+					{
+						console.log(`group.groupId() = ${res.data.groupId()}`);
+						console.log(`group.groupSubject() = ${res.data.groupSubject()}`);
+						console.log(`group.groupDescription() = ${res.data.groupDescription()}`);
+					}
+				});
 			
 				// declineInvitationFromGroup(groupId, inviter, reason, error);
 				// groupId : 同意加入的群组id
