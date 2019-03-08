@@ -199,45 +199,63 @@ class MainView extends PureComponent {
 			// group : 发生操作的群组
 			// invitee : 同意邀请的人
 
-			// this.groupListener.onReceiveInviteAcceptionFromGroup = function(group, invitee){
-			// 	me.onReceiveInviteAcceptionFromGroup(group, invitee);
-			// };
+			this.groupListener.onReceiveInviteAcceptionFromGroup = function(group, invitee){
+				me.onReceiveInviteAcceptionFromGroup(group, invitee);
+			};
 
 			// 接收入群组邀请时触发
 			// groupId : 邀请进入群组的群组id
 			// inviter : 邀请人
 			// inviteMessage : 邀请信息
-			// this.groupListener.onReceiveInviteFromGroup = function(groupId, inviter, inviteMessage){
-			// 	console.log("\n\n EMGroupManagerListener onReceiveInviteFromGroup ----- !");
-			// 	console.log(`groupId = ${groupId}`);
-			// 	console.log(`inviter = ${inviter}`);
-			// 	console.log(`inviteMessage = ${inviteMessage}`);
-			// 	// var error = new easemob.EMError();
-			// 	me.onReceiveInviteFromGroup(groupId, inviter, inviteMessage);
-			//
-			// 	// acceptInvitationFromGroup(groupId, inviter, error) 同意加入群组
-			// 	// groupId : 同意加入的群组id
-			// 	// inviter : 邀请者
-			// 	// error : 错误信息
-			//
-			// 	// var group = groupManager.acceptInvitationFromGroup(groupId, inviter, error);
-			// 	// console.log(`error.errorCode = ${error.errorCode}`);
-			// 	// console.log(`error.description = ${error.description}`);
-			// 	// console.log(`group.groupId() = ${group.groupId()}`);
-			// 	// console.log(`group.groupSubject() = ${group.groupSubject()}`);
-			// 	// console.log(`group.groupDescription() = ${group.groupDescription()}`);
-			//
-			// 	// declineInvitationFromGroup(groupId, inviter, reason, error);
-			// 	// groupId : 同意加入的群组id
-			// 	// inviter : 邀请者
-			// 	// reason : 拒绝加入的原因
-			// 	// error : 错误信息
-			// 	/*
-			// 	groupManager.declineInvitationFromGroup(groupId, inviter, "hahahahaha", error);
-			// 	console.log("declineInvitationFromGroup ret.errorCode = " + error.errorCode);
-			// 	console.log("declineInvitationFromGroup ret.description = " + error.description);
-			// 	*/
-			// };
+			this.groupListener.onReceiveInviteFromGroup = function(groupId, inviter, inviteMessage){
+				console.log("\n\n EMGroupManagerListener onReceiveInviteFromGroup ----- !");
+				console.log(`groupId = ${groupId}`);
+				console.log(`inviter = ${inviter}`);
+				console.log(`inviteMessage = ${inviteMessage}`);
+				// var error = new easemob.EMError();
+				me.onReceiveInviteFromGroup(groupId, inviter, inviteMessage);
+			
+				// acceptInvitationFromGroup(groupId, inviter, error) 同意加入群组
+				// groupId : 同意加入的群组id
+				// inviter : 邀请者
+				// error : 错误信息
+			
+				// var group = groupManager.acceptInvitationFromGroup(groupId, inviter, error);
+				// console.log(`error.errorCode = ${error.errorCode}`);
+				// console.log(`error.description = ${error.description}`);
+				// console.log(`group.groupId() = ${group.groupId()}`);
+				// console.log(`group.groupSubject() = ${group.groupSubject()}`);
+				// console.log(`group.groupDescription() = ${group.groupDescription()}`);
+			
+				// declineInvitationFromGroup(groupId, inviter, reason, error);
+				// groupId : 同意加入的群组id
+				// inviter : 邀请者
+				// reason : 拒绝加入的原因
+				// error : 错误信息
+				/*
+				groupManager.declineInvitationFromGroup(groupId, inviter, "hahahahaha", error);
+				console.log("declineInvitationFromGroup ret.errorCode = " + error.errorCode);
+				console.log("declineInvitationFromGroup ret.description = " + error.description);
+				*/
+			};
+			this.groupListener.onReceiveJoinGroupApplication((groupId, from, message) => {
+				console.log("\n\n EMGroupManagerListener onReceiveJoinGroupApplication ----- !");
+				console.log(groupId);
+				console.log(from);
+				console.log(message);
+		
+				//acceptJoinGroupApplication(groupId, user, error) 同意进群申请
+				//groupId : 发生操作的群组id
+				//user : 申请者
+				//error : 错误信息
+			this.groupManager.acceptJoinGroupApplication(groupId, from).then((res) => {
+					console.log("acceptGroup.groupId() = " + res.data.groupId());
+					console.log("acceptGroup.groupSubject() = " + res.data.groupSubject());
+					console.log("acceptGroup.groupDescription() = " + res.data.groupDescription());
+				},(error) => {
+					console.log(error);
+				});
+		});
 
 			// 添加群管理员时触发(只有是自己时才能收到通知)
 			// group : 发生操作的群组
@@ -305,6 +323,7 @@ class MainView extends PureComponent {
 					me.onLeaveGroup(groupId, reason);
 				}, 1);
 			});
+			this.groupListener.on
 
 			// 多设备监听
 			this.multiDevicesListener = new easemob.EMMultiDevicesListener();
