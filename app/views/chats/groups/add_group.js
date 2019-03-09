@@ -78,9 +78,9 @@ class AddGroup extends Component {
 			.then((res) => {
 				if(res.code == 0){
 					globals.groupManager.fetchAllMyGroups()
-					.then((res) => {
+					.then((fetchres) => {
 						let allGroups = [];
-						res.code == 0 && res.data.map((group) => {
+						fetchres.code == 0 && fetchres.data.map((group) => {
 							allGroups.push(group.groupId());
 						});
 						setGroupChats({ allGroups });
@@ -128,11 +128,11 @@ class AddGroup extends Component {
 			if(res.code == 0){
 				this.setState({
 					isSearch: true,
-					searchResult: [res]
+					searchResult: [res.data]
 				});
 			}
 			else{
-				setNotice("找不到改群组", "fail");
+				setNotice("找不到该群组", "fail");
 			}
 		})
 	}
