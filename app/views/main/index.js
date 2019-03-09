@@ -216,7 +216,6 @@ class MainView extends PureComponent {
 				// acceptInvitationFromGroup(groupId, inviter, error) 同意加入群组
 				// groupId : 同意加入的群组id
 				// inviter : 邀请者
-				// error : 错误信息
 			
 				this.groupManager.acceptInvitationFromGroup(groupId, inviter).then(res => {
 					console.log(`error.errorCode = ${res.code}`);
