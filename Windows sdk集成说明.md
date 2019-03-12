@@ -242,7 +242,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      *  添加好友api，异步操作
      * param String,username为对方用户名，输入参数
      * param String,message为欢迎信息，输入参数，对方收到好友申请时可以看到，
-     * return Promise对象,response参数为空
+     * return Promise对象,response参数为Result
      */
     inviteContact(username, message);
 调用方法如下：
