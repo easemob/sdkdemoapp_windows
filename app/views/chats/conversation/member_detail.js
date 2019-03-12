@@ -24,10 +24,11 @@ class MemberDetailView extends PureComponent {
 		var lenth;
 		if(isGroup)
 		{
+			globals.groupManager.fetchGroupMembers(selectConversationId, "", 500).then((res) => {
+			},(error) => {});
 			var group = globals.groupManager.groupWithId(selectConversationId);
 			name = group.groupSubject();
 			lenth = group.groupMembersCount();
-			console.log("-----------------" + lenth);
 		}else
 			name = selectConversationId;
 		console.log("name:" + name);
