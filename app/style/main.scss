@@ -101,7 +101,7 @@
 		border-right: 1px solid #dfe3e9;
 		background: #f8fafc;
 		>ul {
-			height: 100%;
+			height: calc(100% - 58px);
 			overflow-y: auto;
 			overflow-x: hidden;
 		}

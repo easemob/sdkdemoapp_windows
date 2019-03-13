@@ -123,30 +123,30 @@ class AddGroup extends Component {
 
 	onSearchGroup(value){
 		const { globals, setNotice } = this.props;
-		globals.groupManager.searchPublicGroup(value)
-		.then(( res ) => {
-			if(res.code == 0){
-				this.setState({
-					isSearch: true,
-					searchResult: [res.data]
-				});
-			}
-			else{
-				setNotice("找不到该群组", "fail");
-			}
-		})
-	}
-
-	onChangeSearch(e){
-		const { setNotice } = this.props;
-		if(e.target.value){
-			this.setState({
-				searchValue: e.target.value
+		if(value){
+			globals.groupManager.searchPublicGroup(value)
+			.then(( res ) => {
+				if(res.code == 0){
+					this.setState({
+						isSearch: true,
+						searchResult: [res.data]
+					});
+				}
+				else{
+					setNotice("找不到该群组", "fail");
+				}
 			})
 		}
 		else{
 			setNotice("请输入内容", "fail");
 		}
+	}
+
+	onChangeSearch(e){
+		const { setNotice } = this.props;
+		this.setState({
+			searchValue: e.target.value
+		})
 	}
 
 	emitEmpty(){
