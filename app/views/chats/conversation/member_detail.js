@@ -24,11 +24,22 @@ class MemberDetailView extends PureComponent {
 		var lenth;
 		if(isGroup)
 		{
-			globals.groupManager.fetchGroupMembers(selectConversationId, "", 500).then((res) => {
-			},(error) => {});
 			var group = globals.groupManager.groupWithId(selectConversationId);
 			name = group.groupSubject();
 			lenth = group.groupMembersCount();
+			
+			if(lenth == 0)
+			{
+				console.log("lenth=0");
+				globals.groupManager.fetchGroupSpecification(selectConversationId).then(res => {
+					
+				});
+				lenth = group.groupMembersCount();
+				globals.groupManager.fetchGroupMembers(selectConversationId, "", 500).then((res) => {
+
+				},(error) => {});
+			}
+			
 		}else
 			name = selectConversationId;
 		console.log("name:" + name);
@@ -44,7 +55,7 @@ class MemberDetailView extends PureComponent {
 							name
 						}
 					</span>
-					<span>{ isGroup && `（${lenth}）`}</span>
+					<span>{ isGroup && lenth != 0 && `（${lenth}）`}</span>
 				</div>
 				{
 					!isGroup && <CreateGroupView selectMember={ [{easemobName:selectConversationId}] } />

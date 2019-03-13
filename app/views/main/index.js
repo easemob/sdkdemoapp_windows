@@ -376,17 +376,28 @@ class MainView extends PureComponent {
 		
 
 		// 获取用户所在的组
-		this.groupManager.fetchAllMyGroups().then(res => {
-			if(res.code != 0)
-			{
-				console.log("fetchMyGroup fail:" + res.description);
-			}
+		let allGroup = this.groupManager.allMyGroups().data;
+		if(allGroup.length == 0)
+		{
+			this.groupManager.fetchAllMyGroups().then(res => {
+				if(res.code != 0)
+				{
+					console.log("fetchMyGroup fail:" + res.description);
+				}
+				let allGroups = [];
+				res.data.map((group) => {
+					allGroups.push(group.groupId());
+				});
+				setGroupChats({allGroups});
+			});
+		}else{
 			let allGroups = [];
-			res.data.map((group) => {
+			allGroup.map((group) => {
 				allGroups.push(group.groupId());
 			});
 			setGroupChats({allGroups});
-		});
+		}
+
 		
 
 
