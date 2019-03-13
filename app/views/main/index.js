@@ -355,12 +355,25 @@ class MainView extends PureComponent {
 
 			// 获取好友列表
 		var res = this.contactManager.allContacts();
-		console.log("error.errorCode:" + res.code + "  description:" + res.description);
-		console.log("allContacts length:" + res.data.length);
-		res.data.map((item) => {
-			console.log(item);
-		})
-		setAllContacts({contacts:res.data});
+		if(res.code == 0 && res.data.length == 0)
+		{
+			this.contactManager.getContactsFromServer().then(serverres => {
+				console.log("error.errorCode:" + serverres.code + "  description:" + serverres.description);
+			  console.log("allContacts length:" + serverres.data.length);
+			  serverres.data.map((item) => {
+				console.log(item);
+			});
+			serverres.code == 0 && setAllContacts({contacts:serverres.data});
+			})
+		}else{
+			console.log("error.errorCode:" + res.code + "  description:" + res.description);
+			console.log("allContacts length:" + res.data.length);
+			res.data.map((item) => {
+				console.log(item);
+			})
+			res.code == 0 && setAllContacts({contacts:res.data});
+		}
+		
 
 		// 获取用户所在的组
 		this.groupManager.fetchAllMyGroups().then(res => {
