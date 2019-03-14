@@ -20,10 +20,11 @@ script: npm run prod-mac
 deploy:
   provider: releases
   file_glob: true
-  api_key:
-    secure: b4a5fdec27193cca6056c0095b5f409b73d72e07
+  api_key: "b4a5fdec27193cca6056c0095b5f409b73d72e07"
+    # secure: b4a5fdec27193cca6056c0095b5f409b73d72e07
   file: "release/*.*"
   skip_cleanup: true
   on:
     repo: easemob/sdkdemoapp_windows
     all_branches: true
+    # tags: true
