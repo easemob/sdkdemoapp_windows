@@ -1,14 +1,14 @@
 {
-	"name": "MobilePortal",
-	"productName": "沙箱环信移动门户",
-	"version": "1.0.39",
-	"description": "沙箱环信移动门户",
+	"name": "DesktopDemo",
+	"productName": "沙箱IM-SDK桌面端Demo",
+	"version": "3.5.4",
+	"description": "沙箱IM-SDK桌面端Demo",
 	"main": "./main.js",
 	"author": "",
 	"company": "北京易掌云峰科技有限公司",
 	"license": "ISC",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/easemob/oa-pc.git"
+		"url": "https://github.com/easemob/sdkdemoapp_windows.git"
 	}
 }

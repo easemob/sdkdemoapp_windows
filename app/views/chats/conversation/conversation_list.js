@@ -71,14 +71,6 @@ class ConversationListView extends Component {
 		console.log("isGroup:" + isGroup);
 		if(isGroup == "1"){
 			group = globals.groupManager.groupWithId(key);
-			if(group.groupMembers().length == 0){
-				globals.groupManager.fetchGroupSpecification(key).then(res => {
-					
-				});
-				globals.groupManager.fetchGroupMembers(key, "", 500).then((res) => {
-
-				},(error) => {});
-			}
 			groupInfo = {
 				owner: group.groupOwner(),
 				members: group.groupMembers(),

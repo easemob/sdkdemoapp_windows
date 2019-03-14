@@ -1,8 +1,8 @@
 {
-	"productName": "沙箱环信移动门户",
+	"productName": "沙箱IM-SDK桌面端Demo",
 	"appId": "com.easemob.oa.sandbox",
 	"compression": "maximum",
-	"artifactName": "MobilePortal.sandbox.${version}.${os}.${arch}.${ext}",
+	"artifactName": "DesktopDemo.sandbox.${version}.${os}.${arch}.${ext}",
 	"publish": [
 		{
 			"provider": "generic",
@@ -65,7 +65,7 @@
 	"mac": {
 		"category": "public.app-category.productivity",
 		"icon": "./resources/icon.icns",
-		"artifactName": "MobilePortal.sandbox.${version}.${os}.${ext}"
+		"artifactName": "DesktopDemo.sandbox.${version}.${os}.${ext}"
 	},
 	"nsis": {
 		"oneClick": false,
@@ -74,7 +74,7 @@
       	"allowToChangeInstallationDirectory": true,
       	"createDesktopShortcut": true,
       	"runAfterFinish": true,
-		"artifactName": "MobilePortal.sandbox.${version}.${os}.setup.${ext}",
+		"artifactName": "DesktopDemo.sandbox.${version}.${os}.setup.${ext}",
 		"deleteAppDataOnUninstall": false,
 		"installerIcon": "./resources/icons/icon.ico",
 		"uninstallerIcon": "./resources/icons/icon.ico"
