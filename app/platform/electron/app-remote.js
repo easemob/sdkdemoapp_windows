@@ -135,7 +135,7 @@ class AppRemote {
 		// Make tray icon
 		const tray = new Tray(`${this.entryPath}/media/img/tray-icon-16.png`);
 		const trayContextMenu = Menu.buildFromTemplate(trayMenuTemplate);
-		tray.setToolTip("环信移动门户");
+		tray.setToolTip("IM-SDK桌面端Demo");
 		tray.on("click", () => {
 			this.openMainWindow();
 		});

@@ -21946,7 +21946,7 @@ _electron.app.on("activate", function () {
 
 if (typeof _electron.app.setAboutPanelOptions === "function") {
 	_electron.app.setAboutPanelOptions({
-		applicationName: "环信移动门户",
+		applicationName: "IM-SDK桌面端Demo",
 		applicationVersion: 1.0,
 		copyright: "Copyright (C) 2018 easemob.com",
 		credits: "Licence: ",
