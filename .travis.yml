@@ -18,6 +18,7 @@ deploy:
   api_key:
     secure: vV+JEmNmvdVIFudcTI/+SwI6jvNxUkHZ+wg+dTqzrWfmJZyWT8ygP7fnLn1qzK0RMxC9dVVV0nB1v7fnKEt6WMt5bwephHEQWx27yND8ip2cS/BqKPFD3RZmlT3NWZdrWfqbgq+R8Cy295sP2+mIzKY2ym6RehjqF3ADxVCn+skp3zx7cSola8uLUGxEBg4NKQOpoClao1l8sUcfa4jP8c/Uhjhl/k3+f9Mx2y68u1NGHYqhQR8ItdWnjMH2iS+crCT0RejlHOCOFjkFvpSL9tghiPHlwJSPJ9ShnDzalG2h+JeNG8BAKX1k8bZthcPMQoIj7tm2ydfupLflp6OGjK6zkoLeSP3IXOxF2z2GhGXL0dY4yQAYdbEkl8hOkTowHAs4+aXR2G+61DM2jEczD78bB90UusRkSUFHwchga/OjXtFFXa0gUFp3YdfOmv7bJ3Y1K4Su7cbvFNHA+3T/XsdKZ+yhtfkAEh3S9WX2Mng7qnV2Af6h7GRluDhyPMiMJP0QJO6HxY8wPyxf17PW7/Bfkr6gIw54LYUXrrUg2ZVPiCthSWw51x5ABSs9I6bK7Slcn8maty6u96rUGuokQpgBLOOqW1YiYtzRsnSEpElRz+JsKBD4HH7RZuqxa30bu5Mo/soqXbVd9cjI+h5mQkJ7GlR7m6RHIV08FOG8cg0=
   file: "release/*.*"
+  skip_cleanup: true
   on:
     repo: easemob/sdkdemoapp_windows
     all_branches: true
