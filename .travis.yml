@@ -13,18 +13,11 @@ cache:
   - "$HOME/.cache/electron"
   - "$HOME/.cache/electron-builder"
 script: npm run prod-mac
-
-# notifications:
-#     slack: easemob:tYWZJo2ydkdNkexGpLSVFac5
-
 deploy:
   provider: releases
-  file_glob: true
-  api_key: "b4a5fdec27193cca6056c0095b5f409b73d72e07"
-    # secure: b4a5fdec27193cca6056c0095b5f409b73d72e07
-  file: "release/*.*"
-  skip_cleanup: true
+  api_key:
+    secure: YOP0xKFv21eh89zZq0LLqAMcrr8NoyxIf9WqFU6wDPFLrFLHATiZKosM0V9qXcGSfwY6yPGYYV1MMDnVAZ3xaMMFnjIDXita5rLGa77AUxR4R4yPV4AvoH0hx5kgrm8fmd7pZWBiJ13Ld0KVAHo0W1gUYiKoMG16XTfOAPfy0KudBdb7E7B50HScyBGAYzgz/WmOVn6QUcVA7KtvfIk5GPENp9fUfUBsRfC21hfXjNILhR8l5HMCbnMLo2rxs1EidnHe4Z5cybn6xOZf8KAhfYz9gHcqPNqAYQwDPLAXESAE23N4bGFPLOLS5cqdlnuB1HtJmTg5YLMPLDEugACRCgF6r1r+TLNAl82Th97HKskNUU/Kc9yyEgVpgMMX3hWLsSR365dtPp4G0X2NT8aIBi8P/fz/JDJkK4OnZffcLfFIDHxFsq8QiusFPawr5TBElfZ7lrj05JXVCIENoeUJWnevbiY/HVshuoTOhC8VkQLST5LltxBoX7ILN5GqAsN+n2pzzFANhWrsvtzqZrCMM2VS9KDgewreUhMOLV5G8qrqeunhL7vStvZIxxtzDicyAbReGGhn//DPRkKBju2/IJpkaqEBIXl397gb1HK6ThHef8kNo54LfLySR4zTnhb/kTLKOti7ur/30IvDUVXW18wVbfkZrbVShxzJI2zaqDU=
+  file: ''
   on:
     repo: easemob/sdkdemoapp_windows
-    all_branches: true
-    # tags: true
+    branch: true
