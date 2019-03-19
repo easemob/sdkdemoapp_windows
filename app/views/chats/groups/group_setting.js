@@ -191,7 +191,7 @@ class GroupSettingView extends Component {
 			// console.log(`blockGroupMessage error.description = ${error.description}`);
 		}
 		else{
-			groupManager.unblockGroupMessage(selectConversationId, error).then(res => {
+			groupManager.unblockGroupMessage(selectConversationId).then(res => {
 				if(res.code == 0)
 				{
 					console.log(`unblockGroupMessage error.description = ${res.description}`);

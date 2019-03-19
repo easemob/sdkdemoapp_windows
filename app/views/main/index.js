@@ -160,8 +160,15 @@ class MainView extends PureComponent {
 				setAllContacts({contacts:res.data});
 			});
 			this.contactListener.onContactDeleted((username) => {
-				const {removeContact} = this.props;
+				const {
+					selectMember,
+					memberOfSelect
+					} = this.props;
 				console.log("onContactDeleted username: " + username);
+				if(username == selectMember.easemobName)
+				{
+					memberOfSelect({});
+				}
 				var res = this.contactManager.allContacts();
 				res.data.map((item) => {
 					console.log(item);
@@ -600,7 +607,6 @@ class MainView extends PureComponent {
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`admin = ${admin}`);
 		const { cancelAdminAction, groupChats } = this.props;
-		groupChats[group.groupId()] && cancelAdminAction({ id: group.groupId(), adminMember: admin, group: groupChats[group.groupId()] });
 	}
 
 	// 转让群主的时候触发
@@ -745,6 +751,7 @@ class MainView extends PureComponent {
 			userInfo,
 			conversations,
 			groupAtAction,
+			setGroupChats,
 			globals
 		} = this.props;
 		var conversation;
@@ -800,7 +807,8 @@ class MainView extends PureComponent {
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
 			if(conversationType == 1 && (!conversations[conversationId])){
-				this.groupManager.fetchAllMyGroups().then(res => {
+				globals.chatManager.conversationWithType(conversationId, conversationType);
+				globals.groupManager.fetchAllMyGroups().then(res => {
 					let allGroups = [];
 					res.data.map((group) => {
 						allGroups.push(group.groupId());
@@ -809,7 +817,7 @@ class MainView extends PureComponent {
 			    });
 		    }
 			else if(conversationType == 0 && (!allMembersInfo[conversationId])){
-				this.groupManager.fetchAllMyGroups().then(res => {
+				globals.groupManager.fetchAllMyGroups().then(res => {
 					let allGroups = [];
 					res.data.map((group) => {
 						allGroups.push(group.groupId());
@@ -850,5 +858,7 @@ const mapStateToProps = state => ({
 	allMembersInfo: state.allMembersInfo,
 	messages: state.messages,
 	conversations: state.conversations,
+	selectMember: state.selectMember,
+	memberOfSelect: state.memberOfSelect
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MainView));
