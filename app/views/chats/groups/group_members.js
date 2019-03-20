@@ -440,11 +440,13 @@ class GroupMembersView extends Component {
 		// 把群主加到成员列表里
 		// var memberInfoAndOwner = owner ? [allMembersInfo[owner]].concat(memberInfo) : memberInfo;
 		// memberInfoAndOwner = _.uniq(memberInfoAndOwner);
+		let type = group.groupSetting().style();
+		console.log("type:" + type);
 		return (
 			<div className="oa-main-list oa-conversation-list conversation-group-list">
 				{
 					// 创建群时开放允许普通成员邀请成员开关，则普通成员也可添加成员
-					owner == userInfo.user.easemobName || adminMembers.indexOf(userInfo.user.easemobName) >= 0
+					(type && type == 1) || (owner == userInfo.user.easemobName || adminMembers.indexOf(userInfo.user.easemobName) >= 0)
 						? <div className="operate-members" onClick={ this.handleShowAddDialog }>
 							添加群成员
 						</div>
@@ -472,6 +474,7 @@ class GroupMembersView extends Component {
 				>
 					{
 						_.map([owner].concat(adminMembers).concat(members), (member) => {
+							console.log("groupMember:"+member);
 							memberInfoOfGroup = allMembersInfo[member];
 							return (
 								<Menu.Item key={ member }>

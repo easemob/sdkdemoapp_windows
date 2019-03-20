@@ -211,7 +211,7 @@ ElectronApp.on("before-quit", () => {
 
 if(typeof ElectronApp.setAboutPanelOptions === "function"){
 	ElectronApp.setAboutPanelOptions({
-		applicationName: "沙箱IM-SDK桌面端Demo",
+		applicationName: "IM-SDK桌面端Demo",
 		applicationVersion: 1.0,
 		copyright: "Copyright (C) 2018 easemob.com",
 		credits: `Licence: `,

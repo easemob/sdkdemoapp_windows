@@ -349,11 +349,17 @@ EMGroupManager.prototype.blockGroupMembers = function (groupId, members, reason)
  * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.unblockGroupMembers = function (groupId, members, error) {
+EMGroupManager.prototype.unblockGroupMembers = function (groupId, members) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.unblockGroupMembers(groupId, members, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.unblockGroupMembers(groupId, members, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -370,11 +376,17 @@ EMGroupManager.prototype.unblockGroupMembers = function (groupId, members, error
  * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject, error) {
+EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.changeGroupSubject(groupId, newSubject, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.changeGroupSubject(groupId, newSubject, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -391,11 +403,17 @@ EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject, err
  * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescription, error) {
+EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescription) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.changeGroupDescription(groupId, newDescription, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.changeGroupDescription(groupId, newDescription, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);
@@ -412,11 +430,17 @@ EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescript
  * @param {EMError} error           EMError used for output.
  * @return {EMGroup}                The group.
  */
-EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension, error) {
+EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension) {
   var _manager = this._manager;
   async function f(){
     try{
-      return new EMGroup(_manager.changeGroupExtension(groupId, newExtension, error._error));
+      let error = new EMError();
+      let group = new EMGroup(_manager.changeGroupExtension(groupId, newExtension, error._error));
+      return {
+        code:error.errorCode,
+        description:error.description,
+        data:group
+      };
     }catch(err)
     {
       console.log(err);

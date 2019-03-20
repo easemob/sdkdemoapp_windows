@@ -16,6 +16,8 @@ import _ from "underscore";
 // const { remote } = require("electron");
 // let configDir = remote.app.getPath("userData");
 const easemob = require('../../node/index');
+var gconnectListener;
+var gcontactListner;
 /**
  var easemob;
 if(process.platform !== "darwin"){
@@ -59,6 +61,7 @@ class MainView extends PureComponent {
 				this.emclient = globals.emclient;
 			}
 			else{
+				console.log("new emclient");
 				this.emclient = utils.initEmclient();
 			}
 			this.emclient.login( userInfo.user.easemobName, userInfo.user.easemobPwd).then((res) => {
@@ -75,6 +78,7 @@ class MainView extends PureComponent {
 
 			this.emCallback = new easemob.EMCallback();
 
+			console.log(`listern：${this.connectListener}`);
 			this.connectListener = new easemob.EMConnectionListener();
 			this.connectListener.onDisconnect = function(error){
 				console.log("EMConnectionListener onDisconnect");
@@ -103,7 +107,10 @@ class MainView extends PureComponent {
 					me.sendTempCmd();
 				}
 			};
+			if(typeof(gconnectListener) !== "undefined")
+			  this.emclient.removeConnectionListener(gconnectListener);
 			this.emclient.addConnectionListener(this.connectListener);
+			gconnectListener = this.connectListener;
 
 
 			this.chatManager = this.emclient.getChatManager();
@@ -130,6 +137,7 @@ class MainView extends PureComponent {
 				me.onReceiveRecallMessages(message);
 			});
 			// addListener(listener) 添加消息回调监听，从监听中获取接收消息。
+			this.chatManager.clearListeners();
 			this.chatManager.addListener(this.listener);
 			this.contactManager = this.emclient.getContactManager();
 
@@ -160,8 +168,15 @@ class MainView extends PureComponent {
 				setAllContacts({contacts:res.data});
 			});
 			this.contactListener.onContactDeleted((username) => {
-				const {removeContact} = this.props;
+				const {
+					selectMember,
+					memberOfSelect
+					} = this.props;
 				console.log("onContactDeleted username: " + username);
+				if(username == selectMember.easemobName)
+				{
+					memberOfSelect({});
+				}
 				var res = this.contactManager.allContacts();
 				res.data.map((item) => {
 					console.log(item);
@@ -190,10 +205,13 @@ class MainView extends PureComponent {
 			this.contactListener.onContactRefused((username) => {
 				console.log("onContactRefused username: " + username);
 			});
-			
+			if(typeof(gcontactListner) !== "undefined")
+			   this.contactManager.removeContactListener(gcontactListner);
 			this.contactManager.registerContactListener(this.contactListener);
+			gcontactListner = this.contactListener;
 			
 			this.groupListener = new easemob.EMGroupManagerListener(this.groupManager);
+			this.groupManager.clearListeners();
 			this.groupManager.addListener(this.groupListener);
 			// 邀请别人入群被同意时触发
 			// group : 发生操作的群组
@@ -253,6 +271,7 @@ class MainView extends PureComponent {
 					console.log("acceptGroup.groupId() = " + res.data.groupId());
 					console.log("acceptGroup.groupSubject() = " + res.data.groupSubject());
 					console.log("acceptGroup.groupDescription() = " + res.data.groupDescription());
+					this.chatManager.conversationWithType(groupId, 1);
 				},(error) => {
 					console.log(error);
 				});
@@ -340,6 +359,7 @@ class MainView extends PureComponent {
 				console.log(`usernames : ${usernames}`);
 				me.onGroupMultiDevices(operation, target, usernames);
 			});
+			this.emclient.clearAllMultiDevicesListeners();
 			this.emclient.addMultiDevicesListener(this.multiDevicesListener);
 
 			// this.ret = this.emclient.login(
@@ -507,11 +527,16 @@ class MainView extends PureComponent {
 	// inviter : 邀请人
 	// inviteMessage : 邀请信息
 	onAutoAcceptInvitationFromGroup(groupId, inviter, inviteMessage){
+		const {msgsOfConversation} = this.props;
 		var me = this;
 		var conversation;
-		var textMsgBody;
-		var textRecvMsg;
 		var messageText;
+		this.groupManager.fetchGroupSpecification(groupId).then(res => {
+					
+		});
+		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
+
+		},(error) => {});
 		var group = this.groupManager.groupWithId(groupId);
 		console.log("\n\n EMGroupManagerListener onAutoAcceptInvitationFromGroup ----- !");
 		console.log(`group.groupId() = ${group.groupId()}`);
@@ -523,9 +548,10 @@ class MainView extends PureComponent {
 			userInfo,
 		} = this.props;
 
-		// group = this.groupManager.fetchGroupSpecification(group.groupId(), this.error, true);
-		// this.groupManager.fetchGroupMembers(group.groupId(), "", 500, this.error);
-		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
+		
+		conversation = this.chatManager.conversationWithType(groupId, 1);
+		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
+		msgsOfConversation({ id: groupId, msgs: messages, conversation });
 		/*
 		this.asyncGetMemberInfo(inviter, group)
 		.done(function(name){
@@ -581,12 +607,22 @@ class MainView extends PureComponent {
 	// group : 发生操作的群组
 	// admin : 被提升的群管理员
 	onAddAdminFromGroup(groupId, admin){
+		const {msgsOfConversation} = this.props;
 		var group = this.groupManager.groupWithId(groupId);
+		this.groupManager.fetchGroupSpecification(groupId).then(res => {
+					
+		});
+		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
+
+		},(error) => {});
 		console.log("\n\n EMGroupManagerListener onAddAdminFromGroup ----- !");
 		console.log(`group.groupId() = ${group.groupId()}`);
 		console.log(`group.groupSubject() = ${group.groupSubject()}`);
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`admin = ${admin}`);
+		let conversation = this.chatManager.conversationWithType(groupId, 1);
+		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
+		msgsOfConversation({ id: groupId, msgs: messages, conversation });
 	}
 
 	// 删除群管理员时触发(只有是自己时才能收到通知)
@@ -594,13 +630,21 @@ class MainView extends PureComponent {
 	// admin : 被删除的群管理员（群管理员变成普通群成员）
 	onRemoveAdminFromGroup(groupId, admin){
 		var group = this.groupManager.groupWithId(groupId);
+		this.groupManager.fetchGroupSpecification(groupId).then(res => {
+					
+		});
+		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
+
+		},(error) => {});
 		console.log("\n\n EMGroupManagerListener onRemoveAdminFromGroup ----- !");
 		console.log(`group.groupId() = ${group.groupId()}`);
 		console.log(`group.groupSubject() = ${group.groupSubject()}`);
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`admin = ${admin}`);
-		const { cancelAdminAction, groupChats } = this.props;
-		groupChats[group.groupId()] && cancelAdminAction({ id: group.groupId(), adminMember: admin, group: groupChats[group.groupId()] });
+		const { cancelAdminAction, groupChats,msgsOfConversation } = this.props;
+		let conversation = this.chatManager.conversationWithType(groupId, 1);
+		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
+		msgsOfConversation({ id: groupId, msgs: messages, conversation });
 	}
 
 	// 转让群主的时候触发
@@ -609,6 +653,12 @@ class MainView extends PureComponent {
 	// oldOwner : 原群主
 	onAssignOwnerFromGroup(groupId, newOwner, oldOwner){
 		var group = this.groupManager.groupWithId(groupId);
+		this.groupManager.fetchGroupSpecification(groupId).then(res => {
+					
+		});
+		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
+
+		},(error) => {});
 		console.log("\n\n EMGroupManagerListener onAssignOwnerFromGroup ----- !");
 		console.log(`group.groupId() = ${group.groupId()}`);
 		console.log(`group.groupSubject() = ${group.groupSubject()}`);
@@ -635,6 +685,12 @@ class MainView extends PureComponent {
 			selectConversationId,
 			userInfo
 		} = this.props;
+		this.groupManager.fetchGroupSpecification(groupId).then(res => {
+					
+		});
+		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
+
+		},(error) => {});
 
 		msgs = messages[group.groupId()] || [];
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
@@ -672,7 +728,14 @@ class MainView extends PureComponent {
 		var textMsgBody;
 		var textRecvMsg;
 		var msgs;
+		this.groupManager.fetchGroupSpecification(groupId).then(res => {
+					
+		});
+		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
+
+		},(error) => {});
 		var group = this.groupManager.groupWithId(groupId);
+		
 
 		console.log("\n\n EMGroupManagerListener onMemberLeftGroup ----- !");
 		console.log(`${member} has left the group ${group.groupId()}`);
@@ -680,7 +743,7 @@ class MainView extends PureComponent {
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`group.groupMembers() = ${group.groupMembers()}`);
 
-		const { userInfo, messages } = this.props;
+		const { userInfo, messages,msgsOfConversation,receiveMsgAction,selectConversationId } = this.props;
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
 		{
 			textMsgBody = new easemob.EMTextMessageBody(`${member} 离开群`);
@@ -698,7 +761,17 @@ class MainView extends PureComponent {
 			msgs.push(textRecvMsg);
 			conversation.insertMessage(textRecvMsg);
 		}
-
+		msgsOfConversation({ id: groupId, msgs, conversation });
+		msgs.push(textRecvMsg);
+		receiveMsgAction(
+			{
+				messages: msgs,
+				selectConversationId,
+				id: group.groupId(),
+				user: userInfo.user.easemobName,
+				conversation
+			}
+		);
 	}
 
 	// 离开群组时触发
@@ -745,6 +818,7 @@ class MainView extends PureComponent {
 			userInfo,
 			conversations,
 			groupAtAction,
+			setGroupChats,
 			globals
 		} = this.props;
 		var conversation;
@@ -800,7 +874,8 @@ class MainView extends PureComponent {
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
 			if(conversationType == 1 && (!conversations[conversationId])){
-				this.groupManager.fetchAllMyGroups().then(res => {
+				globals.chatManager.conversationWithType(conversationId, conversationType);
+				globals.groupManager.fetchAllMyGroups().then(res => {
 					let allGroups = [];
 					res.data.map((group) => {
 						allGroups.push(group.groupId());
@@ -809,7 +884,7 @@ class MainView extends PureComponent {
 			    });
 		    }
 			else if(conversationType == 0 && (!allMembersInfo[conversationId])){
-				this.groupManager.fetchAllMyGroups().then(res => {
+				globals.groupManager.fetchAllMyGroups().then(res => {
 					let allGroups = [];
 					res.data.map((group) => {
 						allGroups.push(group.groupId());
@@ -850,5 +925,8 @@ const mapStateToProps = state => ({
 	allMembersInfo: state.allMembersInfo,
 	messages: state.messages,
 	conversations: state.conversations,
+	selectMember: state.selectMember,
+	memberOfSelect: state.memberOfSelect,
+	msgsOfConversation: state.msgsOfConversation
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MainView));

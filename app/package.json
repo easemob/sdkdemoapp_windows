@@ -1,8 +1,8 @@
 {
 	"name": "DesktopDemo",
-	"productName": "沙箱IM-SDK桌面端Demo",
+	"productName": "IM-SDK桌面端Demo",
 	"version": "3.5.4",
-	"description": "沙箱IM-SDK桌面端Demo",
+	"description": "IM-SDK桌面端Demo",
 	"main": "./main.js",
 	"author": "",
 	"company": "北京易掌云峰科技有限公司",

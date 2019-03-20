@@ -40,6 +40,7 @@ class MemberDetailView extends Component {
 		const {
 			selectMember,
 			globals,
+			memberOfSelect,
 			conversationOfSelect
 		} = this.props;
 		var contactManager = globals.contactManager;
@@ -50,6 +51,7 @@ class MemberDetailView extends Component {
 				return;
 			}
 			conversationOfSelect("");
+			memberOfSelect({});
 		});
 	}
 

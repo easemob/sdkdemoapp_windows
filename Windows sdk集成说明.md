@@ -401,7 +401,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /**  
      * 实例化区群组设置
-     * param style 组类型,Number,0为只有群主可以邀请成员加入，1为群主和管理员都可以邀请成员加入，2为普通用户也可以邀请成员加入，但需要群主同意，3为成员可以随意邀请用户加入
+     * param style 组类型,Number,0为私有群，只有群主可以邀请成员加入，1为私有群，成员也可以邀请成员加入，2为公开群，但申请入群需要群主同意，3为公开群，成员可以随意申请加入
      * param maxUserCount 最大成员数,Number，最大200
      * param inviteNeedConfirm 邀请是否需要确认，Bool
      * param extension 扩展信息，String

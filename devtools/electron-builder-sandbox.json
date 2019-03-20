@@ -1,5 +1,5 @@
 {
-	"productName": "沙箱IM-SDK桌面端Demo",
+	"productName": "IM-SDK桌面端Demo",
 	"appId": "com.easemob.oa.sandbox",
 	"compression": "maximum",
 	"artifactName": "DesktopDemo.sandbox.${version}.${os}.${arch}.${ext}",

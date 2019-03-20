@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Switch, Input, Upload, Icon, Modal, Button } from "antd";
 import * as actionCreators from "@/stores/actions";
+import HeadImageView from "@/views/common/head_image";
 import $ from "jquery";
 var _const = require("@/views/common/domain");
 
@@ -145,9 +146,9 @@ class GroupSettingView extends Component {
 		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20)).then(res => {
 			if(res.code != 0)
 			  console.log("leave group fail:" + res.description);
+			conversationOfSelect("");
+			conversationOfSelect(selectConversationId);
 		});
-		conversationOfSelect("");
-		conversationOfSelect(selectConversationId);
 	}
 
 
@@ -191,7 +192,7 @@ class GroupSettingView extends Component {
 			// console.log(`blockGroupMessage error.description = ${error.description}`);
 		}
 		else{
-			groupManager.unblockGroupMessage(selectConversationId, error).then(res => {
+			groupManager.unblockGroupMessage(selectConversationId).then(res => {
 				if(res.code == 0)
 				{
 					console.log(`unblockGroupMessage error.description = ${res.description}`);
@@ -214,23 +215,7 @@ class GroupSettingView extends Component {
 		if(group.groupOwner() === userInfo.user.easemobName){
 			return (
 				<div className="group-setting">
-					<Upload
-						action={ `${_const.domain}/v1/tenants/${userInfo.user.tenantId}/mediafile` }
-						listType="picture-card"
-						fileList={ fileList }
-						accept="image/*"
-						onPreview={ this.handlePreviewAvatar }
-						onChange={ this.handleChangeAvatar }
-					>
-						{
-							fileList.length >= 1
-								? null
-								: <div>
-									<Icon type="plus" />
-									<div className="ant-upload-text">上传</div>
-								</div>
-						}
-					</Upload>
+					<HeadImageView imgUrl={ "" } />
 					<div className="groupname">
 						<Input
 							value={ this.state.chatName }
