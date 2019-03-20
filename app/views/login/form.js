@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import {Route, Redirect} from 'react-router-dom';
+import _ from "underscore";
 import * as actionCreators from "@/stores/actions";
 import Lang from "@/lang";
 import * as selectors from "@/stores/selectors";
@@ -37,18 +38,28 @@ class LoginForm extends PureComponent {
 		this.setState({ password: e.target.value });
 	}
 
-	getCookie(){
+	getCookie(key){
 		var me = this;
-		session.defaultSession.cookies.get({ url: "http://www.github.com" }, function(error, cookies){
+		session.defaultSession.cookies.get({ url: "http://www.github.com", name: key }, function(error, cookies){
+			let userName = '';
+			let password = '';
 			if(cookies.length){
 				checkedVal = true;
 			}
 			else{
 				checkedVal = false;
 			}
+			_.map(cookies, (item) => {
+				if(item.name == "userName"){
+					userName = item.value;
+				}
+				if(item.name == "password"){
+					password = item.value;
+				}
+			});
 			me.setState({
-				userName: cookies.length ? cookies[0].value : "",
-				password: cookies.length ? cookies[1].value : "",
+				userName: userName,
+				password: password,
 			});
 		});
 	}

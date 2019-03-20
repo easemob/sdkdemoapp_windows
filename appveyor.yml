@@ -24,7 +24,7 @@ deploy:
   description: 'MobilePortal-v$(appveyor_build_version)'
   provider: GitHub
   auth_token:
-    secure: BTTXKYx5y+s14Q1FVFeh5XqQU1BD7s4LKPQt3uU42iIyQ1quGUdPPAvwKn9bsCMc
+    secure: Qef9/iOsymggNTOYsiIm6oLMQ3HtL2PhuSc1RWPtyfL9cQ3TYhfMYerLB7LrsFEN
   draft: true
   prerelease: false
   force_update: true             # release from master branch only
