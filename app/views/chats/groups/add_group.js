@@ -93,6 +93,13 @@ class AddGroup extends Component {
 						searchValue: ""
 					});
 					setNotice("加入群组成功");
+					globals.groupManager.fetchGroupSpecification(selectGroupId).then(res => {
+					
+					});
+					globals.groupManager.fetchGroupMembers(selectGroupId, "", 200).then((res) => {
+	
+					},(error) => {});
+					globals.chatManager.conversationWithType(selectGroupId, 1);
 				}
 				else{
 					// 没有权限，需要使用applyjoinPublicGroup
