@@ -49,11 +49,11 @@ class FormInput extends Component {
 	render(){
 		const { getFieldDecorator } = this.props.form;
 		return (
-			<Form onSubmit={ this.handleSubmit }>
+			<Form onSubmit={ this.handleSubmit } hideRequiredMark={true}>
 				<FormItem
 					label="用户名:"
-					labelCol={ { span: 5 } }
-					wrapperCol={ { span: 19 } }
+					labelCol={ { span: 7 } }
+					wrapperCol={ { span: 17 } }
 				>
 					{getFieldDecorator("realName", {
 						rules: [{ required: true, message: "请输入姓名!" }],

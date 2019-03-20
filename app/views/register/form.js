@@ -7,23 +7,11 @@ import { Form, Icon, Input, Button, Checkbox } from "antd";
 import { Link } from "react-router-dom";
 import { utils } from "@/utils/utils";
 const session = require("electron").remote.session;
-// const easemob = require('../../node/index');
-// const fs = require("fs-extra");
-// const { remote } = require("electron");
-// const configDir = remote.app.getPath("userData");
 var checkedVal;
 class RegisterForm extends PureComponent {
 	constructor(props){
 		super(props);
-		// this.state = {
-		// 	userName: "",
-		// 	password: "",
-		// };
-		// this.getCookie();
-
 		this.handleRegister = this.handleRegister.bind(this);
-		// this.handleChangePassword = this.handleChangePassword.bind(this);
-		// this.handleSetCookie = this.handleSetCookie.bind(this);
 	}
 
 
@@ -73,16 +61,6 @@ class RegisterForm extends PureComponent {
 							prefix={ <Icon type="lock" style={ { color: "rgba(0,0,0,.25)" } } /> }
 							type="password"
 							placeholder={ Lang.string("login.password.label") }
-						/>
-					)}
-				</FormItem>
-				<FormItem>
-					{getFieldDecorator("nick", {
-						rules: [{ required: true, message: Lang.string("login.nickName.required") } ],
-					})(
-						<Input
-							prefix={ <Icon type="lock" style={ { color: "rgba(0,0,0,.25)" } } /> }
-							placeholder={ Lang.string("login.nickName.label") }
 						/>
 					)}
 				</FormItem>

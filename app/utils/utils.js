@@ -25,6 +25,9 @@ const utils = {
 		fs.ensureDir(`${configDir}/easemob`, function(err){
 			console.log(err);
 		});
+		fs.ensureDir(`${configDir}/easemob-desktop`, function(err){
+			console.log(err);
+		});
 		// 头像文件夹下创建一个用户文件夹，不同的用户头像存放在不同的文件夹下
 		// 创建一个文件夹用来存放头像
 		fs.ensureDir(`${configDir}/easemob/easemobAvatar`, function(err){
