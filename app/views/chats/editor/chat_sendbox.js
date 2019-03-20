@@ -177,6 +177,7 @@ class ChatSendBoxView extends PureComponent {
 		var textMsgBody;
 		const { globals } = this.props;
 		textMsgBody = new globals.easemob.EMTextMessageBody(this.input.textAreaRef.value);
+		console.log(`value:${e.target.value}end`);
 		if(
 			e.target.value &&
 			!(e.target.value == "\n") &&

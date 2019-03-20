@@ -3,12 +3,15 @@ import * as actionCreators from "@/stores/actions";
 import { connect } from "react-redux";
 import HeadImageView from "@/views/common/head_image";
 import CreateGroupView from "../groups/group_create";
+import { withRouter } from "react-router-dom";
 
 class MemberDetailView extends PureComponent {
 	constructor(props){
 		super(props);
-		this.state = {
-		};
+		const {
+			globals,
+			selectConversationId
+		} = this.props;
 	}
 
 	render(){
@@ -67,9 +70,9 @@ class MemberDetailView extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	allMembersInfo: state.allMembersInfo,
-	selectConversationId: state.selectConversationId,
 	isSelectCovGroup:state.isSelectCovGroup,
 	globals: state.globals,
+	selectConversationId: state.selectConversationId,
+	allMembersInfo: state.allMembersInfo
 });
-export default connect(mapStateToProps, actionCreators)(MemberDetailView);
+export default  withRouter(connect(mapStateToProps, actionCreators)(MemberDetailView));

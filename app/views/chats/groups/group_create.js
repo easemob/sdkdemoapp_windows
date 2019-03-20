@@ -207,6 +207,7 @@ class CreateGroupView extends PureComponent {
 		var username;
 
 		if(membersIdArray.length == 1){
+			setNotice("当前选择的群成员为2人，自动进入单聊", "success");
 			selectMember = allMembersInfo[membersIdArray[0]];
 			conversation = globals.chatManager.conversationWithType(membersIdArray[0], 0);
 			messages = conversation.loadMoreMessagesByMsgId("", 20,0);
@@ -216,6 +217,8 @@ class CreateGroupView extends PureComponent {
 			this.setState({
 				visible: false,
 			});
+			setSelectConvType(0);
+			return;
 		}
 		else if(membersIdArray.length >= 500){
 			setNotice("当前选择的群成员已超过 500 人", "fail");
@@ -226,7 +229,7 @@ class CreateGroupView extends PureComponent {
 			description = description ? description.substring(0, 100) : "";
 			var groupManager = globals.groupManager;
 			// 组设置，4个参数分别为组类型（0,1,2,3），最大成员数，邀请是否需要确认，扩展信息
-			var setting = new globals.easemob.EMMucSetting(1, 20, false, "test");
+			var setting = new globals.easemob.EMMucSetting(inviteGroupMember?1:0, 20, false, "test");
 			console.log("membersIdArray:" + membersIdArray);
 			console.log("membersId:" + membersId);
 			groupManager.createGroup(groupName,description,"welcome message",setting,membersIdArray).then((res)=>{
