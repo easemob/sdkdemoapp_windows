@@ -22,9 +22,15 @@ class MenuList extends Component {
 	}
 	addContact(e){
 		const {
+			allContacts,
 			globals,
 			setNotice
 		} = this.props;
+		var arrContacs = allContacts.contacts;
+		if(arrContacs.indexOf(this.state.chatName) > -1){
+			setNotice("联系人已在好友列表中");
+			return;
+		}
 		let contactManager = globals.contactManager;
 		contactManager.inviteContact(this.state.chatName,"welcome").then((res) => {
 		if(res.code == 0)
