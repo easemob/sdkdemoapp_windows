@@ -28,4 +28,6 @@ deploy:
   draft: true
   prerelease: false
   force_update: true             # release from master branch only
-    appveyor_repo_tag: true        # deploy on tag push only
+  on:
+      APPVEYOR_REPO_TAG: true
+    # appveyor_repo_tag: true        # deploy on tag push only
