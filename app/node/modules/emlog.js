@@ -72,6 +72,12 @@ function EMLog(){
     this.getIsDisplayOnConsole = function(){
         return this._isDisplayOnConsole;
     }
+    this.addLogCallback = function(callback){
+        log.addLogCallback(callback);
+    }
+    this.removeLogCallback = function(callback){
+        log.removeLogCallback(callback);
+    }
 
 }
 
