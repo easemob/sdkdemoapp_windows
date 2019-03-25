@@ -1,5 +1,5 @@
 # easemob\_sdk\windows集成说明
->windows sdk为用户提供在windows平台上进行开发的js接口及二进制文件，开发语言使用electron。目前支持登录、注册、单聊、群聊、聊天室、文本消息、图片、语音、位置等消息以及透传消息，还可以实现好友管理、群组管理等功能。
+>windows sdk为用户提供在windows平台上进行开发的js接口及二进制文件，开发框架使用electron。目前支持登录、注册、单聊、群聊、聊天室、文本消息、图片、语音、位置等消息以及透传消息，还可以实现好友管理、群组管理等功能。
 
 ## 准备
 ### 开发环境需求
@@ -56,6 +56,25 @@ SDK 采用模块化设计，每一模块的功能相对独立和完善，用户�
 > sdk中使用到的对象包括系统配置信息EMChatConfigs、群组信息EMGroup、群组配置信息EMMucSetting、群文件信息EMMucSharedFile、聊天室信息EMChatroom、会话信息EMConversation、消息EMMessage、文本消息体EMFileMessageBody、图片消息体EMImageMessageBody、文件消息体EMTextMessageBody、命令消息体EMCmdMessageBody。
 > 具体接口详见[./jsdoc/out/index.html](./jsdoc/out/index.html "模块定义")
 
+### 依赖模块安装
+> electron开发中依赖的模块及版本写在package.json中，安装依赖模块时，在sdkdemoapp_windows目录下使用命令：
+
+    npm install
+如果安装过程中出现error，可能是网络原因，可以选择使用yarn镜像下载安装：
+
+    npm install -g yarn
+    yarn install
+### 软件调试
+首先需要编译软件，运行命令：
+
+    npm run build:app
+调试过程需要使用热启动，运行命令：
+
+    npm run hot-server
+然后另启动一个命令行工具，运行命令：
+
+    npm run start:hot
+可启动软件。调试过程中修改代码后，hot-server会自动编译新代码，在界面上使用F5按键可以立即刷新界面，应用新代码。在界面上点击鼠标右键，弹出右键菜单，点击检查元素，可以打开开发者工具，查看console控制台输出，在Source中加端点调试
 
 ## 基本功能
 ### 加载sdk
