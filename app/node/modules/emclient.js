@@ -47,9 +47,9 @@ function EMClient(chatConfigs,autoLogin) {
 
 /**
  * Login with username and password.
- * @param {String} username
- * @param {String} password
- * @return {result}
+ * @param {String} username 用户ID
+ * @param {String} password 密码
+ * @return {Object} 登录结果
  */
 EMClient.prototype.login = function (username, password) {
   var _emclient = this._emclient;
@@ -76,9 +76,9 @@ EMClient.prototype.login = function (username, password) {
 
 /**
  * Login with username and token.
- * @param {String} username
- * @param {String} token
- * @return {EMError}
+ * @param {String} username 用户名
+ * @param {String} token token
+ * @return {Object} 登录结果
  */
 EMClient.prototype.loginWithToken = function (username, token) {
   var _emclient = this._emclient;
@@ -99,7 +99,7 @@ EMClient.prototype.loginWithToken = function (username, token) {
 
 /**
  * Logout current user.
- * @return {EMError}
+ * @return {Object} 登出结果
  */
 EMClient.prototype.logout = function () {
   var _emclient = this._emclient;
@@ -126,10 +126,7 @@ EMClient.prototype.logout = function () {
 
 /**
  * Logout current user.
- *EMLoginInfo.loginUser() login user name. {String}
- *EMLoginInfo.loginPassword() login user password. {String}
- *EMLoginInfo.loginToken() login user token. {String}
- * @return {EMLoginInfo}
+ * @return {Object} {loginUser,loginPassword,loginToken}
  */
 EMClient.prototype.getLoginInfo = function () {
   let logininfo = this._emclient.getLoginInfo();
@@ -142,8 +139,8 @@ EMClient.prototype.getLoginInfo = function () {
 
 /**
  * change appkey only when user not logged in.
- * @param {String} appKey
- * @return {EMError}
+ * @param {String} appKey 修改后的appkey
+ * @return {Object} {code,description}修改结果
  */
 EMClient.prototype.changeAppkey = function (appKey) {
   let error = new EMError(this._emclient.changeAppkey(appKey));
@@ -155,7 +152,7 @@ EMClient.prototype.changeAppkey = function (appKey) {
 
 /**
  * register connection listener.
- * @param {EMConnectionListener} listener
+ * @param {EMConnectionListener} listener 网络连接的回调监听对象
  * @return {void}
  */
 EMClient.prototype.addConnectionListener = function (listener) {
@@ -164,7 +161,7 @@ EMClient.prototype.addConnectionListener = function (listener) {
 
 /**
  * remove connection listener.
- * @param {EMConnectionListener} listener
+ * @param {EMConnectionListener} listener 网络连接的回调监听对象
  * @return {void}
  */
 EMClient.prototype.removeConnectionListener = function (listener) {
@@ -173,9 +170,9 @@ EMClient.prototype.removeConnectionListener = function (listener) {
 
 /**
  * Register a new account with user name and password.
- * @param {String} username
- * @param {String} password
- * @return {EMError}
+ * @param {String} username 用户名
+ * @param {String} password 密码
+ * @return {Object} {code,description}注册结果
  */
 EMClient.prototype.createAccount = function (username, password) {
   var _emclient = this._emclient;
@@ -196,7 +193,7 @@ EMClient.prototype.createAccount = function (username, password) {
 
 /**
  * get the chat configs.
- * @return {EMChatConfigs}
+ * @return {EMChatConfigs} 返回配置信息
  */
 EMClient.prototype.getChatConfigs = function () {
   return new EMChatConfigs(this._emclient.getChatConfigs());
@@ -204,7 +201,7 @@ EMClient.prototype.getChatConfigs = function () {
 
 /**
  * Get chat manager to handle the message operation.
- * @return {EMChatManager}
+ * @return {EMChatManager} 返回会话管理对象
  */
 EMClient.prototype.getChatManager = function () {
   return new EMChatManager(this._emclient.getChatManager());
@@ -212,7 +209,7 @@ EMClient.prototype.getChatManager = function () {
 
 /**
  * Get contact manager to manage the contacts.
- * @return {EMContactManager}
+ * @return {EMContactManager} 返回好友管理对象
  */
 EMClient.prototype.getContactManager = function () {
   return new EMContactManager(this._emclient.getContactManager());
@@ -220,7 +217,7 @@ EMClient.prototype.getContactManager = function () {
 
 /**
  * Get group manager to manage the group.
- * @return {EMGroupManager}
+ * @return {EMGroupManager}返回群组管理对象
  */
 EMClient.prototype.getGroupManager = function () {
   return new EMGroupManager(this._emclient.getGroupManager());
@@ -228,7 +225,7 @@ EMClient.prototype.getGroupManager = function () {
 
 /**
  * Get chatroom manager to manage the chatroom.
- * @return {EMChatroomManager}
+ * @return {EMChatroomManager} 返回聊天室管理对象
  */
 EMClient.prototype.getChatroomManager = function () {
   return new EMChatroomManager(this._emclient.getChatroomManager());
@@ -236,7 +233,7 @@ EMClient.prototype.getChatroomManager = function () {
 
 /**
  * register multi devices listener.
- * @param {EMMultiDevicesListener} listener
+ * @param {EMMultiDevicesListener} listener 多设备回调监听对象
  * @return {void}
  */
 EMClient.prototype.addMultiDevicesListener = function (listener) {
@@ -245,7 +242,7 @@ EMClient.prototype.addMultiDevicesListener = function (listener) {
 
 /**
  * remove register multi devices listener.
- * @param {EMMultiDevicesListener} listener
+ * @param {EMMultiDevicesListener} listener 多设备回调监听对象
  * @return {void}
  */
 EMClient.prototype.removeMultiDevicesListener = function (listener) {
@@ -261,46 +258,46 @@ EMClient.prototype.clearAllMultiDevicesListeners = function () {
 };
 
 /**
- * Forced to logout the specified logged in device. return an array of EMDeviceInfo.
+ * get all logged in devices. return an array of EMDeviceInfo.
  * EMDeviceInfo.resource device resource.
  * EMDeviceInfo.deviceUUID device uuid.
  * EMDeviceInfo.deviceName device name.
- * @param {String} username
- * @param {String} password
- * @param {String} error
+ * @param {String} username 用户ID
+ * @param {String} password 用户名密码
  * @return {Array} EMDeviceInfo
  */
-EMClient.prototype.getLoggedInDevicesFromServer = function (username, password, error) {
+EMClient.prototype.getLoggedInDevicesFromServer = function (username, password) {
+  let error = new EMError();
   return this._emclient.getLoggedInDevicesFromServer(username, password, error._error);
 };
 
 /**
  * Forced to logout the specified logged in device.
- * @param {String} username
- * @param {String} password
- * @param {String} resource
- * @param {String} error
+ * @param {String} username 用户ID
+ * @param {String} password 用户密码
+ * @param {String} resource 用户客户端resource
  * @return {void}
  */
-EMClient.prototype.kickDevice = function (username, password, resource, error) {
+EMClient.prototype.kickDevice = function (username, password, resource) {
+  let error = new EMError();
   this._emclient.kickDevice(username, password, resource, error._error);
 };
 
 /**
  * Forced to logout all logged in device.
- * @param {String} username
- * @param {String} password
- * @param {String} error
+ * @param {String} username 用户ID
+ * @param {String} password 用户密码
  * @return {void}
  */
-EMClient.prototype.kickAllDevices = function (username, password, error) {
+EMClient.prototype.kickAllDevices = function (username, password) {
+  let error = new EMError(); 
   this._emclient.kickAllDevices(username, password, error._error);
 };
 
 /**
  * call this method to notify SDK the network change.
- * @param {Number} to
- * @param {Bool} forceReconnect
+ * @param {Number} to 新的网络连接类型
+ * @param {Bool} forceReconnect 是否强制重连
  * @return {void}
  * {
  * NONE = 0

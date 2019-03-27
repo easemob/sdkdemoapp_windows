@@ -18,7 +18,7 @@ function EMStringCursorResult(cursor) {
 
 /**
  * Get cursor of next page.
- * @return {String}
+ * @return {String} 返回下一个结果
  */
 EMStringCursorResult.prototype.nextPageCursor = function () {
   return this._cursor.nextPageCursor();
@@ -40,6 +40,9 @@ EMStringCursorResult.prototype.result = function () {
  * CHATROOM = 1,      //cursor store EMChatroom list.
  * MESSAGE = 2,       //cursor store EMMessage list.
  * }
+ * @constructor
+ * @param {String} cursor
+ * @param {Number} type
  */
 function EMCursorResult (cursor, type) {
   this._cursor = cursor;
@@ -48,7 +51,7 @@ function EMCursorResult (cursor, type) {
 
 /**
  * Get cursor of next page.
- * @return {String}
+ * @return {String} 返回下一个结果
  */
 EMCursorResult.prototype.nextPageCursor = function () {
   return this._cursor.nextPageCursor();
@@ -80,6 +83,7 @@ EMCursorResult.prototype.result = function () {
  * GROUP = 0,         //
  * CHATROOM = 1,      //
  * }
+ * @constructor
  */
 function EMPageResult (cursor, type) {
   this._cursor = cursor;
@@ -88,7 +92,7 @@ function EMPageResult (cursor, type) {
 
 /**
  * Get count.
- * @return {Array}
+ * @return {Number} 返回本页结果计数
  */
 EMPageResult.prototype.count = function () {
   return this._cursor.count();

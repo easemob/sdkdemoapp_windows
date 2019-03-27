@@ -17,7 +17,7 @@ function EMCmdMessageBody(action) {
 
 /**
  * Get message body type.
- * @return {Number}
+ * @return {Number} 返回消息类型
  */
 EMCmdMessageBody.prototype.type = function () {
   return this._body.type();
@@ -25,7 +25,7 @@ EMCmdMessageBody.prototype.type = function () {
 
 /**
  * Get command action.
- * @return {String}
+ * @return {String} 返回命令消息类型
  */
 EMCmdMessageBody.prototype.action = function () {
   return this._body.action();
@@ -34,7 +34,7 @@ EMCmdMessageBody.prototype.action = function () {
 /**
  * Set command action.
  * @param {String} action
- * @return {void}
+ * @return {void} 设置命令消息类型
  */
 EMCmdMessageBody.prototype.setAction = function (action) {
   this._body.setAction(action);

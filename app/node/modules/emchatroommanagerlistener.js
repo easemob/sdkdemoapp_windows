@@ -51,14 +51,7 @@ function EMChatroomManagerListener() {
 
 /**
  * Callback user when user is kicked out from a chatroom or the chatroom is destroyed.
- * callback function type:
- * function callback(chatroom, reason) {
- *  //@param {EMChatroom} chatroom
- *  //@param {Number} reason
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onLeaveChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onLeaveChatroom = function (callback) {
@@ -66,15 +59,15 @@ EMChatroomManagerListener.prototype.onLeaveChatroom = function (callback) {
 };
 
 /**
+ * @function EMChatroomManagerListener~onLeaveChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} reason 退出原因
+ * @return {void}
+ */
+
+/**
  * Callback user when a user join the chatroom.
- * callback function type:
- * function callback(chatroom, member) {
- *  //@param {EMChatroom} chatroom
- *  //@param {String} member
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onMemberJoinedChatroomCallback} callback
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onMemberJoinedChatroom = function (callback) {
@@ -82,15 +75,15 @@ EMChatroomManagerListener.prototype.onMemberJoinedChatroom = function (callback)
 };
 
 /**
+ * @function EMChatroomManagerListener~onMemberJoinedChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} member 加入的成员ID
+ * @return {void}
+ */
+
+/**
  * Callback user when a user leave the chatroom.
- * callback function type:
- * function callback(chatroom, member) {
- *  //@param {EMChatroom} chatroom
- *  //@param {String} member
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onMemberLeftChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onMemberLeftChatroom = function (callback) {
@@ -98,16 +91,15 @@ EMChatroomManagerListener.prototype.onMemberLeftChatroom = function (callback) {
 };
 
 /**
+ * @function EMChatroomManagerListener~onMemberLeftChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} member 离开的成员ID
+ * @return {void}
+ */
+
+/**
  * Callback user when user add to chat room mute list.
- * callback function type:
- * function callback(chatroom, mutes, muteExpire) {
- *  //@param {EMChatroom} chatroom.
- *  //@param {Array} mutes. String mute array.
- *  //@param {Number} muteExpire.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onAddMutesFromChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onAddMutesFromChatroom = function (callback) {
@@ -115,15 +107,16 @@ EMChatroomManagerListener.prototype.onAddMutesFromChatroom = function (callback)
 };
 
 /**
+ * @function EMChatroomManagerListener~onAddMutesFromChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {Array} mutes String mute array.
+ * @param {Number} muteExpire 禁言时长
+ * @return {void}
+ */
+
+/**
  * Callback user when user remove from chat room mute list.
- * callback function type:
- * function callback(chatroom, mutes) {
- *  //@param {EMChatroom} chatroom.
- *  //@param {Array} mutes. String mute array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onRemoveMutesFromChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onRemoveMutesFromChatroom = function (callback) {
@@ -131,15 +124,15 @@ EMChatroomManagerListener.prototype.onRemoveMutesFromChatroom = function (callba
 };
 
 /**
+ * @function EMChatroomManagerListener~onRemoveMutesFromChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {Array} mutes String mute array.
+ * @return {void}
+ */
+
+/**
  * Callback user when user promote to admin.
- * callback function type:
- * function callback(chatroom, admin) {
- *  //@param {EMChatroom} chatroom.
- *  //@param {String} admin
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onAddAdminFromChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onAddAdminFromChatroom = function (callback) {
@@ -147,15 +140,15 @@ EMChatroomManagerListener.prototype.onAddAdminFromChatroom = function (callback)
 };
 
 /**
+ * @function EMChatroomManagerListener~onAddAdminFromChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} admin 管理员ID
+ * @return {void}
+ */
+
+/**
  * Callback user when user cancel admin.
- * callback function type:
- * function callback(chatroom, admin) {
- *  //@param {EMChatroom} chatroom.
- *  //@param {String} admin
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onRemoveAdminFromChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onRemoveAdminFromChatroom = function (callback) {
@@ -163,16 +156,15 @@ EMChatroomManagerListener.prototype.onRemoveAdminFromChatroom = function (callba
 };
 
 /**
+ * @function EMChatroomManagerListener~onRemoveAdminFromChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} admin 管理员ID
+ * @return {void}
+ */
+
+/**
  * Callback user when promote to chatroom owner.
- * callback function type:
- * function callback(chatroom, newOwner, oldOwner) {
- *  //@param {EMChatroom} chatroom.
- *  //@param {String} newOwner
- *  //@param {String} oldOwner
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onAssignOwnerFromChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onAssignOwnerFromChatroom = function (callback) {
@@ -180,19 +172,27 @@ EMChatroomManagerListener.prototype.onAssignOwnerFromChatroom = function (callba
 };
 
 /**
+ * @function EMChatroomManagerListener~onAssignOwnerFromChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} newOwner 新群主
+ * @param {String} oldOwner 旧群主
+ * @return {void}
+ */
+
+/**
  * Callback user when chatroom's announcement change.
- * callback function type:
- * function callback(chatroom, announcement) {
- *  //@param {EMChatroom} chatroom.
- *  //@param {String} announcement
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatroomManagerListener~onUpdateAnnouncementFromChatroomCallback} callback 回调函数
  * @return {void}
  */
 EMChatroomManagerListener.prototype.onUpdateAnnouncementFromChatroom = function (callback) {
   this._eventEmitter.on('onUpdateAnnouncementFromChatroom', callback);
 };
+
+/**
+ * @function EMChatroomManagerListener~onUpdateAnnouncementFromChatroomCallback
+ * @param {EMChatroom} chatroom 聊天室对象
+ * @param {String} announcement 公告内容
+ * @return {void}
+ */
 
 module.exports = EMChatroomManagerListener;

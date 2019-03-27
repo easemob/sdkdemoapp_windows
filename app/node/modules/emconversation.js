@@ -32,7 +32,7 @@ function EMConversation(conversation) {
 /**
  * Get conversation id.
  * Note: For a single chat conversation, it's remote peer's user name, for a group chat conversation, it's group id.
- * @return {String}
+ * @return {String} 会话ID
  */
 EMConversation.prototype.conversationId = function () {
   return this._conversation.conversationId();
@@ -40,7 +40,7 @@ EMConversation.prototype.conversationId = function () {
 
 /**
  * Get conversation type.
- * @return {String}
+ * @return {Number} 会话类型
  */
 EMConversation.prototype.conversationType = function () {
   return this._conversation.conversationType();
@@ -51,7 +51,7 @@ EMConversation.prototype.conversationType = function () {
  * Note: It's user's responsibility to confirm removed message belongs to the conversation.
  * Better to use message to remove message instead of message id.
  * @param {EMMessage|String} message EMMessage is the message to remove, String is message Id. 
- * @return {Bool}
+ * @return {Bool} 删除消息结果
  */
 EMConversation.prototype.removeMessage = function (message) {
   if (typeof(message) == "string") {
@@ -64,8 +64,9 @@ EMConversation.prototype.removeMessage = function (message) {
 /**
  * Insert a message to DB.
  * Note: It's user's responsibility to confirm inserted message belongs to the conversation.
- * @param {EMMessage} message
- * @return {Bool}
+ * 在指定时间插入消息
+ * @param {EMMessage} message 消息对象
+ * @return {Bool} 插入消息结果
  */
 EMConversation.prototype.insertMessage = function (message) {
   return this._conversation.insertMessage(message._message);
@@ -74,8 +75,9 @@ EMConversation.prototype.insertMessage = function (message) {
 /**
  * Append a message to the last of conversation.
  * Note: It's user's responsibility to confirm inserted message belongs to the conversation.
- * @param {EMMessage} message
- * @return {Bool}
+ * 在消息末尾添加
+ * @param {EMMessage} message 消息对象
+ * @return {Bool} 添加消息结果
  */
 EMConversation.prototype.appendMessage = function (message) {
   return this._conversation.appendMessage(message._message);
@@ -85,8 +87,9 @@ EMConversation.prototype.appendMessage = function (message) {
  * Append a message to the last of conversation.
  * It's user's responsibility to confirm updated message belongs to the conversation, and user
  * should NOT change a message's id.
- * @param {EMMessage} message
- * @return {Bool}
+ * 修改制定消息
+ * @param {EMMessage} message 消息对象
+ * @return {Bool} 修改消息结果
  */
 EMConversation.prototype.updateMessage = function (message) {
   return this._conversation.updateMessage(message._message);
@@ -94,7 +97,7 @@ EMConversation.prototype.updateMessage = function (message) {
 
 /**
  * Clear all messages belong to the the conversation(include DB and memory cache).
- * @return {Bool}
+ * @return {Bool} 删除所有消息结果
  */
 EMConversation.prototype.clearAllMessages = function () {
   return this._conversation.clearAllMessages();
@@ -103,9 +106,9 @@ EMConversation.prototype.clearAllMessages = function () {
 /**
  * Change message's read status.
  * Note: It's user's responsibility to confirm changed message belongs to the conversation.
- * @param {String} msgId
- * @param {Bool} isRead the second param is optional.
- * @return {Bool}
+ * @param {String} msgId 消息ID
+ * @param {Bool} isRead 消息已读状态
+ * @return {Bool} 设置结果
  */
 EMConversation.prototype.markMessageAsRead = function (msgId, isRead) {
   return this._conversation.markMessageAsRead(msgId, isRead);
@@ -113,8 +116,8 @@ EMConversation.prototype.markMessageAsRead = function (msgId, isRead) {
 
 /**
  * Change all messages's read status.
- * @param {Bool} isRead
- * @return {Bool}
+ * @param {Bool} isRead 消息已读状态
+ * @return {Bool} 设置结果
  */
 EMConversation.prototype.markAllMessagesAsRead = function (isRead) {
   return this._conversation.markAllMessagesAsRead(isRead);
@@ -122,8 +125,7 @@ EMConversation.prototype.markAllMessagesAsRead = function (isRead) {
 
 /**
  * Get unread messages count of conversation.
- * @param {Bool} isRead
- * @return {Bool}
+ * @return {Number} 返回未读消息计数
  */
 EMConversation.prototype.unreadMessagesCount = function () {
   return this._conversation.unreadMessagesCount();
@@ -131,7 +133,7 @@ EMConversation.prototype.unreadMessagesCount = function () {
 
 /**
  * Get the total messages count of conversation.
- * @return {Number}
+ * @return {Number} 返回消息计数
  */
 EMConversation.prototype.messagesCount = function () {
   return this._conversation.messagesCount();
@@ -139,8 +141,8 @@ EMConversation.prototype.messagesCount = function () {
 
 /**
  * Load a message(Will load message from DB if not exist in cache).
- * @param {String} msgId.
- * @return {EMMessage}
+ * @param {String} msgId. 消息ID
+ * @return {EMMessage} 返回消息对象
  */
 EMConversation.prototype.loadMessage = function (msgId) {
   return new EMMessage(this._conversation.loadMessage(msgId));
@@ -148,7 +150,7 @@ EMConversation.prototype.loadMessage = function (msgId) {
 
 /**
  * Get latest message of conversation.
- * @return {EMMessage}
+ * @return {EMMessage} 返回最新消息对象
  */
 EMConversation.prototype.latestMessage = function () {
   return new EMMessage(this._conversation.latestMessage());
@@ -156,7 +158,7 @@ EMConversation.prototype.latestMessage = function () {
 
 /**
  * Get received latest message of conversation.
- * @return {EMMessage}
+ * @return {EMMessage} 返回最新接收的消息对象
  */
 EMConversation.prototype.latestMessageFromOthers = function () {
   return new EMMessage(this._conversation.latestMessageFromOthers());
@@ -177,8 +179,8 @@ function createEMMessageList(array) {
  * The result will be sorted by ASC.
  * The trailing position resident last arrived message;
 
- * @param {String} refMsgId
- * @param {Number} count
+ * @param {String} refMsgId 起始消息ID
+ * @param {Number} count 要加载的消息计数
  * @param {Number} direction optional
  * @return {Array} EMMessage array list.
  */
@@ -231,9 +233,9 @@ EMConversation.prototype.loadMoreMessagesByKeyWords = function (keywords, timeSt
  * Note: To avoid occupy too much memory, user should limit the max messages count to load.
  * The result will be sorted by ASC.
  * The trailing position resident last arrived message;
- * @param {Number} startTimeStamp
- * @param {Number} endTimeStamp
- * @param {Number} maxCount
+ * @param {Number} startTimeStamp 起始时间
+ * @param {Number} endTimeStamp 结束时间
+ * @param {Number} maxCount 最大消息计数
  * @return {Array} EMMessage array list.
  */
 EMConversation.prototype.loadMoreMessagesBetweenTime = function(startTimeStamp, endTimeStamp, maxCount) {
@@ -242,7 +244,7 @@ EMConversation.prototype.loadMoreMessagesBetweenTime = function(startTimeStamp, 
 
 /**
  * Get conversation extend attribute.
- * @return {String}
+ * @return {String} 返回会话扩展属性
  */
 EMConversation.prototype.extField = function () {
   return this._conversation.extField();
@@ -250,7 +252,7 @@ EMConversation.prototype.extField = function () {
 
 /**
  * Set conversation extend attribute.
- * @param {String} ext
+ * @param {String} ext 设置的会话扩展属性
  */
 EMConversation.prototype.setExtField = function (ext) {
   return this._conversation.setExtField(ext);
@@ -258,7 +260,7 @@ EMConversation.prototype.setExtField = function (ext) {
 
 /**
  * Get conversation last sync roam key. if don't have, return empty string.
- * @return {String}
+ * @return {String} 返回最新的同步消息ID
  */
 EMConversation.prototype.lastSyncedMsgId = function () {
   return this._conversation.lastSyncedMsgId();

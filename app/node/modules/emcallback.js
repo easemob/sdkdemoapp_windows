@@ -33,28 +33,21 @@ function EMCallback() {
 }
 
 /**
- * The success callback of async method.
- * callback function type:
- * function callback() {
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * 设置操作成功时执行的回调
+ * @param {EMCallback~success} callback 回调函数，成功时执行
  * @return {void}
  */
 EMCallback.prototype.onSuccess = function(callback) {
   this._eventEmitter.on('onSuccess', callback);
 };
+/**
+ * @function EMCallback~success
+ * @return {void}
+ */
 
 /**
- * The fail callback of async method.
- * callback function type:
- * function callback(error) {
- *  //@param {EMError} error
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * 设置操作失败时执行的回调
+ * @param {EMCallback~fail} callback 回调函数，失败时执行
  * @return {void}
  */
 EMCallback.prototype.onFail = function(callback) {
@@ -62,18 +55,24 @@ EMCallback.prototype.onFail = function(callback) {
 };
 
 /**
- * The progress callback of async method.
- * callback function type:
- * function callback(progress) {
- *  //@param {Number} progress
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @function EMCallback~fail
+ * @param {EMError} error EMError对象
+ * @return {void}
+ */
+
+/**
+ * 操作进度改变时，执行的回调
+ * @param {EMCallback~progress} callback called when method is running
  * @return {void}
  */
 EMCallback.prototype.onProgress = function (callback) {
   this._eventEmitter.on('onProgress', callback);
 };
+
+/**
+ * @function EMCallback~progress
+ * @param {Number} progress 进度，1-100
+ * @return {void}
+ */
 
 module.exports = EMCallback;

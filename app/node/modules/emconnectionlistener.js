@@ -26,19 +26,11 @@ function EMConnectionListener() {
   self._listener.onDisconnect = function (error) {
     self._eventEmitter.emit('onDisconnect', new EMError(error));
   };
-  self._listener.onPong = function () {
-    self._eventEmitter.emit('onPong');
-  };
 }
 
 /**
  * Callback user when sdk connect to the server.
- * callback function type:
- * function callback() {
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMConnectionListener~onConnectCallback} callback 回调函数
  * @return {void}
  */
 EMConnectionListener.prototype.onConnect = function(callback) {
@@ -46,14 +38,13 @@ EMConnectionListener.prototype.onConnect = function(callback) {
 };
 
 /**
+ * @function EMConnectionListener~onConnectCallback
+ * @return {void}
+ */
+
+/**
  * Callback user when sdk disconnect from the server.
- * callback function type:
- * function callback(error) {
- *  //@param {EMError} error
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMConnectionListener~onDisconnectCallback} callback 回调函数
  * @return {void}
  */
 EMConnectionListener.prototype.onDisconnect = function(callback) {
@@ -61,17 +52,9 @@ EMConnectionListener.prototype.onDisconnect = function(callback) {
 };
 
 /**
- * Callback user when sdk onPong data.
- * callback function type:
- * function callback() {
- *  ...
- *  //@return {void}
- * } 
- * @param {callback} callback
+ * @function EMConnectionListener~onDisconnectCallback
+ * @param {EMError} error 断开连接结果
  * @return {void}
  */
-EMConnectionListener.prototype.onPong = function(callback) {
-  this._eventEmitter.on('onPong', callback);
-};
 
 module.exports = EMConnectionListener;

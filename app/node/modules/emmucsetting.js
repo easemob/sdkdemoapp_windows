@@ -15,10 +15,10 @@ const easemobNode = require('./../load');
 /**
  * EMMucSetting constructor.
  * @constructor
- * @param {Number} style 
- * @param {Number} maxUserCount 
- * @param {Bool} inviteNeedConfirm 
- * @param {String} extension 
+ * @param {Number} style 群组类型
+ * @param {Number} maxUserCount  最大人数
+ * @param {Bool} inviteNeedConfirm 邀请进群是否需要确认
+ * @param {String} extension 扩展信息
  */
 function EMMucSetting(style, maxUserCount, inviteNeedConfirm, extension) {
   if (typeof(style) == "object") {
@@ -30,7 +30,7 @@ function EMMucSetting(style, maxUserCount, inviteNeedConfirm, extension) {
 
 /**
  * Set muc setting style.
- * @param {Number} style
+ * @param {Number} style 群组类型
  * @return {void}
  */
 EMMucSetting.prototype.setStyle = function (style) {
@@ -39,7 +39,7 @@ EMMucSetting.prototype.setStyle = function (style) {
 
 /**
  * Get muc setting style.
- * @return {Number}
+ * @return {Number} 返回群组类型
  */
 EMMucSetting.prototype.style = function () {
   return this._setting.style();
@@ -47,7 +47,7 @@ EMMucSetting.prototype.style = function () {
 
 /**
  * Set muc max user count.
- * @param {Number} maxUserCount
+ * @param {Number} maxUserCount 群组最大人数
  * @return {void}
  */
 EMMucSetting.prototype.setMaxUserCount = function (maxUserCount) {
@@ -56,7 +56,7 @@ EMMucSetting.prototype.setMaxUserCount = function (maxUserCount) {
 
 /**
  * Get muc max user count.
- * @return {Number}
+ * @return {Number} 返回群组最大人数
  */
 EMMucSetting.prototype.maxUserCount = function () {
   return this._setting.maxUserCount();
@@ -64,7 +64,7 @@ EMMucSetting.prototype.maxUserCount = function () {
 
 /**
  * Set muc max user count.
- * @param {Bool} inviteNeedConfirm
+ * @param {Bool} inviteNeedConfirm 邀请成员是否需要确认
  * @return {void}
  */
 EMMucSetting.prototype.setInviteNeedConfirm = function (inviteNeedConfirm) {
@@ -73,7 +73,7 @@ EMMucSetting.prototype.setInviteNeedConfirm = function (inviteNeedConfirm) {
 
 /**
  * Get muc max user count.
- * @return {Bool}
+ * @return {Bool} 返回邀请成员是否需要确认
  */
 EMMucSetting.prototype.inviteNeedConfirm = function () {
   return this._setting.inviteNeedConfirm();
@@ -81,7 +81,7 @@ EMMucSetting.prototype.inviteNeedConfirm = function () {
 
 /**
  * Set muc max user count.
- * @param {String} extension
+ * @param {String} extension 扩展信息
  * @return {void}
  */
 EMMucSetting.prototype.setExtension = function (extension) {
@@ -90,7 +90,7 @@ EMMucSetting.prototype.setExtension = function (extension) {
 
 /**
  * Get muc max user count.
- * @return {String}
+ * @return {String} 返回扩展信息
  */
 EMMucSetting.prototype.extension = function () {
   return this._setting.extension();

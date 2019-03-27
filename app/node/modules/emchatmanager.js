@@ -21,7 +21,7 @@ function EMChatManager(chatManager) {
 
 /**
  * Send a message.
- * @param {EMMessage} message
+ * @param {EMMessage} message 发送的消息
  * @return {void}
  */
 EMChatManager.prototype.sendMessage = function (message) {
@@ -30,7 +30,7 @@ EMChatManager.prototype.sendMessage = function (message) {
 
 /**
  * Send read ask for a message.
- * @param {EMMessage} message
+ * @param {EMMessage} message 发送消息的已读ack
  * @return {void}
  */
 EMChatManager.prototype.sendReadAckForMessage = function (message) {
@@ -39,8 +39,7 @@ EMChatManager.prototype.sendReadAckForMessage = function (message) {
 
 /**
  * Recall a message.
- * @param {EMMessage} message
- * @param {EMError} error
+ * @param {EMMessage} message 要撤回的消息
  * @return {void}
  */
 EMChatManager.prototype.recallMessage = function (message) {
@@ -50,7 +49,7 @@ EMChatManager.prototype.recallMessage = function (message) {
 
 /**
  * Resend a message.
- * @param {EMMessage} message
+ * @param {EMMessage} message 要重发的消息
  * @return {void}
  */
 EMChatManager.prototype.resendMessage = function (message) {
@@ -61,7 +60,7 @@ EMChatManager.prototype.resendMessage = function (message) {
  * Download thumbnail for image or video message
  * Note: Image and video message thumbnail will be downloaded automatically. ONLY call this method if automatic download failed.
  * SDK will callback the user by EMChatManagerListener if user doesn't provide a callback in the message or callback return false.
- * @param {EMMessage} message
+ * @param {EMMessage} message 要下载缩略的消息
  * @return {void}
  */
 EMChatManager.prototype.downloadMessageThumbnail = function (message) {
@@ -72,7 +71,7 @@ EMChatManager.prototype.downloadMessageThumbnail = function (message) {
  * Download attachment of a message.
  * Note: User should call this method to download file, voice, image, video.
  * SDK will callback the user by EMChatManagerListener if user doesn't provide a callback or callback return false.
- * @param {EMMessage} message
+ * @param {EMMessage} message 要下载附件的消息
  * @return {void}
  */
 EMChatManager.prototype.downloadMessageAttachments = function (message) {
@@ -82,7 +81,8 @@ EMChatManager.prototype.downloadMessageAttachments = function (message) {
 /**
  * Remove a conversation from cache and local database.
  * Note: Before removing a conversation, all conversations must be loaded from local database first
- * @param {EMMessage} message
+ * @param {String} conversationId 要删除的会话ID
+ * @param {Bool} isRemoveMessages 删除会话时，是否移除消息
  * @return {void}
  */
 EMChatManager.prototype.removeConversation = function (conversationId, isRemoveMessages) {
@@ -92,7 +92,8 @@ EMChatManager.prototype.removeConversation = function (conversationId, isRemoveM
 /**
  * Remove a conversation from cache and local database.
  * Note: Before removing a conversation, all conversations must be loaded from local database first
- * @param {array} list EMConversation array.
+ * @param {array} list 要删除的会话数组
+ * @param {Bool} isRemoveMessages 删除会话时，是否移除消息
  * @return {void}
  */
 EMChatManager.prototype.removeConversations = function (list, isRemoveMessages) {
@@ -106,9 +107,9 @@ EMChatManager.prototype.removeConversations = function (list, isRemoveMessages) 
 /**
  * Get a conversation
  * Note: All conversations will be loaded from local database.
- * @param {String} conversationId
- * @param {Number} type
- * @param {Bool} createIfNotExist
+ * @param {String} conversationId 会话ID
+ * @param {Number} type 会话类型，0为单聊，1为群组
+ * @param {Bool} createIfNotExist 如果会话不存在，是否临时创建
  * @return {void}
  */
 EMChatManager.prototype.conversationWithType = function (conversationId, type, createIfNotExist) {
@@ -117,7 +118,7 @@ EMChatManager.prototype.conversationWithType = function (conversationId, type, c
 
 /**
  * Get all conversations from cache or local database if not in cache.
- * @return {Array} EMConversation list.
+ * @return {Array} 会话对象列表
  */
 EMChatManager.prototype.getConversations = function () {
   var conversations = this._manager.getConversations();
@@ -130,7 +131,7 @@ EMChatManager.prototype.getConversations = function () {
 
 /**
  * Get all conversations from local database.
- * @return {Array}
+ * @return {Array} 会话对象列表
  */
 EMChatManager.prototype.loadAllConversationsFromDB = function () {
   var _manager = this._manager;
@@ -152,7 +153,7 @@ EMChatManager.prototype.loadAllConversationsFromDB = function () {
 
 /**
  * Add chat manager listener
- * @param {EMChatManagerListener} listener
+ * @param {EMChatManagerListener} listener 添加会话的回调监听对象
  * @return {void}
  */
 EMChatManager.prototype.addListener = function (listener) {
@@ -161,7 +162,7 @@ EMChatManager.prototype.addListener = function (listener) {
 
 /**
  * Remove chat manager listener
- * @param {EMChatManagerListener} listener
+ * @param {EMChatManagerListener} listener 移除会话的回调监听对象
  * @return {void}
  */
 EMChatManager.prototype.removeListener = function (listener) {
@@ -178,7 +179,7 @@ EMChatManager.prototype.clearListeners = function () {
 
 /**
  * Insert messages
- * @param {array} list message list
+ * @param {array} list message list 插入消息到本地，消息列表
  * @return {Bool}
  */
 EMChatManager.prototype.insertMessages = function (list) {
@@ -191,11 +192,11 @@ EMChatManager.prototype.insertMessages = function (list) {
 
 /**
  * fetch conversation roam messages from server.
- * @param {String} conversationId
- * @param {Number} type
- * @param {Number} pageSize
- * @param {String} startMsgId
- * @return {EMCursorResult} cursor store the roam messages from the server.
+ * @param {String} conversationId 会话ID
+ * @param {Number} type 会话类型，0为单聊，1为群组
+ * @param {Number} pageSize 分页
+ * @param {String} startMsgId 开始的消息ID
+ * @return {Object} {code,description,data},code为结果，0为成功，其他失败，description为失败原因，data为消息列表
  */
 EMChatManager.prototype.fetchHistoryMessages = function (conversationId, type, pageSize, startMsgId) {
   var _manager = this._manager;
@@ -219,8 +220,8 @@ EMChatManager.prototype.fetchHistoryMessages = function (conversationId, type, p
 
 /**
  * Get message by message Id.
- * @param {String} messageId
- * @return {EMMessage}
+ * @param {String} messageId 消息ID
+ * @return {EMMessage} 消息
  */
 EMChatManager.prototype.getMessage = function (messageId) {
   return new EMMessage(this._manager.getMessage(messageId));
@@ -228,8 +229,8 @@ EMChatManager.prototype.getMessage = function (messageId) {
 
 /**
  * update database participant related records, include message table, conversation table, contact table, blacklist table
- * @param {String} from
- * @param {String} changeTo
+ * @param {String} from 修改前的会话ID
+ * @param {String} changeTo 修改后的会话ID
  * @return {bool}
  */
 EMChatManager.prototype.updateParticipant = function (from, changeTo) {
@@ -237,8 +238,8 @@ EMChatManager.prototype.updateParticipant = function (from, changeTo) {
 };
 
 /**
- * Upload log to server.
- * @return {void}
+ * Upload log to server.上传日志到服务器
+ * @return {void} 
  */
 EMChatManager.prototype.uploadLog = function () {
   this._manager.uploadLog();

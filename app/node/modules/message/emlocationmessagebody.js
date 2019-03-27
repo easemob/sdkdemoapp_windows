@@ -8,9 +8,9 @@ const easemobNode = require('./../../load');
 /**
  * Location message body constructor.
  * @constructor
- * @param {Number} latitude
- * @param {Number} longitude
- * @param {String} address
+ * @param {Number} latitude 纬度
+ * @param {Number} longitude 经度
+ * @param {String} address 地址
  */
 function EMLocationMessageBody(latitude, longitude, address) {
   if (typeof(latitude) == "object") {
@@ -23,7 +23,7 @@ function EMLocationMessageBody(latitude, longitude, address) {
 
 /**
  * Get message body type.
- * @return {Number}
+ * @return {Number} 消息类型
  */
 EMLocationMessageBody.prototype.type = function () {
   return this._body.type();
@@ -31,7 +31,7 @@ EMLocationMessageBody.prototype.type = function () {
 
 /**
  * Set latitude.
- * @param {Number} latitude
+ * @param {Number} latitude 纬度
  * @return {void}
  */
 EMLocationMessageBody.prototype.setLatitude = function (latitude) {
@@ -40,7 +40,7 @@ EMLocationMessageBody.prototype.setLatitude = function (latitude) {
 
 /**
  * Get latitude.
- * @return {Number}
+ * @return {Number} 返回纬度
  */
 EMLocationMessageBody.prototype.latitude = function () {
   return this._body.latitude();
@@ -48,7 +48,7 @@ EMLocationMessageBody.prototype.latitude = function () {
 
 /**
  * Set longitude.
- * @param {Number} longitude
+ * @param {Number} longitude 经度
  * @return {void}
  */
 EMLocationMessageBody.prototype.setLongitude = function (longitude) {
@@ -57,7 +57,7 @@ EMLocationMessageBody.prototype.setLongitude = function (longitude) {
 
 /**
  * Get longitude.
- * @return {Number}
+ * @return {Number} 返回经度
  */
 EMLocationMessageBody.prototype.longitude = function () {
   return this._body.longitude();
@@ -65,7 +65,7 @@ EMLocationMessageBody.prototype.longitude = function () {
 
 /**
  * Set address.
- * @param {String} address
+ * @param {String} address 地址信息
  * @return {void}
  */
 EMLocationMessageBody.prototype.setAddress = function (address) {
@@ -74,7 +74,7 @@ EMLocationMessageBody.prototype.setAddress = function (address) {
 
 /**
  * Get address.
- * @return {String}
+ * @return {String} 返回地址信息
  */
 EMLocationMessageBody.prototype.address = function () {
   return this._body.address();

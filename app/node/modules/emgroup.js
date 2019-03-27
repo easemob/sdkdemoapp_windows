@@ -18,7 +18,7 @@ function EMGroup(group) {
 
 /**
  * Get group's ID.
- * @return {String}
+ * @return {String} 返回groupId
  */
 EMGroup.prototype.groupId = function () {
   return this._group.groupId();
@@ -26,7 +26,7 @@ EMGroup.prototype.groupId = function () {
 
 /**
  * Get group's subject.
- * @return {String}
+ * @return {String} 返回组名称
  */
 EMGroup.prototype.groupSubject = function () {
   return this._group.groupSubject();
@@ -34,7 +34,7 @@ EMGroup.prototype.groupSubject = function () {
 
 /**
  * Get group's description.
- * @return {String}
+ * @return {String} 返回组描述
  */
 EMGroup.prototype.groupDescription = function () {
   return this._group.groupDescription();
@@ -42,7 +42,7 @@ EMGroup.prototype.groupDescription = function () {
 
 /**
  * Get group's owner.
- * @return {String}
+ * @return {String} 返回群主
  */
 EMGroup.prototype.groupOwner = function () {
   return this._group.groupOwner();
@@ -50,7 +50,7 @@ EMGroup.prototype.groupOwner = function () {
 
 /**
  * Get group's setting.
- * @return {EMMucSetting}
+ * @return {EMMucSetting} 返回组设置
  */
 EMGroup.prototype.groupSetting = function () {
   return new EMMucSetting(this._group.groupSetting());
@@ -58,7 +58,7 @@ EMGroup.prototype.groupSetting = function () {
 
 /**
  * Get current members count.
- * @return {Number}
+ * @return {Number} 返回组成员计数
  */
 EMGroup.prototype.groupMembersCount = function () {
   return this._group.groupMembersCount();
@@ -66,7 +66,7 @@ EMGroup.prototype.groupMembersCount = function () {
 
 /**
  * Get current login user type.
- * @return {Number}
+ * @return {Number} 返回组成员类型
  */
 EMGroup.prototype.groupMemberType = function () {
   return this._group.groupMemberType();
@@ -74,7 +74,7 @@ EMGroup.prototype.groupMemberType = function () {
 
 /**
  * Get whether push is enabled status.
- * @return {Bool}
+ * @return {Bool} 返回是否允许发送消息
  */
 EMGroup.prototype.isPushEnabled = function () {
   return this._group.isPushEnabled();
@@ -82,7 +82,7 @@ EMGroup.prototype.isPushEnabled = function () {
 
 /**
  * Get whether group messages is blocked.
- * @return {Bool}
+ * @return {Bool} 返回当前是否屏蔽群
  */
 EMGroup.prototype.isMessageBlocked = function () {
   return this._group.isMessageBlocked();
@@ -91,7 +91,7 @@ EMGroup.prototype.isMessageBlocked = function () {
 /**
  * Get a copy of group's member list.
  * Note: Will return empty array if have not ever got group's members.
- * @return {Array} String list.
+ * @return {Array} String list. 组成员列表
  */
 EMGroup.prototype.groupMembers = function () {
   return this._group.groupMembers();
@@ -100,7 +100,7 @@ EMGroup.prototype.groupMembers = function () {
 /**
  * Get a copy of group's bans.
  * Note: Will return empty array if have not ever got group's bans.
- * @return {Array} String list.
+ * @return {Array} String list. 组禁言成员列表
  */
 EMGroup.prototype.groupBans = function () {
   return this._group.groupBans();
@@ -109,7 +109,7 @@ EMGroup.prototype.groupBans = function () {
 /**
  * Get group's admins.
  * Note: Will return empty array if have not ever got group's admins.
- * @return {Array} String list.
+ * @return {Array} String list. 组管理员列表
  */
 EMGroup.prototype.groupAdmins = function () {
   return this._group.groupAdmins();
@@ -119,7 +119,7 @@ EMGroup.prototype.groupAdmins = function () {
  * Get group's mutes.
  * Note: Will return empty array if have not ever got group's mutes.
  * object is like {"key": name, "value": muteTime}.
- * @return {Array} Object list.
+ * @return {Array} Object list. 聊天室禁言列表
  */
 EMGroup.prototype.groupMutes = function () {
   return this._group.groupMutes();
@@ -140,7 +140,7 @@ EMGroup.prototype.groupSharedFiles = function () {
 
 /**
  * Get group's announcement.
- * @return {String}
+ * @return {String} 群公告
  */
 EMGroup.prototype.groupAnnouncement = function () {
   return this._group.groupAnnouncement();
