@@ -10,7 +10,9 @@ const EMConversation = require('./emconversation');
 const emChatManagerListenerCount = 8;
 
 /**
- * Easemob EMChatManagerListener implementation.
+ * 创建消息列表
+ * @param {Array} array 消息数组
+ * @return {Array} 消息数组
  */
 
 function createEMMessageList(array) {
@@ -21,6 +23,11 @@ function createEMMessageList(array) {
   return messageList;
 }
 
+/**
+ * 创建会话列表
+ * @param {Array} array 会话数组
+ * @return {Array} 会话数组
+ */
 function createEMConversationList(array) {
   var conversationList = new Array(array.length);
   for (var i = 0; i < array.length; i++) {
@@ -66,13 +73,7 @@ function EMChatManagerListener() {
 
 /**
  * Callback user when receive a list of messages from remote peer.
- * callback function type:
- * function callback(messages) {
- *  //@param {Array} messages EMMessage array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ReceiveMessages} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onReceiveMessages = function(callback) {
@@ -80,14 +81,14 @@ EMChatManagerListener.prototype.onReceiveMessages = function(callback) {
 };
 
 /**
+ * @function EMChatManagerListener~ReceiveMessages
+ * @param {Array} messages EMMessage array.
+ * @return {void}
+ */
+
+/**
  * Callback user when receive a list of command messages from remote peer.
- * callback function type:
- * function callback(messages) {
- *  //@param {Array} messages EMMessage array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ReceiveMessages} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onReceiveCmdMessages = function(callback) {
@@ -96,14 +97,7 @@ EMChatManagerListener.prototype.onReceiveCmdMessages = function(callback) {
 
 /**
  * Callback user when send message successed or failed.
- * callback function type:
- * function callback(message, error) {
- *  //@param {EMMessage} message
- *  //@param {EMError} error
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ReceiveMessages} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onMessageStatusChanged = function(callback) {
@@ -112,14 +106,7 @@ EMChatManagerListener.prototype.onMessageStatusChanged = function(callback) {
 
 /**
  * Callback user when attachment download status changed.
- * callback function type:
- * function callback(message, error) {
- *  //@param {EMMessage} message
- *  //@param {EMError} error
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~MessageAttachmentsStatusChanged} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onMessageAttachmentsStatusChanged = function(callback) {
@@ -127,14 +114,15 @@ EMChatManagerListener.prototype.onMessageAttachmentsStatusChanged = function(cal
 };
 
 /**
+ * @function EMChatManagerListener~MessageAttachmentsStatusChanged
+ * @param {EMMessage} message EMMessage.
+ * @param {EMError} error EMError
+ * @return {void}
+ */
+
+/**
  * Callback user when receive read ack for messages.
- * callback function type:
- * function callback (messages) {
- *  //@param {Array} messages EMMessage array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ReceiveMessages} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onReceiveHasReadAcks = function(callback) {
@@ -143,13 +131,7 @@ EMChatManagerListener.prototype.onReceiveHasReadAcks = function(callback) {
 
 /**
  * Callback user when receive delivery successed ack for messages.
- * callback function type:
- * function callback (messages) {
- *  //@param {Array} messages EMMessage array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ReceiveMessages} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onReceiveHasDeliveredAcks = function(callback) {
@@ -158,13 +140,7 @@ EMChatManagerListener.prototype.onReceiveHasDeliveredAcks = function(callback) {
 
 /**
  * Callback user when receive recall for messages.
- * callback function type:
- * function callback (messages) {
- *  //@param {Array} messages EMMessage array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ReceiveMessages} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onReceiveRecallMessages = function(callback) {
@@ -173,17 +149,17 @@ EMChatManagerListener.prototype.onReceiveRecallMessages = function(callback) {
 
 /**
  * Callback user when conversation list are changed.
- * callback function type:
- * function callback (conversations) {
- *  // @param {Array} conversations EMConversation array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMChatManagerListener~ConversationList} callback 回调函数
  * @return {void}
  */
 EMChatManagerListener.prototype.onUpdateConversationList = function(callback) {
   this._eventEmitter.on('onUpdateConversationList', callback);
 };
+
+/**
+ * @function EMChatManagerListener~ConversationList
+ * @param {Array} conversations EMConversation array.
+ * @return {void}
+ */
 
 module.exports = EMChatManagerListener;

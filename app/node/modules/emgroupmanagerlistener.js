@@ -88,15 +88,7 @@ function EMGroupManagerListener(manager) {
 /**
  * Callback user when user is invited to a group.
  * Note: User can accept or decline the invitation.
- * callback function type:
- * function callback(groupId, inviter, inviteMessage) {
- *  //@param {String} groupId
- *  //@param {String} inviter
- *  //@param {String} inviteMessage
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onReceiveInviteFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onReceiveInviteFromGroup = function (callback) {
@@ -104,15 +96,16 @@ EMGroupManagerListener.prototype.onReceiveInviteFromGroup = function (callback) 
 };
 
 /**
+ * @function EMGroupManagerListener~onReceiveInviteFromGroupCallback
+ * @param {String} groupId
+ * @param {String} inviter
+ * @param {String} inviteMessage
+ * @return {void}
+ */
+
+/**
  * Callback user when the user accept to join the group.
- * callback function type:
- * function callback(group, invitee) {
- *  //@param {EMGroup} group
- *  //@param {String} invitee
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onReceiveInviteAcceptionFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onReceiveInviteAcceptionFromGroup = function (callback) {
@@ -120,16 +113,15 @@ EMGroupManagerListener.prototype.onReceiveInviteAcceptionFromGroup = function (c
 };
 
 /**
+ * @function EMGroupManagerListener~onReceiveInviteAcceptionFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} invitee
+ * @return {void}
+ */
+
+/**
  * Callback user when the user decline to join the group.
- * callback function type:
- * function callback(group, invitee, reason) {
- *  //@param {EMGroup} group
- *  //@param {String} invitee
- *  //@param {String} reason
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onReceiveInviteDeclineFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onReceiveInviteDeclineFromGroup = function (callback) {
@@ -137,17 +129,17 @@ EMGroupManagerListener.prototype.onReceiveInviteDeclineFromGroup = function (cal
 };
 
 /**
+ * @function EMGroupManagerListener~onReceiveInviteDeclineFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} invitee
+ * @param {String} reason
+ * @return {void}
+ */
+
+/**
  * Callback user when user is invited to a group.
  * Note: User has been added to the group when received this callback.
- * callback function type:
- * function callback(group, inviter, inviteMessage) {
- *  //@param {EMGroup} group
- *  //@param {String} inviter
- *  //@param {String} inviteMessage
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onAutoAcceptInvitationFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onAutoAcceptInvitationFromGroup = function (callback) {
@@ -155,15 +147,16 @@ EMGroupManagerListener.prototype.onAutoAcceptInvitationFromGroup = function (cal
 };
 
 /**
+ * @function EMGroupManagerListener~onAutoAcceptInvitationFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} invitee
+ * @param {String} inviteMessage
+ * @return {void}
+ */
+
+/**
  * Callback user when user is kicked out from a group or the group is destroyed.
- * callback function type:
- * function callback(group, reason) {
- *  //@param {EMGroup} group
- *  //@param {Number} reason
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onLeaveGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onLeaveGroup = function (callback) {
@@ -171,16 +164,15 @@ EMGroupManagerListener.prototype.onLeaveGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onLeaveGroupCallback
+ * @param {EMGroup} group
+ * @param {String} reason
+ * @return {void}
+ */
+
+/**
  * Callback user when receive a join group application.
- * callback function type:
- * function callback(group, from, message) {
- *  //@param {EMGroup} group
- *  //@param {String} from
- *  //@param {String} message
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onReceiveJoinGroupApplicationCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onReceiveJoinGroupApplication = function (callback) {
@@ -188,14 +180,16 @@ EMGroupManagerListener.prototype.onReceiveJoinGroupApplication = function (callb
 };
 
 /**
+ * @function EMGroupManagerListener~onReceiveJoinGroupApplicationCallback
+ * @param {EMGroup} group
+ * @param {String} from
+ * @param {String} message
+ * @return {void}
+ */
+
+/**
  * Callback user when receive owner's approval.
- * callback function type:
- * function callback(group) {
- *  //@param {EMGroup} group
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onReceiveAcceptionFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onReceiveAcceptionFromGroup = function (callback) {
@@ -203,15 +197,14 @@ EMGroupManagerListener.prototype.onReceiveAcceptionFromGroup = function (callbac
 };
 
 /**
+ * @function EMGroupManagerListener~onReceiveAcceptionFromGroupCallback
+ * @param {EMGroup} group
+ * @return {void}
+ */
+
+/**
  * Callback user when receive group owner's rejection.
- * callback function type:
- * function callback(groupId, reason) {
- *  //@param {String} groupId
- *  //@param {String} reason
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onReceiveRejectionFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onReceiveRejectionFromGroup = function (callback) {
@@ -219,14 +212,15 @@ EMGroupManagerListener.prototype.onReceiveRejectionFromGroup = function (callbac
 };
 
 /**
+ * @function EMGroupManagerListener~onReceiveRejectionFromGroupCallback
+ * @param {String} groupId
+ * @param {String} reason
+ * @return {void}
+ */
+
+/**
  * Callback user when login user's group list is updated.
- * callback function type:
- * function callback(list) {
- *  //@param {Array} list. EMGroup array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onUpdateMyGroupListCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onUpdateMyGroupList = function (callback) {
@@ -234,16 +228,14 @@ EMGroupManagerListener.prototype.onUpdateMyGroupList = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onUpdateMyGroupListCallback
+ * @param {Array} list. EMGroup array.
+ * @return {void}
+ */
+
+/**
  * Callback user when user add to group mute list.
- * callback function type:
- * function callback(group, mutes, muteExpire) {
- *  //@param {EMGroup} group
- *  //@param {Array} mutes. String mute array.
- *  //@param {Number} muteExpire
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onAddMutesFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onAddMutesFromGroup = function (callback) {
@@ -251,15 +243,16 @@ EMGroupManagerListener.prototype.onAddMutesFromGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onAddMutesFromGroupCallback
+ * @param {EMGroup} group
+ * @param {Array} mutes. String mute array.
+ * @param {Number} muteExpire
+ * @return {void}
+ */
+
+/**
  * Callback user when user remove from group mute list.
- * callback function type:
- * function callback(group, mutes) {
- *  //@param {EMGroup} group
- *  //@param {Array} mutes. String mute array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onRemoveMutesFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onRemoveMutesFromGroup = function (callback) {
@@ -267,15 +260,15 @@ EMGroupManagerListener.prototype.onRemoveMutesFromGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onRemoveMutesFromGroupCallback
+ * @param {EMGroup} group
+ * @param {Array} mutes. String mute array.
+ * @return {void}
+ */
+
+/**
  * Callback user when promote to group admin.
- * callback function type:
- * function callback(group, admin) {
- *  //@param {EMGroup} group
- *  //@param {String} admin
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onAddAdminFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onAddAdminFromGroup = function (callback) {
@@ -283,15 +276,15 @@ EMGroupManagerListener.prototype.onAddAdminFromGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onAddAdminFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} admin
+ * @return {void}
+ */
+
+/**
  * Callback user when cancel admin.
- * callback function type:
- * function callback(group, admin) {
- *  //@param {EMGroup} group
- *  //@param {String} admin
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onRemoveAdminFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onRemoveAdminFromGroup = function (callback) {
@@ -299,16 +292,15 @@ EMGroupManagerListener.prototype.onRemoveAdminFromGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onRemoveAdminFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} admin
+ * @return {void}
+ */
+
+/**
  * Callback user when promote to group owner.
- * callback function type:
- * function callback(group, newOwner, oldOwner) {
- *  //@param {EMGroup} group
- *  //@param {String} newOwner
- *  //@param {String} oldOwner
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onAssignOwnerFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onAssignOwnerFromGroup= function (callback) {
@@ -316,15 +308,16 @@ EMGroupManagerListener.prototype.onAssignOwnerFromGroup= function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onAssignOwnerFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} newOwner
+ * @param {String} oldOwner
+ * @return {void}
+ */
+
+/**
  * Callback user when a user join the group.
- * callback function type:
- * function callback(group, member) {
- *  //@param {EMGroup} group
- *  //@param {String} member
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onMemberJoinedGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onMemberJoinedGroup = function (callback) {
@@ -332,15 +325,15 @@ EMGroupManagerListener.prototype.onMemberJoinedGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onMemberJoinedGroupCallback
+ * @param {EMGroup} group
+ * @param {String} Owner
+ * @return {void}
+ */
+
+/**
  * Callback user when a user leave the group.
- * callback function type:
- * function callback(group, member) {
- *  //@param {EMGroup} group
- *  //@param {String} member
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onMemberLeftGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onMemberLeftGroup = function (callback) {
@@ -348,15 +341,15 @@ EMGroupManagerListener.prototype.onMemberLeftGroup = function (callback) {
 };
 
 /**
+ * @function EMGroupManagerListener~onMemberLeftGroupCallback
+ * @param {EMGroup} group
+ * @param {String} Owner
+ * @return {void}
+ */
+
+/**
  * Callback user when update group announcement.
- * callback function type:
- * function callback(group, announcement) {
- *  //@param {EMGroup} group
- *  //@param {String} announcement
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onUpdateAnnouncementFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onUpdateAnnouncementFromGroup = function (callback) {
@@ -364,15 +357,15 @@ EMGroupManagerListener.prototype.onUpdateAnnouncementFromGroup = function (callb
 };
 
 /**
+ * @function EMGroupManagerListener~onUpdateAnnouncementFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} announcement
+ * @return {void}
+ */
+
+/**
  * Callback user when group member upload share file.
- * callback function type:
- * function callback(group, sharedFile) {
- *  //@param {EMGroup} group
- *  //@param {EMMucSharedFile} sharedFile
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onUploadSharedFileFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onUploadSharedFileFromGroup = function (callback) {
@@ -380,19 +373,26 @@ EMGroupManagerListener.prototype.onUploadSharedFileFromGroup = function (callbac
 };
 
 /**
+ * @function EMGroupManagerListener~onUploadSharedFileFromGroupCallback
+ * @param {EMGroup} group
+ * @param {EMMucSharedFile} sharedFile
+ * @return {void}
+ */
+
+/**
  * Callback user when group admin or owner or file uploader delete share file.
- * callback function type:
- * function callback(group, fileId) {
- *  //@param {EMGroup} group
- *  //@param {String} fileId
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMGroupManagerListener~onDeleteSharedFileFromGroupCallback} callback
  * @return {void}
  */
 EMGroupManagerListener.prototype.onDeleteSharedFileFromGroup = function (callback) {
   this._eventEmitter.on('onDeleteSharedFileFromGroup', callback);
 };
+
+/**
+ * @function EMGroupManagerListener~onDeleteSharedFileFromGroupCallback
+ * @param {EMGroup} group
+ * @param {String} fileId
+ * @return {void}
+ */
 
 module.exports = EMGroupManagerListener;

@@ -38,13 +38,7 @@ function EMContactListener() {
 
 /**
  * callback function called when contact added.
- * callback function type:
- * function callback(username) {
- *  //@param {String} username
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMContactListener~onContactAddedCallback} callback 回调函数
  * @return {void}
  */
 EMContactListener.prototype.onContactAdded = function (callback) {
@@ -52,14 +46,14 @@ EMContactListener.prototype.onContactAdded = function (callback) {
 };
 
 /**
+ * @function EMContactListener~onContactAddedCallback
+ * @param {String} username 用户ID
+ * @return {void}
+ */
+
+/**
  * called when contact deleted.
- * callback function type:
- * function callback(username) {
- *  //@param {String} username
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMContactListener~onContactDeletedCallback} callback 回调函数
  * @return {void}
  */
 EMContactListener.prototype.onContactDeleted = function (callback) {
@@ -67,15 +61,14 @@ EMContactListener.prototype.onContactDeleted = function (callback) {
 };
 
 /**
+ * @function EMContactListener~onContactDeletedCallback
+ * @param {String} username 好友ID
+ * @return {void}
+ */
+
+/**
  * called when user be invited by contact to be friend.
- * callback function type:
- * function callback(username, reason) {
- *  //@param {String} username
- *  //@param {String} reason
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMContactListener~onContactInvitedCallback} callback 回调函数
  * @return {void}
  */
 EMContactListener.prototype.onContactInvited = function (callback) {
@@ -83,14 +76,15 @@ EMContactListener.prototype.onContactInvited = function (callback) {
 };
 
 /**
+ * @function EMContactListener~onContactInvitedCallback
+ * @param {String} username 好友ID
+ * @param {String} reason 添加原因
+ * @return {void}
+ */
+
+/**
  * called when user invite contact to be friend, and contact has accepted the invitation.
- * callback function type:
- * function callback(username) {
- *  //@param {String} username
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMContactListener~onContactAgreedCallback} callback 回调函数
  * @return {void}
  */
 EMContactListener.prototype.onContactAgreed = function (callback) {
@@ -98,18 +92,24 @@ EMContactListener.prototype.onContactAgreed = function (callback) {
 };
 
 /**
+ * @function EMContactListener~onContactAgreedCallback
+ * @param {String} username 好友ID
+ * @return {void}
+ */
+
+/**
  * called when user invite contact to be friend, and contact has declined the invitation.
- * callback function type:
- * function callback(username) {
- *  //@param {String} username
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMContactListener~onContactRefusedCallback} callback 回调函数
  * @return {void}
  */
 EMContactListener.prototype.onContactRefused = function (callback) {
   this._eventEmitter.on('onContactRefused', callback);
 };
+
+/**
+ * @function EMContactListener~onContactRefusedCallback
+ * @param {String} username 用户ID
+ * @return {void}
+ */
 
 module.exports = EMContactListener;

@@ -14,7 +14,7 @@ const async = require('async');
 /**
  * EMGroupManager constructor.
  * @constructor
- * @param {Object} manager
+ * @param {Object} manager 组管理对象
  */
 function EMGroupManager(manager) {
   this._manager = manager;
@@ -22,7 +22,7 @@ function EMGroupManager(manager) {
 
 /**
  * Add group manager listener.
- * @param {EMGroupManagerListener} listener
+ * @param {EMGroupManagerListener} listener 组管理的回调监听对象
  * @return {void}
  */
 EMGroupManager.prototype.addListener = function (listener) {
@@ -31,7 +31,7 @@ EMGroupManager.prototype.addListener = function (listener) {
 
 /**
  * Remove group manager listener.
- * @param {EMGroupManagerListener} listener
+ * @param {EMGroupManagerListener} listener 组管理的回调监听对象
  * @return {void}
  */
 EMGroupManager.prototype.removeListener = function (listener) {
@@ -48,8 +48,8 @@ EMGroupManager.prototype.clearListeners = function () {
 
 /**
  * Get a group with groupId, create the group if not exist.
- * @param {String} groupId
- * @return {EMGroup}
+ * @param {String} groupId 群组ID
+ * @return {EMGroup} 返回群组对象
  */
 EMGroupManager.prototype.groupWithId = function (groupId) {
   return new EMGroup(this._manager.groupWithId(groupId));
@@ -80,7 +80,7 @@ EMGroupManager.prototype.allMyGroups = function () {
 /**
  * Fetch all groups for login user from server.
  * Note: Groups in memory will be updated.
- * @return {Array} EMGroup array.
+ * @return {Object} {code,description,data} EMGroup array.
  */
 EMGroupManager.prototype.fetchAllMyGroups = function () {
 
@@ -106,7 +106,9 @@ EMGroupManager.prototype.fetchAllMyGroups = function () {
  * Fetch app's public groups with page.
  * If PageNum=0, then there is no pagination and will get all the users on the list.
  * If PageNum=1, then will start from the first page of pagination.
- * @return {EMCursorResult} cursor store the public groups.
+ * @param {Number} pageNum 获取的页数
+ * @param {Number} pageSize 每页的群组计数
+ * @return {Object}  {code,description,data} cursor store the public groups.
  */
 EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize) {
   var _manager = this._manager;
@@ -135,7 +137,7 @@ EMGroupManager.prototype.fetchPublicGroupsWithPage = function (pageNum, pageSize
  * @param {String} welcomeMessage   Welcoming message that will be sent to invited user.
  * @param {String} setting          Group's setting.
  * @param {Array} members           Group's members. String array.
- * @return {EMGroup}                The group created.
+ * @return {Object}      {code,description,data}          The group created.
  */
 EMGroupManager.prototype.createGroup = function (subject, description, welcomeMessage, setting, members) {
   
@@ -161,7 +163,7 @@ EMGroupManager.prototype.createGroup = function (subject, description, welcomeMe
  * Join a public group.
  * Note: The group's style must be PUBLIC_JOIN_OPEN, or will return error.
  * @param {String} groupId    Group ID.
- * @return {EMGroup}          The group joined.
+ * @return {Object}    {code,description,data}      The group joined.
  */
 EMGroupManager.prototype.joinPublicGroup = function (groupId) {
   var _manager = this._manager;
@@ -188,7 +190,7 @@ EMGroupManager.prototype.joinPublicGroup = function (groupId) {
  * @param {String} groupId        Group ID.
  * @param {String} nickName       user's nickname in the group.
  * @param {String} message        requesting message, that will be sent to group owner.
- * @return {EMGroup}              The group to join.
+ * @return {Object}       {code,description,data}       The group to join.
  */
 EMGroupManager.prototype.applyJoinPublicGroup = function (groupId, nickName, message) {
   var _manager = this._manager;
@@ -213,7 +215,7 @@ EMGroupManager.prototype.applyJoinPublicGroup = function (groupId, nickName, mes
  * Leave a group.
  * Note: Group owner cannot leave the group.
  * @param {String} groupId        Group ID.
- * @return {void}
+ * @return {Object} {code,description,data}
  */
 EMGroupManager.prototype.leaveGroup = function (groupId) {
   var _manager = this._manager;
@@ -237,7 +239,7 @@ EMGroupManager.prototype.leaveGroup = function (groupId) {
  * Destroy a group.
  * Note: Only group owner can destroy the group.
  * @param {String} groupId        Group ID.
- * @return {void}
+ * @return {Object} {code,description,data}
  */
 EMGroupManager.prototype.destroyGroup = function (groupId, error) {
   var _manager = this._manager;
@@ -263,7 +265,7 @@ EMGroupManager.prototype.destroyGroup = function (groupId, error) {
  * @param {String} groupId          Group ID
  * @param {Array} members           string members array, Invited users.
  * @param {String} welcomeMessage   Welcome message that will be sent to invited user.
- * @return {EMGroup}                The group.
+ * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.addGroupMembers = function (groupId, members, welcomeMessage) {
   var _manager = this._manager;
@@ -290,7 +292,7 @@ EMGroupManager.prototype.addGroupMembers = function (groupId, members, welcomeMe
  * ONLY group owner can remove both admin and members.
  * @param {String} groupId          Group ID.
  * @param {Array} members           string members array, Removed members.
- * @return {EMGroup}                The group.
+ * @return {Object}      {code,description,data}          The group.
  */
 EMGroupManager.prototype.removeGroupMembers = function (groupId, members) {
   var _manager = this._manager;
@@ -319,7 +321,7 @@ EMGroupManager.prototype.removeGroupMembers = function (groupId, members) {
  * @param {Array} members           string members array,  Blocked members.
 
  * @param {String} reason           The reason of blocking members.
- * @return {EMGroup}                The group.
+ * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.blockGroupMembers = function (groupId, members, reason) {
   var _manager = this._manager;
@@ -347,7 +349,7 @@ EMGroupManager.prototype.blockGroupMembers = function (groupId, members, reason)
  * @param {String} groupId          Group ID.
  * @param {Array} members           string members array,  Unblocked users.
  * @param {EMError} error           EMError used for output.
- * @return {EMGroup}                The group.
+ * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.unblockGroupMembers = function (groupId, members) {
   var _manager = this._manager;
@@ -374,7 +376,7 @@ EMGroupManager.prototype.unblockGroupMembers = function (groupId, members) {
  * @param {String} groupId          Group ID.
  * @param {String} newSubject       The new group subject.
  * @param {EMError} error           EMError used for output.
- * @return {EMGroup}                The group.
+ * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject) {
   var _manager = this._manager;
@@ -401,7 +403,7 @@ EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject) {
  * @param {String} groupId          Group ID.
  * @param {String} newDescription   The new group description.
  * @param {EMError} error           EMError used for output.
- * @return {EMGroup}                The group.
+ * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescription) {
   var _manager = this._manager;
@@ -428,7 +430,7 @@ EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescript
  * @param {String} groupId          Group ID.
  * @param {String} newDescription   The new group extension.
  * @param {EMError} error           EMError used for output.
- * @return {EMGroup}                The group.
+ * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension) {
   var _manager = this._manager;
@@ -454,7 +456,7 @@ EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension)
  * @param {String} groupId          Group ID.
  * @param {EMError} error           EMError used for output.
  * @param {Bool} fetchMembers       Whether get group's members.
- * @return {EMGroup}                The group.
+ * @return {Object}    {code,description,data}            The group.
  */
 EMGroupManager.prototype.fetchGroupSpecification = function (groupId, fetchMembers) {
   var _manager = this._manager;
@@ -481,7 +483,7 @@ EMGroupManager.prototype.fetchGroupSpecification = function (groupId, fetchMembe
  * @param {String} groupId          Group ID.
  * @param {String} cursor           Page's cursor.
  * @param {Number} pageSize         Page size. ex. 20 for 20 objects.
- * @return {EMStringCursorResult}   the cursor store the list of group members.
+ * @return {Object} {code,description,data}  the cursor store the list of group members.
  */
 EMGroupManager.prototype.fetchGroupMembers = function (groupId, cursor, pageSize) {
   var _manager = this._manager;
@@ -508,7 +510,7 @@ EMGroupManager.prototype.fetchGroupMembers = function (groupId, cursor, pageSize
  * @param {String} groupId          Group ID.
  * @param {Number} pageNum          Page's cursor.
  * @param {Number} pageSize         Page size. ex. 20 for 20 objects.
- * @return {EMStringCursorResult}   the cursor store the list of group members.
+ * @return {Object}  {code,description,data} the cursor store the list of group members.
  */
 
 EMGroupManager.prototype.fetchGroupBans = function (groupId, pageNum, pageSize) {
@@ -533,7 +535,7 @@ EMGroupManager.prototype.fetchGroupBans = function (groupId, pageNum, pageSize) 
 /**
  * Search for a public group.
  * @param {String} groupId          Group ID to be found.
- * @return {EMGroup}                The group with specified id.
+ * @return {Object}     {code,description,data}           The group with specified id.
  */
 EMGroupManager.prototype.searchPublicGroup = function (groupId) {
   var _manager = this._manager;
@@ -558,7 +560,7 @@ EMGroupManager.prototype.searchPublicGroup = function (groupId) {
  * Block group message.
  * Note: Owner cannot block the group message.
  * @param {String} groupId          Group ID.
- * @return {EMGroup}                The group.
+ * @return {Object}       {code,description,data}         The group.
  */
 EMGroupManager.prototype.blockGroupMessage = function (groupId) {
   var _manager = this._manager;
@@ -582,7 +584,7 @@ EMGroupManager.prototype.blockGroupMessage = function (groupId) {
 /**
  * Unblock group message.
  * @param {String} groupId          Group ID.
- * @return {EMGroup}                The group.
+ * @return {Object}        {code,description,data}        The group.
  */
 EMGroupManager.prototype.unblockGroupMessage = function (groupId) {
   var _manager = this._manager;
@@ -608,7 +610,7 @@ EMGroupManager.prototype.unblockGroupMessage = function (groupId) {
  * Note: Only group's owner and admin can approval user's request to join group.
  * @param {String} groupId          Group ID.
  * @param {String} user             The user that made the request.
- * @return {EMGroup}                The group.
+ * @return {Object}       {code,description,data}         The group.
  */
 EMGroupManager.prototype.acceptJoinGroupApplication = function (groupId, user) {
   var _manager = this._manager;
@@ -634,7 +636,7 @@ EMGroupManager.prototype.acceptJoinGroupApplication = function (groupId, user) {
  * Note: Only group's owner and admin can decline user's request to join group.
  * @param {String} groupId          Group ID.
  * @param {String} user             The user that made the request.
- * @return {EMGroup}                The group.
+ * @return {Object}        {code,description,data}        The group.
  */
 EMGroupManager.prototype.declineJoinGroupApplication = function (groupId, user, reason) {
   var _manager = this._manager;
@@ -659,7 +661,7 @@ EMGroupManager.prototype.declineJoinGroupApplication = function (groupId, user, 
  * accept invitation to join a group.
  * @param {String} groupId          Group ID.
  * @param {String} inviter          Inviter
- * @return {EMGroup}                The group user has accepted.
+ * @return {Object}      {code,description,data}          The group user has accepted.
  */
 EMGroupManager.prototype.acceptInvitationFromGroup = function (groupId, inviter) {
   var _manager = this._manager;
@@ -685,7 +687,7 @@ EMGroupManager.prototype.acceptInvitationFromGroup = function (groupId, inviter)
  * @param {String} groupId          Group ID.
  * @param {String} inviter          Inviter.
  * @param {String} reason           The decline reason.
- * @return {EMGroup}                The group user has accepted.
+ * @return {Object}        {code,description,data}        The group user has accepted.
  */
 EMGroupManager.prototype.declineInvitationFromGroup = function (groupId, inviter, reason) {
   var _manager = this._manager;
@@ -711,7 +713,7 @@ EMGroupManager.prototype.declineInvitationFromGroup = function (groupId, inviter
  * Note: Only group owner can transfer ownership
  * @param {String} groupId          Group ID of the current owner.
  * @param {String} newOwner         Group ID of the new owner.
- * @return {EMGroup}                The group user has accepted.
+ * @return {Object}          {code,description,data}      The group user has accepted.
  */
 EMGroupManager.prototype.transferGroupOwner = function (groupId, newOwner) {
   var _manager = this._manager;
@@ -737,7 +739,7 @@ EMGroupManager.prototype.transferGroupOwner = function (groupId, newOwner) {
  * Note: Only group owner can add admin.
  * @param {String} groupId          Group ID.
  * @param {String} admin            New group admin.
- * @return {EMGroup}                The group.
+ * @return {Object}      {code,description,data}          The group.
  */
 EMGroupManager.prototype.addGroupAdmin = function (groupId, admin) {
   var _manager = this._manager;
@@ -763,7 +765,7 @@ EMGroupManager.prototype.addGroupAdmin = function (groupId, admin) {
  * Note: ONLY group owner can remove admin, not other admin.
  * @param {String} groupId          Group ID.
  * @param {String} admin            Group admin member.
- * @return {EMGroup}                The group.
+ * @return {Object}       {code,description,data}         The group.
  */
 EMGroupManager.prototype.removeGroupAdmin = function (groupId, admin) {
   var _manager = this._manager;
@@ -790,7 +792,7 @@ EMGroupManager.prototype.removeGroupAdmin = function (groupId, admin) {
  * @param {String} groupId          Group ID.
  * @param {Array}  members          Group's mute members.
  * @param {Number} muteDuration     mute duration in milliseconds.
- * @return {EMGroup}                The group.
+ * @return {Object}      {code,description,data}          The group.
  */
 EMGroupManager.prototype.muteGroupMembers = function (groupId, members, muteDuration) {
   var _manager = this._manager;
@@ -815,7 +817,7 @@ EMGroupManager.prototype.muteGroupMembers = function (groupId, members, muteDura
  * remove group muted members.
  * @param {String} groupId          Group ID.
  * @param {Array}  members          mute members to be removed.
- * @return {EMGroup}                The group.
+ * @return {Object}      {code,description,data}          The group.
  */
 EMGroupManager.prototype.unmuteGroupMembers = function (groupId, members, error) {
   var _manager = this._manager;
@@ -841,7 +843,7 @@ EMGroupManager.prototype.unmuteGroupMembers = function (groupId, members, error)
  * @param {String} groupId          Group ID.
  * @param {Number} pageNum          mute members to be removed.
  * @param {Number} pageSizePage     size. ex. 20 for 20 objects.
- * @return {Array} object list. The list of mute users. object like { "key" : name, "value" : 111 }.
+ * @return {Object} {code,description,data}  The list of mute users. object like { "key" : name, "value" : 111 }.
  */
 EMGroupManager.prototype.fetchGroupMutes = function (groupId, pageNum, pageSize) {
   var _manager = this._manager;
@@ -867,7 +869,7 @@ EMGroupManager.prototype.fetchGroupMutes = function (groupId, pageNum, pageSize)
  * @param {String} groupId          Group ID.
  * @param {String} filePath         file path to be uploaded to on server. Can be used for file downloading later.
  * @param {EMCallback} callback     EMCallback contains onProgress of file uploading progress.
- * @return {Array} EMMucSharedFile list. 
+ * @return {Object} {code,description,data} EMMucSharedFile list. 
  */
 EMGroupManager.prototype.uploadGroupSharedFile = function (groupId, filePath, callback) {
   var _manager = this._manager;
@@ -893,7 +895,7 @@ EMGroupManager.prototype.uploadGroupSharedFile = function (groupId, filePath, ca
  * @param {String} groupId          Group ID.
  * @param {Number} pageNum          page number of pagination.
  * @param {Number} pageSize         Page size. ex. 20 for 20 objects.
- * @return {Array} EMMucSharedFile list. 
+ * @return {Object}  {code,description,data} EMMucSharedFile list. 
  */
 EMGroupManager.prototype.fetchGroupSharedFiles = function (groupId, pageNum, pageSize) {
   var _manager = this._manager;
@@ -925,7 +927,7 @@ EMGroupManager.prototype.fetchGroupSharedFiles = function (groupId, pageNum, pag
  * @param {String} filePath         store file to this path.
  * @param {String} fileId           shared file id.
  * @param {EMCallback} callback     EMCallback contains onProgress of file uploading progress.
- * @return {EMGroup}                The group.
+ * @return {Object}        {code,description,data}        The group.
  */
 EMGroupManager.prototype.downloadGroupSharedFile = function (groupId, filePath, fileId, callback) {
   var _manager = this._manager;
@@ -951,7 +953,7 @@ EMGroupManager.prototype.downloadGroupSharedFile = function (groupId, filePath, 
  * Note: ONLY group's admin and owner or file uploader can delete shared file.
  * @param {String} groupId          Group ID.
  * @param {String} fileId           shared file id.
- * @return {EMGroup}                The group.
+ * @return {Object}       {code,description,data}         The group.
  */
 EMGroupManager.prototype.deleteGroupSharedFile = function (groupId, fileId) {
   var _manager = this._manager;
@@ -976,7 +978,7 @@ EMGroupManager.prototype.deleteGroupSharedFile = function (groupId, fileId) {
  * fetch group's announcement.
  * Note: Only group's members can fetch group's announcement.
  * @param {String} groupId          Group ID.
- * @return {String}                 The group's announcement in string.
+ * @return {Object}         {code,description,data}        The group's announcement in string.
  */
 EMGroupManager.prototype.fetchGroupAnnouncement = function (groupId) {
   var _manager = this._manager;
@@ -1001,7 +1003,7 @@ EMGroupManager.prototype.fetchGroupAnnouncement = function (groupId) {
  * Update group's announcement.
  * @param {String} groupId          Group ID.
  * @param {String} newAnnouncement  a new group announcement.
- * @return {EMGroup}                The group.
+ * @return {Object}  {code,description,data}  The group.
  */
 EMGroupManager.prototype.updateGroupAnnouncement = function (groupId, newAnnouncement) {
   var _manager = this._manager;

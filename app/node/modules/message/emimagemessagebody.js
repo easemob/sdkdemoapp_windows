@@ -43,7 +43,7 @@ function EMImageMessageBody(localPath, thumbnailLocalPath) {
 
 /**
  * Get message body type.
- * @return {Number}
+ * @return {Number} 返回消息类型
  */
 EMImageMessageBody.prototype.type = function () {
   return this._body.type();
@@ -51,7 +51,7 @@ EMImageMessageBody.prototype.type = function () {
 
 /**
  * Set display name of the attachment.
- * @param {String} displayName
+ * @param {String} displayName 消息展示名
  * @return {void}
  */
 EMImageMessageBody.prototype.setDisplayName = function (displayName) {
@@ -60,7 +60,7 @@ EMImageMessageBody.prototype.setDisplayName = function (displayName) {
 
 /**
  * Get display name of the attachment.
- * @return {String}
+ * @return {String} 返回消息展示名
  */
 EMImageMessageBody.prototype.displayName = function () {
   return this._body.displayName();
@@ -69,7 +69,7 @@ EMImageMessageBody.prototype.displayName = function () {
 /**
  * Set local path of the attachment.
  * Note: should NOT change the local path of the Received message.
- * @param {String} localPath
+ * @param {String} localPath 图片本地存储路径
  * @return {void}
  */
 EMImageMessageBody.prototype.setLocalPath = function (localPath) {
@@ -78,7 +78,7 @@ EMImageMessageBody.prototype.setLocalPath = function (localPath) {
 
 /**
  * Get local path of the attachment.
- * @return {String}
+ * @return {String} 返回图片本地存储路径
  */
 EMImageMessageBody.prototype.localPath = function () {
   return this._body.localPath();
@@ -87,7 +87,7 @@ EMImageMessageBody.prototype.localPath = function () {
 /**
  * Set remote path of the attachment.
  * Note: It's internal used, user should never need to call this method.
- * @param {String} remotePath
+ * @param {String} remotePath 图片在服务器的存储路径
  * @return {void}
  */
 EMImageMessageBody.prototype.setRemotePath = function (remotePath) {
@@ -96,7 +96,7 @@ EMImageMessageBody.prototype.setRemotePath = function (remotePath) {
 
 /**
  * Get remote path of the attachment.
- * @return {String}
+ * @return {String} 返回图片在服务器的存储路径
  */
 EMImageMessageBody.prototype.remotePath = function () {
   return this._body.remotePath();
@@ -105,7 +105,7 @@ EMImageMessageBody.prototype.remotePath = function () {
 /**
  * Set secret key of the attachment.
  * Note: It's internal used, user should never need to call this method.
- * @param {String} secretKey
+ * @param {String} secretKey 图片加密密钥
  * @return {void}
  */
 EMImageMessageBody.prototype.setSecretKey = function (secretKey) {
@@ -114,7 +114,7 @@ EMImageMessageBody.prototype.setSecretKey = function (secretKey) {
 
 /**
  * Get secret key of the attachment, it's used to download attachment from server.
- * @return {String}
+ * @return {String} 返回图片加密密钥
  */
 EMImageMessageBody.prototype.secretKey = function () {
   return this._body.secretKey();
@@ -123,7 +123,7 @@ EMImageMessageBody.prototype.secretKey = function () {
 /**
  * Set file length of the attachment.
  * Note: It's usually not necessary to call this method, will calculate file length automatically when setting local path.
- * @param {Number} fileLength
+ * @param {Number} fileLength 文件大小
  * @return {void}
  */
 EMImageMessageBody.prototype.setFileLength = function (fileLength) {
@@ -132,7 +132,7 @@ EMImageMessageBody.prototype.setFileLength = function (fileLength) {
 
 /**
  * Get file length of the attachment.
- * @return {Number}
+ * @return {Number} 返回文件大小
  */
 EMImageMessageBody.prototype.fileLength = function () {
   return this._body.fileLength();
@@ -141,7 +141,7 @@ EMImageMessageBody.prototype.fileLength = function () {
 /**
  * Set file downloading status.
  * Note: Usually, user should NOT call this method directly.
- * @param {Number} downloadStatus
+ * @param {Number} downloadStatus 图片文件下载状态
  * @return {void}
  */
 EMImageMessageBody.prototype.setDownloadStatus = function (downloadStatus) {
@@ -150,7 +150,7 @@ EMImageMessageBody.prototype.setDownloadStatus = function (downloadStatus) {
 
 /**
  * Get file downloading status
- * @return {Number}
+ * @return {Number} 返回图片文件下载状态
  */
 EMImageMessageBody.prototype.downloadStatus = function () {
   return this._body.downloadStatus();
@@ -158,7 +158,7 @@ EMImageMessageBody.prototype.downloadStatus = function () {
 
 /**
  * Set display name of the thumbnail.
- * @param {String} thumbnailDisplayName
+ * @param {String} thumbnailDisplayName 图片缩略图展示名
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailDisplayName = function (thumbnailDisplayName) {
@@ -167,7 +167,7 @@ EMImageMessageBody.prototype.setThumbnailDisplayName = function (thumbnailDispla
 
 /**
  * Get display name of the thumbnail.
- * @return {String}
+ * @return {String} 返回图片缩略图展示名
  */
 EMImageMessageBody.prototype.thumbnailDisplayName = function () {
   return this._body.thumbnailDisplayName();
@@ -175,7 +175,7 @@ EMImageMessageBody.prototype.thumbnailDisplayName = function () {
 
 /**
  * Set local path of the thumbnail.
- * @param {String} thumbnailLocalPath
+ * @param {String} thumbnailLocalPath 图片缩略图本地路径
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailLocalPath = function (thumbnailLocalPath) {
@@ -184,7 +184,7 @@ EMImageMessageBody.prototype.setThumbnailLocalPath = function (thumbnailLocalPat
 
 /**
  * Get local path of the thumbnail.
- * @return {String}
+ * @return {String} 返回图片缩略图本地路径
  */
 EMImageMessageBody.prototype.thumbnailLocalPath = function () {
   return this._body.thumbnailLocalPath();
@@ -193,7 +193,7 @@ EMImageMessageBody.prototype.thumbnailLocalPath = function () {
 /**
  * Set remote path of the thumbnail.
  * Note: It's internal used, user should never need to call this method.
- * @param {String} thumbnailRemotePath
+ * @param {String} thumbnailRemotePath 缩略图在服务器的存储路径
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailRemotePath = function (thumbnailRemotePath) {
@@ -202,7 +202,7 @@ EMImageMessageBody.prototype.setThumbnailRemotePath = function (thumbnailRemoteP
 
 /**
  * Get remote path of the thumbnail.
- * @return {String}
+ * @return {String} 返回缩略图在服务器的存储路径
  */
 EMImageMessageBody.prototype.thumbnailRemotePath = function () {
   return this._body.thumbnailRemotePath();
@@ -211,7 +211,7 @@ EMImageMessageBody.prototype.thumbnailRemotePath = function () {
 /**
  * Set secret key of the thumbnail.
  * Note: It's internal used, user should never need to call this method.
- * @param {String} thumbnailRemotePath
+ * @param {String} thumbnailRemotePath 缩略图加密密钥
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailSecretKey = function (thumbnailRemotePath) {
@@ -220,7 +220,7 @@ EMImageMessageBody.prototype.setThumbnailSecretKey = function (thumbnailRemotePa
 
 /**
  * Get secret key of the thumbnail.
- * @return {String}
+ * @return {String} 返回缩略图加密密钥
  */
 EMImageMessageBody.prototype.thumbnailSecretKey = function () {
   return this._body.thumbnailSecretKey();
@@ -228,7 +228,7 @@ EMImageMessageBody.prototype.thumbnailSecretKey = function () {
 
 /**
  * Set size of the thumbnail.
- * @param {EMImageSize} size
+ * @param {EMImageSize} size 缩略图大小
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailSize = function (size) {
@@ -237,7 +237,7 @@ EMImageMessageBody.prototype.setThumbnailSize = function (size) {
 
 /**
  * Get size of the thumbnail.
- * @return {EMImageSize}
+ * @return {EMImageSize} 返回缩略图大小
  */
 EMImageMessageBody.prototype.thumbnailSize = function () {
   return new EMImageSize(this._body.thumbnailSize().width, this._body.thumbnailSize().height);
@@ -246,7 +246,7 @@ EMImageMessageBody.prototype.thumbnailSize = function () {
 /**
  * Set file length of the thumbnail.
  * Note: It's usually not necessary to call this method, will calculate file length automatically when setting local path.
- * @param {Number} thumbnailFileLength
+ * @param {Number} thumbnailFileLength 缩略图文件大小
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailFileLength = function (thumbnailFileLength) {
@@ -255,7 +255,7 @@ EMImageMessageBody.prototype.setThumbnailFileLength = function (thumbnailFileLen
 
 /**
  * Get file length of the thumbnail.
- * @return {Number}
+ * @return {Number} 返回缩略图文件大小
  */
 EMImageMessageBody.prototype.thumbnailFileLength = function () {
   return this._body.thumbnailFileLength();
@@ -264,7 +264,7 @@ EMImageMessageBody.prototype.thumbnailFileLength = function () {
 /**
  * Set download status of the thumbnail.
  * Note: Usually, user should NOT call this method directly.
- * @param {Number} thumbnailDownloadStatus
+ * @param {Number} thumbnailDownloadStatus 缩略图下载状态
  * @return {void}
  */
 EMImageMessageBody.prototype.setThumbnailDownloadStatus = function (thumbnailDownloadStatus) {
@@ -273,7 +273,7 @@ EMImageMessageBody.prototype.setThumbnailDownloadStatus = function (thumbnailDow
 
 /**
  * Get download status of the thumbnail.
- * @return {Number}
+ * @return {Number} 返回缩略图下载状态
  */
 EMImageMessageBody.prototype.thumbnailDownloadStatus = function () {
   return this._body.thumbnailDownloadStatus();
@@ -281,7 +281,7 @@ EMImageMessageBody.prototype.thumbnailDownloadStatus = function () {
 
 /**
  * Set size of the thumbnail.
- * @param {EMImageSize} size
+ * @param {EMImageSize} size 缩略图图片大小
  * @return {void}
  */
 EMImageMessageBody.prototype.setSize = function (size) {
@@ -290,7 +290,7 @@ EMImageMessageBody.prototype.setSize = function (size) {
 
 /**
  * Get size of the thumbnail.
- * @return {EMImageSize}
+ * @return {EMImageSize} 返回缩略图图片大小
  */
 EMImageMessageBody.prototype.size = function () {
   return new EMImageSize(this._body.size().width, this._body.size().height);

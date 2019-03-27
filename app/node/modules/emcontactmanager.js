@@ -5,7 +5,8 @@ const EMError = require('./emerror');
 const async = require('async');
 
 /**
- * Easemob EMContactManager implementation.
+ * EMContactManager
+ * @constructor
  */
 
 function EMContactManager(contactManager) {
@@ -14,7 +15,7 @@ function EMContactManager(contactManager) {
 
 /**
  * register contact status change listener.
- * @param {EMContactListener} listener
+ * @param {EMContactListener} listener 好友管理回调监听对象
  * @return {void}
  */
 EMContactManager.prototype.registerContactListener = function (listener) {
@@ -23,7 +24,7 @@ EMContactManager.prototype.registerContactListener = function (listener) {
 
 /**
  * remove registration of contact status change listener.
- * @param {EMContactListener} listener
+ * @param {EMContactListener} listener 好友管理回调监听对象
  * @return {void}
  */
 EMContactManager.prototype.removeContactListener = function (listener) {
@@ -32,7 +33,7 @@ EMContactManager.prototype.removeContactListener = function (listener) {
 
 /**
  * retrieve current user's friend list from server.
- * @return {Object}
+ * @return {Object} 好友列表
  */
 EMContactManager.prototype.allContacts = function () {
   let error = new EMError();
@@ -46,7 +47,7 @@ EMContactManager.prototype.allContacts = function () {
 
 /**
  * retrieve current user's friend list from server.
- * @return {Object}
+ * @return {Object} 好友列表
  */
 EMContactManager.prototype.getContactsFromServer = function () {
   var _manager = this._manager;
@@ -69,7 +70,7 @@ EMContactManager.prototype.getContactsFromServer = function () {
 
 /**
  * invite contact to be friend, need contact accept.
- * @return {Object} String array
+ * @return {Object} 好友列表
  */
 EMContactManager.prototype.getContactsFromDB = function () {
   let error = new EMError();
@@ -83,9 +84,9 @@ EMContactManager.prototype.getContactsFromDB = function () {
 
 /**
  * invite contact to be friend, need contact accept.
- * @param {String} username
- * @param {String} message
- * @return {Object}
+ * @param {String} username 用户ID
+ * @param {String} message 邀请信息
+ * @return {Object} 邀请信息发送结果
  */
 EMContactManager.prototype.inviteContact = function (username, message) {
   var _manager = this._manager;
@@ -107,9 +108,9 @@ EMContactManager.prototype.inviteContact = function (username, message) {
 
 /**
  * invite contact to be friend, need contact accept.
- * @param {String} username
- * @param {String} message
- * @return {Object}
+ * @param {String} username 用户ID
+ * @param {Bool} keepConversation  删除后是否保留会话
+ * @return {Object} 删除好友结果
  */
 EMContactManager.prototype.deleteContact = function (username,keepConversation) {
   var _manager = this._manager;
@@ -131,8 +132,8 @@ EMContactManager.prototype.deleteContact = function (username,keepConversation) 
 
 /**
  * accept contact's invitation.
- * @param {String} username
- * @return {void}
+ * @param {String} username 用户ID
+ * @return {Object} 同意好友申请结果
  */
 EMContactManager.prototype.acceptInvitation = function (username) {
   var _manager = this._manager;
@@ -154,8 +155,8 @@ EMContactManager.prototype.acceptInvitation = function (username) {
 
 /**
  * decline contact's invitation.
- * @param {String} username
- * @return {void}
+ * @param {String} username 好友ID
+ * @return {Object}
  */
 EMContactManager.prototype.declineInvitation = function (username) {
   var _manager = this._manager;
@@ -177,7 +178,7 @@ EMContactManager.prototype.declineInvitation = function (username) {
 
 /**
  * retrieve black list from memory.
- * @return {Array} String array
+ * @return {Array} 黑名单列表
  */
 EMContactManager.prototype.blacklist = function () {
   let error = new EMError();
@@ -191,7 +192,7 @@ EMContactManager.prototype.blacklist = function () {
 
 /**
  * retrieve black list from server.
- * @return {Array} String array
+ * @return {Array} 黑名单列表
  */
 EMContactManager.prototype.getBlackListFromServer = function () {
   var _manager = this._manager;
@@ -214,8 +215,8 @@ EMContactManager.prototype.getBlackListFromServer = function () {
 
 /**
  * save black list.
- * @param {Array} blacklist String array
- * @return {void}
+ * @param {Array} blacklist String array 黑名单
+ * @return {Object} 修改黑名单结果
  */
 EMContactManager.prototype.saveBlackList = function (blacklist) {
   var _manager = this._manager;
@@ -238,8 +239,8 @@ EMContactManager.prototype.saveBlackList = function (blacklist) {
 /**
  * add contact to blacklist.
  * Note: both whether both side will be blocked, if true user also can not subscribe contact's presense. both = false is not work yet, current behaviour is both side conmunication will be blocded.
- * @param {String} username
- * @return {void}
+ * @param {String} username 用户ID
+ * @return {Object} 添加黑名单结果
  */
 EMContactManager.prototype.addToBlackList = function (username) {
   var _manager = this._manager;
@@ -261,8 +262,8 @@ EMContactManager.prototype.addToBlackList = function (username) {
 
 /**
  * remove contact from black list.
- * @param {String} username
- * @return {void}
+ * @param {String} username 用户ID
+ * @return {Object}
  */
 EMContactManager.prototype.removeFromBlackList = function (username) {
   var _manager = this._manager;
@@ -284,10 +285,10 @@ EMContactManager.prototype.removeFromBlackList = function (username) {
 
 /**
  * get self id list on other platforms.
- * @param {Error} error
  * @return {Array} String
  */
-EMContactManager.prototype.getSelfIdsOnOtherPlatform = function (error) {
+EMContactManager.prototype.getSelfIdsOnOtherPlatform = function () {
+  let error = new EMError();
   return this._manager.getSelfIdsOnOtherPlatform(error._error);
 };
 

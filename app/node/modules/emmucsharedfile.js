@@ -9,11 +9,11 @@ const easemobNode = require('./../load');
 /**
  * EMMucSetting constructor.
  * @constructor
- * @param {String} fileId 
- * @param {String} fileName 
- * @param {String} fileOwner 
- * @param {Number} create 
- * @param {Number} fileSize 
+ * @param {String} fileId 文件ID
+ * @param {String} fileName  文件名
+ * @param {String} fileOwner 文件所有人
+ * @param {Number} create 创建时间
+ * @param {Number} fileSize 文件大小
  */
 function EMMucSharedFile(fileId, fileName, fileOwner, create, fileSize) {
   if (typeof(fileId) == "object") {
@@ -25,7 +25,7 @@ function EMMucSharedFile(fileId, fileName, fileOwner, create, fileSize) {
 
 /**
  * Get shared file id.
- * @return {String}
+ * @return {String} 返回文件ID
  */
 EMMucSharedFile.prototype.fileId = function () {
   return this._sharedfile.fileId();
@@ -33,7 +33,7 @@ EMMucSharedFile.prototype.fileId = function () {
 
 /**
  * Get shared file name.
- * @return {String}
+ * @return {String} 返回文件名
  */
 EMMucSharedFile.prototype.fileName = function () {
   return this._sharedfile.fileName();
@@ -41,7 +41,7 @@ EMMucSharedFile.prototype.fileName = function () {
 
 /**
  * Get shared file owner.
- * @return {String}
+ * @return {String} 返回文件创建人
  */
 EMMucSharedFile.prototype.fileOwner = function () {
   return this._sharedfile.fileOwner();
@@ -49,7 +49,7 @@ EMMucSharedFile.prototype.fileOwner = function () {
 
 /**
  * Get shared file create time.
- * @return {Number}
+ * @return {Number} 返回创建时间
  */
 EMMucSharedFile.prototype.create = function () {
   return this._sharedfile.create();
@@ -57,7 +57,7 @@ EMMucSharedFile.prototype.create = function () {
 
 /**
  * Get shared file size.
- * @return {Number}
+ * @return {Number} 返回文件大小
  */
 EMMucSharedFile.prototype.fileSize = function () {
   return this._sharedfile.fileSize();

@@ -20,7 +20,7 @@ function EMTextMessageBody(text) {
 
 /**
  * Get message body type.
- * @return {Number}
+ * @return {Number} 返回消息类型
  */
 EMTextMessageBody.prototype.type = function () {
   return this._body.type();
@@ -28,7 +28,7 @@ EMTextMessageBody.prototype.type = function () {
 
 /**
  * Get the text.
- * @return {String}
+ * @return {String} 消息类型
  */
 EMTextMessageBody.prototype.text = function () {
   return this._body.text();

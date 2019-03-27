@@ -53,7 +53,7 @@ function EMMessage(message) {
 
 /**
  * Get message id.
- * @return {String}
+ * @return {String} 返回消息ID
  */
 EMMessage.prototype.msgId = function () {
   return this._message.msgId();
@@ -62,7 +62,7 @@ EMMessage.prototype.msgId = function () {
 /**
  * Set message id.
  * Note: User should never change a message's id if you don't want to save as a new message.
- * @param {String} msgId
+ * @param {String} msgId 消息ID
  * @return {void}
  */
 EMMessage.prototype.setMsgId = function (msgId) {
@@ -71,7 +71,7 @@ EMMessage.prototype.setMsgId = function (msgId) {
 
 /**
  * Get message sender.
- * @return {String}
+ * @return {String} 消息发送者
  */
 EMMessage.prototype.from = function () {
   return this._message.from();
@@ -79,7 +79,7 @@ EMMessage.prototype.from = function () {
 
 /**
  * Set message sender.
- * @param {String} from
+ * @param {String} from 消息发送者
  * @return {void}
  */
 EMMessage.prototype.setFrom = function (from) {
@@ -88,7 +88,7 @@ EMMessage.prototype.setFrom = function (from) {
 
 /**
  * Get message receiver.
- * @return {String}
+ * @return {String} 返回消息接收者
  */
 EMMessage.prototype.to = function () {
   return this._message.to();
@@ -96,7 +96,7 @@ EMMessage.prototype.to = function () {
 
 /**
  * Set message receiver.
- * @param {String} to
+ * @param {String} to 消息接收者
  * @return {void}
  */
 EMMessage.prototype.setTo = function (to) {
@@ -105,7 +105,7 @@ EMMessage.prototype.setTo = function (to) {
 
 /**
  * Get conversation id.
- * @return {String}
+ * @return {String} 返回消息的会话ID
  */
 EMMessage.prototype.conversationId = function () {
   return this._message.conversationId();
@@ -114,7 +114,7 @@ EMMessage.prototype.conversationId = function () {
 /**
  * Set message's conversation id.
  * Note: User should NOT change message's conversation id after received or sent a message.
- * @param {String} conversationId
+ * @param {String} conversationId 消息的会话ID
  * @return {void}
  */
 EMMessage.prototype.setConversationId = function (conversationId) {
@@ -123,7 +123,7 @@ EMMessage.prototype.setConversationId = function (conversationId) {
 
 /**
  * Get message status.
- * @return {Number}
+ * @return {Number} 返回消息状态
  */
 EMMessage.prototype.status = function () {
   return this._message.status();
@@ -139,7 +139,7 @@ EMMessage.prototype.status = function () {
  * SUCCESS = 2,        // Message is delivered successfully
  * FAIL = 3            // Message delivering failed
  * }
- * @param {Number} status
+ * @param {Number} status 消息状态
  * @return {void}
  */
 EMMessage.prototype.setStatus = function (status) {
@@ -148,7 +148,7 @@ EMMessage.prototype.setStatus = function (status) {
 
 /**
  * Get message chat type.
- * @return {Number}
+ * @return {Number} 返回聊天类型
  */
 EMMessage.prototype.chatType = function () {
   return this._message.chatType();
@@ -162,7 +162,7 @@ EMMessage.prototype.chatType = function () {
  * GROUP = 1,     // Group chat
  * CHATROOM = 2   // Chatroom chat
  * }
- * @param {Number} status
+ * @param {Number} status 聊天类型
  * @return {void}
  */
 EMMessage.prototype.setChatType = function (chatType) {
@@ -171,7 +171,7 @@ EMMessage.prototype.setChatType = function (chatType) {
 
 /**
  * Get message direction.
- * @return {Number}
+ * @return {Number} 返回消息收发方向，0为发，1为收
  */
 EMMessage.prototype.msgDirection = function () {
   return this._message.msgDirection();
@@ -185,7 +185,7 @@ EMMessage.prototype.msgDirection = function () {
  * SEND = 0,
  * RECEIVE = 1
  * }
- * @param {Number} status
+ * @param {Number} msgDirection 消息收发方向，0为发，1为收
  * @return {void}
  */
 EMMessage.prototype.setMsgDirection = function (msgDirection) {
@@ -194,7 +194,7 @@ EMMessage.prototype.setMsgDirection = function (msgDirection) {
 
 /**
  * Get if message is read status.
- * @return {Bool}
+ * @return {Bool} 返回消息是否已读
  */
 EMMessage.prototype.isRead = function () {
   return this._message.isRead();
@@ -203,7 +203,7 @@ EMMessage.prototype.isRead = function () {
 /**
  * Set if message is read status.
  * Note: User should NOT change message's read status directly.
- * @param {Bool} isRead
+ * @param {Bool} isRead 消息是否已读
  * @return {void}
  */
 EMMessage.prototype.setIsRead = function (isRead) {
@@ -212,7 +212,7 @@ EMMessage.prototype.setIsRead = function (isRead) {
 
 /**
  * Get message if has listened status.
- * @return {Bool}
+ * @return {Bool} 返回消息是否已接收
  */
 EMMessage.prototype.isListened = function () {
   return this._message.isListened();
@@ -221,7 +221,7 @@ EMMessage.prototype.isListened = function () {
 /**
  * Set message's listened status.
  * Note: User should NOT change message's listened status directly.
- * @param {Bool} isRead
+ * @param {Bool} isListened 消息是否已接收
  * @return {void}
  */
 EMMessage.prototype.setIsListened = function (isListened) {
@@ -231,7 +231,7 @@ EMMessage.prototype.setIsListened = function (isListened) {
 /**
  * Get message read ack status.
  * Note: For receiver, it indicates whether has sent read ack, and for sender, it indicates whether has received read ack.
- * @return {Bool}
+ * @return {Bool} 返回消息读ack状态
  */
 EMMessage.prototype.isReadAcked = function () {
   return this._message.isReadAcked();
@@ -240,7 +240,7 @@ EMMessage.prototype.isReadAcked = function () {
 /**
  * Set message's read ack status.
  * Note: User should NOT change message's read ack status directly.
- * @param {Bool} isRead
+ * @param {Bool} isRead 消息读ack状态
  * @return {void}
  */
 EMMessage.prototype.setIsReadAcked = function (isReadAcked) {
@@ -250,7 +250,7 @@ EMMessage.prototype.setIsReadAcked = function (isReadAcked) {
 /**
  * Get message delivering status.
  * Note: For receiver, it indicates whether has sent delivering succeed ack; and for sender, it indicates whether has received delivering succeed ack.
- * @return {Bool}
+ * @return {Bool} 返回消息发ack状态
  */
 EMMessage.prototype.isDeliverAcked = function () {
   return this._message.isDeliverAcked();
@@ -259,7 +259,7 @@ EMMessage.prototype.isDeliverAcked = function () {
 /**
  * Set message's delivery ack status.
  * Note: User should NOT change message's delivery ack status directly.
- * @param {Bool} isRead
+ * @param {Bool} isDeliverAcked 消息发ack状态
  * @return {void}
  */
 EMMessage.prototype.setIsDeliverAcked = function (isDeliverAcked) {
@@ -268,7 +268,7 @@ EMMessage.prototype.setIsDeliverAcked = function (isDeliverAcked) {
 
 /**
  * Get message timestamp(server time).
- * @return {Number}
+ * @return {Number} 返回消息服务器时间
  */
 EMMessage.prototype.timestamp = function () {
   return this._message.timestamp();
@@ -277,7 +277,7 @@ EMMessage.prototype.timestamp = function () {
 /**
  * Set message's timestamp.
  * Note: User should NOT change message's timestamp.
- * @param {Number} timestamp
+ * @param {Number} timestamp 返回消息服务器时间
  * @return {void}
  */
 EMMessage.prototype.setTimestamp = function (timestamp) {
@@ -286,7 +286,7 @@ EMMessage.prototype.setTimestamp = function (timestamp) {
 
 /**
  * Get message's local time.
- * @return {Number}
+ * @return {Number} 返回消息本地时间
  */
 EMMessage.prototype.localTime = function () {
   return this._message.localTime();
@@ -295,7 +295,7 @@ EMMessage.prototype.localTime = function () {
 /**
  * Set message's local time.
  * Note: User should NOT change message's server time.
- * @param {Number} timestamp
+ * @param {Number} timestamp 返回消息本地时间
  * @return {void}
  */
 EMMessage.prototype.setLocalTime = function (localTime) {
@@ -348,6 +348,7 @@ EMMessage.prototype.clearBodies = function () {
 
 /**
  * Add a body to message.
+ * @param {EMMessageBody} body
  * @return {void}
  */
 EMMessage.prototype.addBody = function (body) {
@@ -357,8 +358,8 @@ EMMessage.prototype.addBody = function (body) {
 /**
  * Add a extend attribute to message.
  * Note: Supported types: Bool Number and String.
- * @param {String} attribute
- * @param {Bool | Number | String} value
+ * @param {String} attribute 消息属性
+ * @param {Bool | Number | String} value 属性值
  * @return {void}
  */
 EMMessage.prototype.setAttribute = function (attribute, value) {
@@ -368,8 +369,8 @@ EMMessage.prototype.setAttribute = function (attribute, value) {
 /**
  * Get extend attribute of message.
  * Note: Supported types: Bool Number and String.
- * @param {String} attribute
- * @return {Bool | Number | String}
+ * @param {String} attribute 消息属性
+ * @return {Bool | Number | String} 属性值
  */
 EMMessage.prototype.getAttribute = function (attribute) {
   return this._message.getAttribute(attribute);
@@ -377,8 +378,8 @@ EMMessage.prototype.getAttribute = function (attribute) {
 
 /**
  * Add a extend json object attribute to message.
- * @param {String} attribute
- * @param {Object} object
+ * @param {String} attribute 消息属性
+ * @param {Object} object 属性的json字符串
  * @return {void}
  */
 EMMessage.prototype.setJsonAttribute = function (attribute, object) {
@@ -387,8 +388,8 @@ EMMessage.prototype.setJsonAttribute = function (attribute, object) {
 
 /**
  * Get extend attribute of json object.
- * @param {String} attribute
- * @return {Object}
+ * @param {String} attribute 消息属性
+ * @return {Object} 属性的json字符串
  */
 EMMessage.prototype.getJsonAttribute = function (attribute) {
   return JSON.parse(this._message.getJsonAttribute(attribute));
@@ -396,7 +397,7 @@ EMMessage.prototype.getJsonAttribute = function (attribute) {
 
 /**
  * Remove a attribute from message by key. 
- * @param {String} attribute
+ * @param {String} attribute 消息属性
  * @return {void}
  */
 EMMessage.prototype.removeAttribute = function (attribute) {
@@ -421,7 +422,7 @@ EMMessage.prototype.ext = function () {
 
 /**
  * Get message's callback to notify status change.
- * @return {EMCallback}
+ * @return {EMCallback} 返回消息回调对象
  */
 EMMessage.prototype.callback = function () {
   return this._callback;
@@ -429,7 +430,7 @@ EMMessage.prototype.callback = function () {
 
 /**
  * Set message's callback to notify status change.
- * @param {EMCallback} callback
+ * @param {EMCallback} callback 消息回调对象
  * @return {void}
  */
 EMMessage.prototype.setCallback = function (callback) {
@@ -439,7 +440,7 @@ EMMessage.prototype.setCallback = function (callback) {
 
 /**
  * Set progress.
- * @param {Number} percent
+ * @param {Number} percent 消息收发进度
  * @return {void}
  */
 EMMessage.prototype.setProgress = function (percent) {
@@ -448,7 +449,7 @@ EMMessage.prototype.setProgress = function (percent) {
 
 /**
  * Get progress
- * @return {Number}
+ * @return {Number} 返回消息收发进度
  */
 EMMessage.prototype.getProgress = function () {
   return this._message.getProgress();

@@ -26,7 +26,7 @@ function EMFileMessageBody(localPath) {
 
 /**
  * Get message body type.
- * @return {Number}
+ * @return {Number} 返回消息类型
  */
 EMFileMessageBody.prototype.type = function () {
   return this._body.type();
@@ -34,7 +34,7 @@ EMFileMessageBody.prototype.type = function () {
 
 /**
  * Set display name of the attachment.
- * @param {String} displayName
+ * @param {String} displayName 消息展示名
  * @return {void}
  */
 EMFileMessageBody.prototype.setDisplayName = function (displayName) {
@@ -43,7 +43,7 @@ EMFileMessageBody.prototype.setDisplayName = function (displayName) {
 
 /**
  * Get display name of the attachment.
- * @return {String}
+ * @return {String} 返回消息展示名
  */
 EMFileMessageBody.prototype.displayName = function () {
   return this._body.displayName();
@@ -52,7 +52,7 @@ EMFileMessageBody.prototype.displayName = function () {
 /**
  * Set local path of the attachment.
  * Note: should NOT change the local path of the Received message.
- * @param {String} localPath
+ * @param {String} localPath 附件本地存储路径
  * @return {void}
  */
 EMFileMessageBody.prototype.setLocalPath = function (localPath) {
@@ -61,7 +61,7 @@ EMFileMessageBody.prototype.setLocalPath = function (localPath) {
 
 /**
  * Get local path of the attachment.
- * @return {String}
+ * @return {String} 返回附件本地存储路径
  */
 EMFileMessageBody.prototype.localPath = function () {
   return this._body.localPath();
@@ -70,7 +70,7 @@ EMFileMessageBody.prototype.localPath = function () {
 /**
  * Set remote path of the attachment.
  * Note: It's internal used, user should never need to call this method.
- * @param {String} remotePath
+ * @param {String} remotePath 文件在服务器的存储位置
  * @return {void}
  */
 EMFileMessageBody.prototype.setRemotePath = function (remotePath) {
@@ -79,7 +79,7 @@ EMFileMessageBody.prototype.setRemotePath = function (remotePath) {
 
 /**
  * Get remote path of the attachment.
- * @return {String}
+ * @return {String} 返回文件在服务器的存储位置
  */
 EMFileMessageBody.prototype.remotePath = function () {
   return this._body.remotePath();
@@ -88,7 +88,7 @@ EMFileMessageBody.prototype.remotePath = function () {
 /**
  * Set secret key of the attachment.
  * Note: It's internal used, user should never need to call this method.
- * @param {String} secretKey
+ * @param {String} secretKey 文件加密密钥
  * @return {void}
  */
 EMFileMessageBody.prototype.setSecretKey = function (secretKey) {
@@ -97,7 +97,7 @@ EMFileMessageBody.prototype.setSecretKey = function (secretKey) {
 
 /**
  * Get secret key of the attachment, it's used to download attachment from server.
- * @return {String}
+ * @return {String} 返回文件加密密钥
  */
 EMFileMessageBody.prototype.secretKey = function () {
   return this._body.secretKey();
@@ -106,7 +106,7 @@ EMFileMessageBody.prototype.secretKey = function () {
 /**
  * Set file length of the attachment.
  * Note: It's usually not necessary to call this method, will calculate file length automatically when setting local path.
- * @param {Number} fileLength
+ * @param {Number} fileLength 文件大小
  * @return {void}
  */
 EMFileMessageBody.prototype.setFileLength = function (fileLength) {
@@ -115,7 +115,7 @@ EMFileMessageBody.prototype.setFileLength = function (fileLength) {
 
 /**
  * Get file length of the attachment.
- * @return {Number}
+ * @return {Number} 返回文件大小
  */
 EMFileMessageBody.prototype.fileLength = function () {
   return this._body.fileLength();
@@ -124,7 +124,7 @@ EMFileMessageBody.prototype.fileLength = function () {
 /**
  * Set file downloading status.
  * Note: Usually, user should NOT call this method directly.
- * @param {Number} downloadStatus
+ * @param {Number} downloadStatus 设置下载状态
  * @return {void}
  */
 EMFileMessageBody.prototype.setDownloadStatus = function (downloadStatus) {
@@ -133,7 +133,7 @@ EMFileMessageBody.prototype.setDownloadStatus = function (downloadStatus) {
 
 /**
  * Get file downloading status
- * @return {Number}
+ * @return {Number} 下载状态
  */
 EMFileMessageBody.prototype.downloadStatus = function () {
   return this._body.downloadStatus();

@@ -9,7 +9,7 @@ const EMMucSetting = require('./emmucsetting');
 /**
  * EMChatroom constructor.
  * @constructor
- * @param {Object} chatroom
+ * @param {Object} chatroom 聊天室对象
  */
 function EMChatroom(chatroom) {
   this._chatroom = chatroom;
@@ -17,7 +17,7 @@ function EMChatroom(chatroom) {
 
 /**
  * Get chatroom's ID.
- * @return {String}
+ * @return {String} 聊天室ID
  */
 EMChatroom.prototype.chatroomId = function () {
   return this._chatroom.chatroomId();
@@ -25,7 +25,7 @@ EMChatroom.prototype.chatroomId = function () {
 
 /**
  * Get chatroom's subject.
- * @return {String}
+ * @return {String} 返回聊天室名称
  */
 EMChatroom.prototype.chatroomSubject = function () {
   return this._chatroom.chatroomSubject();
@@ -33,7 +33,7 @@ EMChatroom.prototype.chatroomSubject = function () {
 
 /**
  * Get chatroom's description.
- * @return {String}
+ * @return {String} 返回聊天室描述
  */
 EMChatroom.prototype.chatroomDescription = function () {
   return this._chatroom.chatroomDescription();
@@ -41,7 +41,7 @@ EMChatroom.prototype.chatroomDescription = function () {
 
 /**
  * Get chatroom's owner.
- * @return {String}
+ * @return {String} 返回聊天室群主
  */
 EMChatroom.prototype.owner = function () {
   return this._chatroom.owner();
@@ -49,7 +49,7 @@ EMChatroom.prototype.owner = function () {
 
 /**
  * Get chatroom's setting.
- * @return {Number}
+ * @return {Number} 返回聊天室设置
  */
 EMChatroom.prototype.chatroomSetting = function () {
   return new EMMucSetting(this._chatroom.chatroomSetting());
@@ -57,7 +57,7 @@ EMChatroom.prototype.chatroomSetting = function () {
 
 /**
  * Get current members count.
- * @return {Number}
+ * @return {Number} 返回聊天室成员数
  */
 EMChatroom.prototype.chatroomMemberCount = function () {
   return this._chatroom.chatroomMemberCount();
@@ -65,7 +65,7 @@ EMChatroom.prototype.chatroomMemberCount = function () {
 
 /**
  * Get max count of chatroom member.
- * @return {Number}
+ * @return {Number} 返回聊天室最大人数
  */
 EMChatroom.prototype.chatroomMemberMaxCount = function () {
   return this._chatroom.chatroomMemberMaxCount();
@@ -74,7 +74,7 @@ EMChatroom.prototype.chatroomMemberMaxCount = function () {
 /**
  * Get chatroom's members.
  * Note: Will return empty array if have not ever got chatroom's members.
- * @return {Array} String list.
+ * @return {Array} String list.聊天室成员列表
  */
 EMChatroom.prototype.chatroomMembers = function () {
   return this._chatroom.chatroomMembers();
@@ -83,7 +83,7 @@ EMChatroom.prototype.chatroomMembers = function () {
 /**
  * Get chatroom's bans.
  * Note: Will return empty array if have not ever got chatroom's bans.
- * @return {Array} String list.
+ * @return {Array} String list. 聊天室禁言成员列表
  */
 EMChatroom.prototype.chatroomBans = function () {
   return this._chatroom.chatroomBans();
@@ -92,7 +92,7 @@ EMChatroom.prototype.chatroomBans = function () {
 /**
  * Get chatroom's admins.
  * Note: Will return empty array if have not ever got chatroom's admins.
- * @return {Array} String list.
+ * @return {Array} String list. 聊天室管理员列表
  */
 EMChatroom.prototype.chatroomAdmins = function () {
   return this._chatroom.chatroomAdmins();
@@ -102,7 +102,7 @@ EMChatroom.prototype.chatroomAdmins = function () {
  * Get chatroom's mutes.
  * Note: Will return empty array if have not ever got chatroom's mutes.
  * object is like {"key": name, "value": muteTime}.
- * @return {Array} Object list.
+ * @return {Array} Object list. 聊天室禁言一段时间的成员列表
  */
 EMChatroom.prototype.chatroomMutes = function () {
   return this._chatroom.chatroomMutes();
@@ -110,7 +110,7 @@ EMChatroom.prototype.chatroomMutes = function () {
 
 /**
  * Get current login user type.
- * @return {Number}
+ * @return {Number} 聊天室类型
  */
 EMChatroom.prototype.chatroomMemberType = function () {
   return this._chatroom.chatroomMemberType();
@@ -118,7 +118,7 @@ EMChatroom.prototype.chatroomMemberType = function () {
 
 /**
  * Get chatroom's announcement.
- * @return {String}
+ * @return {String} 聊天室公告
  */
 EMChatroom.prototype.chatroomAnnouncement = function () {
   return this._chatroom.chatroomAnnouncement();

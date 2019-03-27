@@ -29,15 +29,7 @@ function EMMultiDevicesListener() {
 
 /**
  * callback function called when contact added.
- * callback function type:
- * function callback(operation, target, ext) {
- *  //@param {Number} operation
- *  //@param {String} target
- *  //@param {String} ext
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMMultiDevicesListener~onContactMultiDevicesEventCallback} callback 回调函数
  * @return {void}
  */
 EMMultiDevicesListener.prototype.onContactMultiDevicesEvent = function (callback) {
@@ -45,20 +37,28 @@ EMMultiDevicesListener.prototype.onContactMultiDevicesEvent = function (callback
 };
 
 /**
+ * @function EMMultiDevicesListener~onContactMultiDevicesEventCallback
+ * @param {Number} operation 操作类型
+ * @param {String} target 目标机器
+ * @param {String} ext 扩展信息
+ * @return {void}
+ */
+
+/**
  * callback function called when contact added.
- * callback function type:
- * function callback(operation, target, usernames) {
- *  //@param {Number} operation
- *  //@param {String} target
- *  //@param {Array} usernames. String username array.
- *  ...
- *  //@return {void}
- * }
- * @param {callback} callback
+ * @param {EMMultiDevicesListener~onGroupMultiDevicesEventCallback} callback
  * @return {void}
  */
 EMMultiDevicesListener.prototype.onGroupMultiDevicesEvent = function (callback) {
   this._eventEmitter.on('onGroupMultiDevicesEvent', callback);
 };
+
+/**
+ * @function EMMultiDevicesListener~onGroupMultiDevicesEventCallback
+ * @param {Number} operation 操作类型
+ * @param {String} target 目标机器
+ * @param {Array} usernames. String username array.
+ * @return {void}
+ */
 
 module.exports = EMMultiDevicesListener;
