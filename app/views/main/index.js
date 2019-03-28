@@ -80,18 +80,17 @@ class MainView extends PureComponent {
 
 			console.log(`listern：${this.connectListener}`);
 			this.connectListener = new easemob.EMConnectionListener();
-			this.connectListener.onDisconnect = function(error){
+			this.connectListener.onDisconnect((error) => {
 				console.log("EMConnectionListener onDisconnect");
 				console.log(error.errorCode);
 				console.log(error.description);
 
 				// code == 206 被踢，需要去验证 session
 				if(error.errorCode == 206){
-					console.log("EMConnectionListener onDisconnect");
-					console.log(error.errorCode);
-					console.log(error.description);
 					this.emclient.logout();
-					logout(); // 这个只是我前端用来控制 ui 上的展示的，跟 emclient 没有关系
+					this.props.history.push('/index');
+					logout();
+					localStorage.clear();
 
 					Modal.info({
 						title: "提示",
@@ -106,7 +105,7 @@ class MainView extends PureComponent {
 					// 尝试发一条 cmd 消息，看看网络有没有真的断掉
 					me.sendTempCmd();
 				}
-			};
+			});
 			if(typeof(gconnectListener) !== "undefined")
 			  this.emclient.removeConnectionListener(gconnectListener);
 			this.emclient.addConnectionListener(this.connectListener);
