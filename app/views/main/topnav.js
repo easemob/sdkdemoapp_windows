@@ -55,12 +55,7 @@ class FormInput extends Component {
 					labelCol={ { span: 7 } }
 					wrapperCol={ { span: 17 } }
 				>
-					{getFieldDecorator("realName", {
-						rules: [{ required: true, message: "请输入姓名!" }],
-						initialValue: this.state.realName
-					})(
-						<Input />
-					)}
+				<a >&nbsp;&nbsp;{this.state.realName}</a>
 				</FormItem>
 				<FormItem
 					wrapperCol={ { span: 4, offset: 9 } }
