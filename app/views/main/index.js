@@ -11,6 +11,7 @@ import { utils } from "@/utils/utils";
 import { userChange } from "./receive_notice";
 import api from "@/api";
 import _ from "underscore";
+import ROUTES from "../common/routes";
 // var fs = require("fs-extra");
 
 // const { remote } = require("electron");
@@ -504,20 +505,17 @@ class MainView extends PureComponent {
 		var textRecvMsg;
 		var conversationType = message[0].chatType();
 		var conversation = this.chatManager.conversationWithType(conversationId, conversationType);
-		this.asyncGetMemberInfo(message[0].from())
-		.done(function(name){
-			var recallMsgUser = message[0].from() == userInfo.user.easemobName ? "您" : name;
-			messageText = `${recallMsgUser} 撤回了一条消息`;
-			textMsgBody = new easemob.EMTextMessageBody(messageText);
-			textRecvMsg = easemob.createReceiveMessage(conversationId, userInfo.user.easemobName, textMsgBody);
-			textRecvMsg.setFrom("oa-easemob-system");
-			recallMessageAction({
+		var recallMsgUser = message[0].from() == userInfo.user.easemobName ? "您" : message[0].from();
+		messageText = `${recallMsgUser} 撤回了一条消息`;
+		textMsgBody = new easemob.EMTextMessageBody(messageText);
+		textRecvMsg = easemob.createReceiveMessage(conversationId, userInfo.user.easemobName, textMsgBody);
+		textRecvMsg.setFrom("oa-easemob-system");
+		recallMessageAction({
 				messages: msgs,
 				id: message[0].conversationId(),
 				recallMsg: message[0],
 				insertMsg: textRecvMsg,
 				conversation
-			});
 		});
 	}
 
@@ -818,7 +816,9 @@ class MainView extends PureComponent {
 			conversations,
 			groupAtAction,
 			setGroupChats,
-			globals
+			globals,
+			selectNav,
+			unReadMsgCountAction
 		} = this.props;
 		var conversation;
 		var conversationType;
@@ -866,9 +866,10 @@ class MainView extends PureComponent {
 			conversation = me.chatManager.conversationWithType(conversationId, conversationType);
 			!conference && conversationOfMessages.push(message);
 
-			// 后期要改，需要根据窗体显示状态和是否选中来判断
-			if(conversationId == selectConversationId){
-				message.setIsRead(true);
+			// 根据窗体显示状态和是否选中来判断
+			if(selectNav == ROUTES.chats.recents.__ && conversationId == selectConversationId){
+				let res = conversation.markMessageAsRead(message.msgId(),true);
+				res && unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
 			}
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
@@ -926,6 +927,8 @@ const mapStateToProps = state => ({
 	conversations: state.conversations,
 	selectMember: state.selectMember,
 	memberOfSelect: state.memberOfSelect,
-	msgsOfConversation: state.msgsOfConversation
+	msgsOfConversation: state.msgsOfConversation,
+	selectNav:state.selectNav,
+	unReadMsgCountAction:state.unReadMsgCountAction
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MainView));
