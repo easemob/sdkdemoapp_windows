@@ -41,11 +41,11 @@ const utils = {
 			console.log(err);
 		});
 		this.chatConfigs = new easemob.EMChatConfig(`${configDir}/easemob-desktop`, `${configDir}/easemob-desktop`, (userInfo && userInfo.user.appkey), 0);
-		this.chatConfigs.setClientResource("desktop");
 		this.chatConfigs.setDeleteMessageAsExitGroup(true);
 		this.chatConfigs.setSdkVersion("3.5.4");
 
 		const emclient = new easemob.EMClient(this.chatConfigs);
+		this.chatConfigs.setClientResource("desktop");
 		return emclient;
 	}
 };
