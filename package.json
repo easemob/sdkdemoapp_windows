@@ -21,7 +21,7 @@
     "prod-win": "npm run build:app && npm run build:main && npm run dist-win"
   },
   "build": {
-    "extends": "./devtools/electron-builder-sandbox.json"
+    "extends": "./devtools/electron-builder.json"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"

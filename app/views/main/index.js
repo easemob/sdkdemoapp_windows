@@ -497,7 +497,7 @@ class MainView extends PureComponent {
 
 	// 收到消息撤回
 	onReceiveRecallMessages(message){
-		const { recallMessageAction, messages, userInfo } = this.props;
+		const { recallMessageAction, messages, userInfo,selectNav,selectConversationId,unReadMsgCountAction } = this.props;
 		const conversationId = message[0].conversationId();
 		var msgs = messages[conversationId];
 		var messageText;
@@ -517,6 +517,10 @@ class MainView extends PureComponent {
 				insertMsg: textRecvMsg,
 				conversation
 		});
+		if(selectNav == ROUTES.chats.recents.__ && conversationId == selectConversationId){
+			let res = conversation.markMessageAsRead(textRecvMsg.msgId(),true);
+			res && unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
+		}
 	}
 
 	// 我接收到自动进群时被触发
@@ -680,7 +684,9 @@ class MainView extends PureComponent {
 			messages,
 			receiveMsgAction,
 			selectConversationId,
-			userInfo
+			userInfo,
+			selectNav,
+			unReadMsgCountAction
 		} = this.props;
 		this.groupManager.fetchGroupSpecification(groupId).then(res => {
 					
@@ -688,7 +694,6 @@ class MainView extends PureComponent {
 		this.groupManager.fetchGroupMembers(groupId, "", 200).then((res) => {
 
 		},(error) => {});
-
 		msgs = messages[group.groupId()] || [];
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
 		{
@@ -714,6 +719,10 @@ class MainView extends PureComponent {
 					conversation
 				}
 			);
+			if(selectNav == ROUTES.chats.recents.__ && conversation.conversationId() == selectConversationId){
+				let res = conversation.markAllMessagesAsRead();
+				res && unReadMsgCountAction({ id: conversation.conversationId(), unReadMsg: [] });
+			}
 		}
 	}
 
@@ -740,9 +749,9 @@ class MainView extends PureComponent {
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`group.groupMembers() = ${group.groupMembers()}`);
 
-		const { userInfo, messages,msgsOfConversation,receiveMsgAction,selectConversationId } = this.props;
+		const { userInfo, messages,msgsOfConversation,receiveMsgAction,selectConversationId,unReadMsgCountAction,selectNav } = this.props;
 		conversation = this.chatManager.conversationWithType(group.groupId(), 1);
-		{
+		//{
 			textMsgBody = new easemob.EMTextMessageBody(`${member} 离开群`);
 			textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
 			textRecvMsg.setFrom("oa-easemob-system");
@@ -757,7 +766,7 @@ class MainView extends PureComponent {
 			}
 			msgs.push(textRecvMsg);
 			conversation.insertMessage(textRecvMsg);
-		}
+		//}
 		msgsOfConversation({ id: groupId, msgs, conversation });
 		msgs.push(textRecvMsg);
 		receiveMsgAction(
@@ -769,6 +778,10 @@ class MainView extends PureComponent {
 				conversation
 			}
 		);
+		if(selectNav == ROUTES.chats.recents.__ && conversation.conversationId() == selectConversationId){
+			let res = conversation.markAllMessagesAsRead();
+			res && unReadMsgCountAction({ id: conversation.conversationId(), unReadMsg: [] });
+		}
 	}
 
 	// 离开群组时触发
@@ -869,6 +882,7 @@ class MainView extends PureComponent {
 			// 根据窗体显示状态和是否选中来判断
 			if(selectNav == ROUTES.chats.recents.__ && conversationId == selectConversationId){
 				let res = conversation.markMessageAsRead(message.msgId(),true);
+				console.log("res:" + res);
 				res && unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
 			}
 
