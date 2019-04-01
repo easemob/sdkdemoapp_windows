@@ -6,6 +6,7 @@
 #### 操作系统
 
 >win7/win8/win10 64位操作系统
+>mac os 10.10以上
 #### 开发工具
 
 * nodejs
@@ -462,7 +463,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
 
     /**  
      * 服务器获取用户所有的组
-     * return [GroupListResult](GroupListResult)
+     * return GroupListResult
      */
     allMyGroups()
 调用方法如下:
@@ -697,23 +698,21 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
      * 修改群标题
      * param groupId 群组ID，输入参数，String
      * param newSubject 群组新组名，输入参数，String
-     * param error 操作结果，输出参数，EMError
-     * return 返回Promise对象，response参数为EMGroup
+     * return 返回Promise对象，response参数为GroupResult
      */
-	groupManager.changeGroupSubject(groupId, newSubject, error);
+	groupManager.changeGroupSubject(groupId, newSubject);
 
     /** 
      *  修改群描述
      * param groupId 群组ID，输入参数，String
      * param newDescription 群组新描述，输入参数，String
-     * param error 操作结果，输出参数，EMError
-     * return 返回Promise对象，response参数为EMGroup
+     * return 返回Promise对象，response参数为GroupResult
      */
-	changeGroupDescription(groupId, newDescription, error)
+	changeGroupDescription(groupId, newDescription)
 调用方法如下:
 
-	groupManager.changeGroupSubject(groupId, "new Subject", error).then((group) =>{},(error) => {});
-    groupManager.changeGroupDescription(groupId, "new Description", error).then((group) =>{},(error) => {});
+	groupManager.changeGroupSubject(groupId, "new Subject").then((res) =>{},(error) => {});
+    groupManager.changeGroupDescription(groupId, "new Description").then((res) =>{},(error) => {});
 	
 #### 屏蔽群组消息
 接口API如下：
@@ -1046,6 +1045,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       * 不发送消息，只是插入到本地，按照时间插入到本地数据库
       * param messagelist 要插入的消息列表，EMMessage数组
       * return 返回操作结果，Bool
+      */
 	insertMessages(messagelist);
 调用方法如下:
 
@@ -1057,6 +1057,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       * 在末尾添加一条消息
       * param message 要插入的消息，EMMessage对象
       * return 返回操作结果，Bool
+      */
 	appendMessage(message);
 调用方法如下:
 
@@ -1068,6 +1069,7 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       * 修改一条消息，不能改变消息ID
       * param message 要插入的消息，EMMessage对象
       * return 返回操作结果，Bool
+      */
 	updateMessage(message);
 调用方法如下:
 
@@ -1197,7 +1199,6 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     /** 
      * 获取会话扩展属性
      * return 扩展属性，String
-     * return 无
      */
     extField()
 调用方法如下：
