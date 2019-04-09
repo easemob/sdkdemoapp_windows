@@ -30,6 +30,7 @@ const EMMucSharedFile = require('./modules/EMMucSharedFile');
 const EMMultiDevicesListener = require('./modules/emmultideviceslistener');
 const EMClient = require('./modules/emclient');
 const EMLog = require('./modules/emlog');
+const EMChatPrivateConfigs = require('./modules/emchatprivateconfigs');
 
 /**chat type.
  * {
@@ -81,5 +82,6 @@ module.exports = {
   EMClient: EMClient,
   createSendMessage: createSendMessage,
   createReceiveMessage: createReceiveMessage,
-  EMLog: EMLog
+  EMLog: EMLog,
+  EMChatPrivateConfigs: EMChatPrivateConfigs
 };

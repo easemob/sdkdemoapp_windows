@@ -942,7 +942,6 @@ const mapStateToProps = state => ({
 	selectMember: state.selectMember,
 	memberOfSelect: state.memberOfSelect,
 	msgsOfConversation: state.msgsOfConversation,
-	selectNav:state.selectNav,
-	unReadMsgCountAction:state.unReadMsgCountAction
+	selectNav:state.selectNav
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MainView));

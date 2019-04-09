@@ -83,7 +83,7 @@ class ConversationDetailView extends Component {
 
 	// 消息撤回
 	onRecallMessages(message){
-		const { recallMessageAction, messages, isSelectCovGroup, globals, userInfo, selectConversationId } = this.props;
+		const { recallMessageAction, messages, isSelectCovGroup, globals, userInfo, selectConversationId,unReadMsgCountAction } = this.props;
 		const conversationId = selectConversationId;
 		var msgs = messages[conversationId];
 		var conversationType = isSelectCovGroup;
@@ -99,6 +99,8 @@ class ConversationDetailView extends Component {
 			insertMsg: textRecvMsg,
 			conversation
 		});
+		conversation.markMessageAsRead(textRecvMsg.msgId(),true);
+		unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
 	}
 
 	// 加载更多历史消息
