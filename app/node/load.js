@@ -6,4 +6,4 @@ else{
 	easemobNode = require("./../easemob/easemobMac.node");
 }
 
-export default easemobNode;
+module.exports = easemobNode;
