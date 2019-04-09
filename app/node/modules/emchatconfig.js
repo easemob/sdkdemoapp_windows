@@ -1,6 +1,7 @@
 'use strict';
 
 const easemobNode = require('./../load');
+const EMChatPrivateConfigs = require('./EMChatPrivateConfigs');
 
 /**
  * Easemob EMChatconfigs implementation.
@@ -405,7 +406,7 @@ EMChatConfigs.prototype.getDeviceName = function () {
  * @return {EMChatPrivateConfigs} 返回系统设置
  */
 EMChatConfigs.prototype.privateConfigs = function () {
-  return this._chatConfigs.privateConfigs();
+  return new EMChatPrivateConfigs(this._chatConfigs.privateConfigs());
 };
 
 /**
