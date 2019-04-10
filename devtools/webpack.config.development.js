@@ -169,6 +169,10 @@ cfg = merge([
 				from: path.resolve(__dirname, "./../app/easemob/LIBCURL.DLL"),
 				force: true,
 				to: "addon/LIBCURL.DLL"
+			}, {
+				from: path.resolve(__dirname, "./../app/easemob/libcrypto.1.0.0.dylib"),
+				force: true,
+				to: "addon/libcrypto.1.0.0.dylib"
 			}]),
 			// for bindings package, see https://github.com/rwaldron/johnny-five/issues/1101#issuecomment-213581938
 			new webpack.ContextReplacementPlugin(/bindings$/, /^$/),
@@ -284,6 +288,10 @@ videoCfg = merge([
 				from: path.resolve(__dirname, "./../app/easemob/LIBCURL.DLL"),
 				force: true,
 				to: "addon/LIBCURL.DLL"
+			}, {
+				from: path.resolve(__dirname, "./../app/easemob/libcrypto.1.0.0.dylib"),
+				force: true,
+				to: "addon/libcrypto.1.0.0.dylib"
 			}]),
 			// for bindings package, see https://github.com/rwaldron/johnny-five/issues/1101#issuecomment-213581938
 			new webpack.ContextReplacementPlugin(/bindings$/, /^$/),
