@@ -1,6 +1,6 @@
 {
 	"productName": "IM-SDK桌面端Demo",
-	"appId": "com.easemob.oa",
+	"appId": "com.easemob.desktop",
 	"compression": "maximum",
 	"artifactName": "DesktopDemo.${version}.${os}.${arch}.${ext}",
 	"publish": [
