@@ -1,7 +1,7 @@
 {
 	"name": "DesktopDemo",
 	"productName": "IM-SDK桌面端Demo",
-	"version": "3.5.4",
+	"version": "3.5.5",
 	"description": "IM-SDK桌面端Demo",
 	"main": "./main.js",
 	"author": "",
