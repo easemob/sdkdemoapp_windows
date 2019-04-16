@@ -6,7 +6,7 @@ const EMChatConfigs = require('./emchatconfig');
 const EMContactManager = require('./emcontactmanager');
 const EMChatManager = require('./emchatmanager');
 const EMGroupManager = require('./emgroupmanager');
-const EMChatroomManager = require('./EMChatroomManager');
+const EMChatroomManager = require('./emchatroommanager');
 const async = require('async');
 const fs = require("fs")
 /**
