@@ -1,7 +1,7 @@
 'use strict';
 
 const easemobNode = require('./../load');
-const EMChatPrivateConfigs = require('./EMChatPrivateConfigs');
+const EMChatPrivateConfigs = require('./emchatprivateconfigs');
 
 /**
  * Easemob EMChatconfigs implementation.
