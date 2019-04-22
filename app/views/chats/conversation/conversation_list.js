@@ -144,15 +144,7 @@ class ConversationListView extends Component {
 				let conversation = globals.chatManager.conversationWithType(conversationId,0);
 				latestMessageFromRealName = `${conversation.latestMessage().from()}`;
 			}
-			switch(latestMessage.type){
-			case "TEXT":
-			case "IMAGE":
-			case "FILE":
-			case "OTHER":
-				return `${latestMessageFromRealName}:${latestMessage.shortVal}`;
-			default:
-				return `${latestMessageFromRealName}:${latestMessage.shortVal}`;
-			}
+			return latestMessageFromRealName == "system"?`${latestMessage.shortVal}`:`${latestMessageFromRealName}:${latestMessage.shortVal}`;
 		}
 		return "";
 	}
@@ -170,7 +162,7 @@ class ConversationListView extends Component {
 			globals
 		} = this.props;
 		var groupManager = globals.groupManager;
-		console.log("selectconvkey:" + selectConversationId + isSelectCovGroup);
+		console.log("selectconvkey:" + selectConversationId);
 		return (
 			<Menu
 				mode="inline"

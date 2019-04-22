@@ -12,6 +12,7 @@ import { userChange } from "./receive_notice";
 import api from "@/api";
 import _ from "underscore";
 import ROUTES from "../common/routes";
+import { conversationOfSelect } from "../../stores/actions";
 // var fs = require("fs-extra");
 
 // const { remote } = require("electron");
@@ -19,6 +20,7 @@ import ROUTES from "../common/routes";
 const easemob = require('../../node/index');
 var gconnectListener;
 var gcontactListner;
+var gInvitedContacts = [];
 /**
  var easemob;
 if(process.platform !== "darwin"){
@@ -55,7 +57,9 @@ class MainView extends PureComponent {
 			networkConnectAction,
 			setNotice,
 			setAllContacts,
-			setGroupChats
+			setGroupChats,
+			selectConversationId,
+			conversationOfSelect
 		} = this.props;
 		if(userInfo && userInfo.user && userInfo.user.id){
 			if(globals.emclient){
@@ -117,7 +121,10 @@ class MainView extends PureComponent {
 
 			// this.chatManager.loadAllConversationsFromDB(); // 每一条会话加载 20 条消息到缓存中
 			this.listener = new easemob.EMChatManagerListener();
+		
 			this.listener.onReceiveMessages((messages) => {
+				const {selectConversationId} = this.props;
+				console.log("selc:"+ selectConversationId);
 				console.log("\n\n EMChatManagerListener onReceiveHasReadAcks ----- !");
 				console.log(messages[0].conversationId());
 				setTimeout(function(){
@@ -155,11 +162,9 @@ class MainView extends PureComponent {
 			});
 
 
-			
 			this.contactListener = new easemob.EMContactListener();
 			
 			this.contactListener.onContactAdded((username) => {
-				const {addContact} = this.props;
 				console.log("onContactAdded username: " + username);
 				var res = this.contactManager.allContacts();
 				res.data.map((item) => {
@@ -184,6 +189,13 @@ class MainView extends PureComponent {
 				setAllContacts({contacts:res.data});
 			});
 			this.contactListener.onContactInvited((username, reason) => {
+				if(gInvitedContacts.indexOf(username) > -1)
+					return;
+				var res = this.contactManager.allContacts();
+				console.log(res);
+				if(res.code == 0 && res.data.indexOf(username) > -1)
+					return;
+				gInvitedContacts.push(username);
 				setTimeout(()=>{
 					console.log("onContactInvited username: " + username + " reason: " + reason);
 					let con = confirm(username + "请求添加好友,是否同意");
@@ -191,12 +203,15 @@ class MainView extends PureComponent {
 						console.log("agree invite");
 						this.contactManager.acceptInvitation(username).then((res) => {
 							console.log("acceptInvitation:" + res.code);
+							gInvitedContacts.splice(gInvitedContacts.indexOf(username));
 						});
 					} else {
-						contactManager.declineInvitation(username).then((res) => {
-							console.log("acceptInvitation:" + res.code);
+						this.contactManager.declineInvitation(username).then((res) => {
+							console.log("declineInvitation:" + res.code);
+							gInvitedContacts.splice(gInvitedContacts.indexOf(username));
 						});
 					}
+					
 				},500);
 			});
 			this.contactListener.onContactAgreed((username) => {
@@ -428,7 +443,8 @@ class MainView extends PureComponent {
 				var unReadMsgMsgId = [];
 				conversationType = item.conversationType();
 				//conversation = this.chatManager.conversationWithType(item.conversationId(), conversationType);
-				messages = item.loadMoreMessagesByMsgId("", 20,0);
+				let unreadNum = item.unreadMessagesCount();
+				messages = item.loadMoreMessagesByMsgId("", unreadNum>20?unreadNum:20,0);
 				messages.map((msg) => {
 					msgObj[msg.msgId()] = msg.isRead();
 				});
@@ -509,7 +525,7 @@ class MainView extends PureComponent {
 		messageText = `${recallMsgUser} 撤回了一条消息`;
 		textMsgBody = new easemob.EMTextMessageBody(messageText);
 		textRecvMsg = easemob.createReceiveMessage(conversationId, userInfo.user.easemobName, textMsgBody);
-		textRecvMsg.setFrom("oa-easemob-system");
+		textRecvMsg.setFrom("system");
 		recallMessageAction({
 				messages: msgs,
 				id: message[0].conversationId(),
@@ -559,7 +575,7 @@ class MainView extends PureComponent {
 			messageText = inviter == "系统管理员" ? `群 ${name} 创建成功` : `${name} 邀请你进群`;
 			textMsgBody = new easemob.EMTextMessageBody(messageText);
 			textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
-			textRecvMsg.setFrom("oa-easemob-system");
+			textRecvMsg.setFrom("system");
 			conversation.insertMessage(textRecvMsg);
 			requestGroupInfo(userInfo.user.tenantId, group.groupId(), conversation, me.groupManager, me.error);
 		});
@@ -699,7 +715,7 @@ class MainView extends PureComponent {
 		{
 			textMsgBody = new easemob.EMTextMessageBody(`${member} 加入群`);
 			textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
-			textRecvMsg.setFrom("oa-easemob-system");
+			textRecvMsg.setFrom("system");
 			if(msgs[msgs.length - 1]){
 				textRecvMsg.setLocalTime(msgs[msgs.length - 1].localTime() + 1);
 				textRecvMsg.setTimestamp(msgs[msgs.length - 1].timestamp() + 1);
@@ -754,7 +770,7 @@ class MainView extends PureComponent {
 		//{
 			textMsgBody = new easemob.EMTextMessageBody(`${member} 离开群`);
 			textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
-			textRecvMsg.setFrom("oa-easemob-system");
+			textRecvMsg.setFrom("system");
 			msgs = messages[group.groupId()] || [];
 			if(msgs[msgs.length - 1]){
 				textRecvMsg.setLocalTime(msgs[msgs.length - 1].localTime() + 1);
@@ -874,7 +890,6 @@ class MainView extends PureComponent {
 			){
 				groupAtAction({ [conversationId]: [userInfo.user.easemobName] });
 			}
-
 			conversationType = message.chatType();	// 0 单聊  1 群聊
 			conversation = me.chatManager.conversationWithType(conversationId, conversationType);
 			!conference && conversationOfMessages.push(message);

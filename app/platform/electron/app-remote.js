@@ -12,10 +12,12 @@ electron,
 }
 	from "electron";
 import _ from "underscore";
+import { file } from "_tmp-promise@1.0.5@tmp-promise";
 const metadata = require("../../package");
 const { shell } = require("electron");
 const { autoUpdater } = require("electron-updater");
 var feedUrl = `https://download-sdk.oss-cn-beijing.aliyuncs.com/mp/sandbox/${process.platform}`;
+var exec = require('child_process').exec;
 const IS_MAC_OSX = process.platform === "darwin";
 if(DEBUG && process.type === "renderer"){
 	console.error("AppRemote must run in main process.");
@@ -28,7 +30,15 @@ class AppRemote {
 		this.cancelConfrId = {};
 		this.isAnswered = false;
 		ipcMain.on("open-file", (e, filePath) => {
-			shell.showItemInFolder(filePath);
+			if(IS_MAC_OSX)
+			  shell.showItemInFolder(filePath);
+			else{
+				//windows下showItemInFolder不能选中文件，不知道为什么
+				var reg = /\\|\//g;
+				filePath = filePath.replace(reg, "\\");
+				var cmdInfo = "explorer.exe /select," + filePath;
+				exec(cmdInfo);
+			}
 		});
 
 		// 设置未读消息数

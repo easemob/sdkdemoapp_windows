@@ -91,7 +91,7 @@ class ConversationDetailView extends Component {
 		var messageText = "您撤回了一条消息";
 		var textMsgBody = new globals.easemob.EMTextMessageBody(messageText);
 		var textRecvMsg = globals.easemob.createReceiveMessage(conversationId, userInfo.user.easemobName, textMsgBody);
-		textRecvMsg.setFrom("oa-easemob-system");
+		textRecvMsg.setFrom("system");
 		recallMessageAction({
 			messages: msgs,
 			id: conversationId,
@@ -217,7 +217,7 @@ class ConversationDetailView extends Component {
 					historyMsg.map((item, idx) => {
 						msg = msgParse(item, userInfo);
 						return (
-							item.from() == "oa-easemob-system"
+							item.from() == "system"
 								? <div key={ `${item.msgId() + idx}` } className="notice-msg">{ msg.value }</div>
 								: <div key={ `${item.msgId() + idx}` } className={ `${this.getSide(item.from())} detail-message-box` } >
 									<div className="message-time">

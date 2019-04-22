@@ -113,7 +113,7 @@ class LoginForm extends PureComponent {
 		if(navigator.onLine){
 			var userInfo = {
 				"user":{
-					"easemobName":this.state.userName,
+					"easemobName":this.state.userName.toLowerCase(),
 					"id":1,
 					"easemobPwd":this.state.password,
 					"os":"PC",
