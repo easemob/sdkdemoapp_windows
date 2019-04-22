@@ -66,7 +66,8 @@ class GroupDetailView extends Component {
 
 						})
 					} */}
-					<div className="group-name">{ group.groupSubject() }</div>
+					<div className="group-name">{ "群组名称：" + group.groupSubject() }</div>
+					<div className="group-name">{ "群组ID：" + group.groupId() }</div>
 					<Link to={ ROUTES.chats.recents.__ }>
 						<Button type="primary" onClick={ this.handleClick }>进入群聊</Button>
 					</Link>
