@@ -17,6 +17,7 @@ class FileView extends PureComponent {
 
 	handleSearch(){
 		const { msg } = this.props;
+		console.log(msg.localPath);
 		ipcRenderer.send("open-file", msg.localPath);
 	}
 	handleDownload(){

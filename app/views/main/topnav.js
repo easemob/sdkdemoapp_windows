@@ -160,6 +160,8 @@ class TopNav extends Component {
 			logout();
 			break;
 		case "cancellation":
+			emclient.getChatManager().clearListeners();
+			//emclient.getGroupManager().clearListeners();
 			emclient.logout();
 			this.props.history.push('/index');
 			logout();

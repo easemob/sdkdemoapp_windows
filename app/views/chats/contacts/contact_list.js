@@ -26,6 +26,12 @@ class MenuList extends Component {
 			globals,
 			setNotice
 		} = this.props;
+		
+		if(!this.state.chatName || this.state.chatName == "")
+		{
+			setNotice("联系人ID不能为空");
+			return;
+		}
 		var arrContacs = allContacts.contacts;
 		if(arrContacs.indexOf(this.state.chatName) > -1){
 			setNotice("联系人已在好友列表中");
@@ -96,7 +102,7 @@ class MenuList extends Component {
 						: null
 				}
 				<div className="groupname">
-						<Input title="好友用户ID" onChange={(event) => {this.onIdChange(event)}}></Input>
+					<Input title="好友用户ID" placeholder="输入联系人ID" onChange={(event) => {this.onIdChange(event)}}></Input>
 				</div>
 				<Button type="primary" onClick={ this.addContact }>添加好友</Button>
 				<Menu

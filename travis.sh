@@ -10,9 +10,9 @@ packing(){
 
 upload(){
 	# 为了不修改 ci，copy 一份
-	cp -r ./release ./oa-electron
-	zip -r $TRAVIS_TAG.zip oa-electron
-	curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.oa.electron -F a=oa-electron -F v=${TRAVIS_TAG} -F p=zip -F file=@${TRAVIS_TAG}.zip -u ci-deploy:Xyc-R5c-SdS-2Qr https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
+	cp -r ./release ./desktop-electron
+	zip -r $TRAVIS_TAG.zip desktop-electron
+	curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.desktop.electron -F a=desktop-electron -F v=${TRAVIS_TAG} -F p=zip -F file=@${TRAVIS_TAG}.zip -u ci-deploy:Xyc-R5c-SdS-2Qr https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
 }
 
 if [ $TRAVIS_TAG ]; then
