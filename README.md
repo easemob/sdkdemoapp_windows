@@ -1,4 +1,4 @@
-## 环信OA-PC端
+## 环信IM SDK桌面端
 
 ![](https://travis-ci.com/easemob/oa-pc.svg?token=Mu42bpYYtyGrvbzPi4HT&branch=master)
 
