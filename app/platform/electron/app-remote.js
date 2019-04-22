@@ -12,7 +12,6 @@ electron,
 }
 	from "electron";
 import _ from "underscore";
-import { file } from "_tmp-promise@1.0.5@tmp-promise";
 const metadata = require("../../package");
 const { shell } = require("electron");
 const { autoUpdater } = require("electron-updater");
