@@ -390,9 +390,6 @@ class MainView extends PureComponent {
 			// }
 
 			// 获取好友列表
-		var res = this.contactManager.allContacts();
-		if(res.code == 0 && res.data.length == 0)
-		{
 			this.contactManager.getContactsFromServer().then(serverres => {
 				console.log("error.errorCode:" + serverres.code + "  description:" + serverres.description);
 			  console.log("allContacts length:" + serverres.data.length);
@@ -400,21 +397,11 @@ class MainView extends PureComponent {
 				console.log(item);
 			});
 			serverres.code == 0 && setAllContacts({contacts:serverres.data});
-			})
-		}else{
-			console.log("error.errorCode:" + res.code + "  description:" + res.description);
-			console.log("allContacts length:" + res.data.length);
-			res.data.map((item) => {
-				console.log(item);
-			})
-			res.code == 0 && setAllContacts({contacts:res.data});
-		}
+			});
+		
 		
 
 		// 获取用户所在的组
-		let allGroup = this.groupManager.allMyGroups().data;
-		if(allGroup.length == 0)
-		{
 			this.groupManager.fetchAllMyGroups().then(res => {
 				if(res.code != 0)
 				{
@@ -426,16 +413,6 @@ class MainView extends PureComponent {
 				});
 				setGroupChats({allGroups});
 			});
-		}else{
-			let allGroups = [];
-			allGroup.map((group) => {
-				allGroups.push(group.groupId());
-			});
-			setGroupChats({allGroups});
-		}
-
-		
-
 
 			// this.chatManager.getConversations();// 获取缓存中的会话列表
 			let conversationType = 0;
