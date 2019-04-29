@@ -10,7 +10,8 @@ import FileView from "./file_view";
 import LocationView from "./location_view";
 import moment from "moment";
 import { downLoadFile } from "@/utils/local_remote_file";
-
+var loadMoreMessage = false;
+var scrollHeight = 0;
 class ConversationDetailView extends Component {
 
 	constructor(props){
@@ -111,6 +112,8 @@ class ConversationDetailView extends Component {
 		conversation = globals.chatManager.conversationWithType(selectConversationId, 0);
 		moreMsgs = conversation.loadMoreMessagesByTime( messages[selectConversationId][0].timestamp(), 20,0);
 		msgsOfHistory({ id: selectConversationId, msgs: moreMsgs, conversation });
+		scrollHeight = this.refs.clientNode.scrollHeight;
+		loadMoreMessage = true;
 	}
 
 	handleClickUrl(e){
@@ -171,6 +174,12 @@ class ConversationDetailView extends Component {
 			if(me.refs.clientNode){
 
 				me.refs.clientNode.scrollTop = me.refs.clientNode.scrollHeight - me.refs.clientNode.clientHeight;
+				if(loadMoreMessage && scrollHeight)
+				{
+					me.refs.clientNode.scrollTop = me.refs.clientNode.scrollHeight - scrollHeight;
+					loadMoreMessage = false;
+					scrollHeight = 0;
+				}
 			}
 		}, 0);
 
