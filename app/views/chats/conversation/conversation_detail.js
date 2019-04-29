@@ -151,12 +151,12 @@ class ConversationDetailView extends Component {
 		case "FILE":
 			return <FileView msg={ msg } item={ item } { ...this.props } />;
 		case "VIDEO":
-			return <VideoView { ...msg } />;
+			return <div>[收到一段视频，请在手机上查看]</div>;
 		case "AUDIO":
 			return <div>[收到一段语音，请在手机上查看]</div>;
 			// return <AudioView { ...msg } />;
 		case "LOCATION":
-			return <LocationView { ...msg } />;
+			return <div>[收到位置消息，请在手机上查看]</div>;
 		default:
 			return msg.value;
 		}

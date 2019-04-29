@@ -67,11 +67,7 @@ class MenuList extends Component {
 	handleClick(e){
 		const key = e.key;
 		const {
-			requestMembersOfOrg,
-			keyOfCurrentOpenMenu,
 			memberOfSelect,
-			hashOrgAndMember,
-			orgTree,
 			userInfo
 		} = this.props;
 		const tenantId = userInfo ? userInfo.user.tenantId : 9;
@@ -95,7 +91,7 @@ class MenuList extends Component {
 		console.log("arrContacs:" + allContacts.contacts);
 
 		return (
-			<div className="oa-main-list">
+			<div className="oa-main-list  oa-conversation-list">
 				{
 					networkConnection
 						? <div className="network-state">网络连接已断开</div>
@@ -126,11 +122,11 @@ class MenuList extends Component {
 }
 
 const mapStateToProps = state => ({
-	hashOrgAndMember: state.hashOrgAndMember,
 	openMenuKeys: state.openMenuKeys,
 	selectMember: state.selectMember,
 	userInfo: state.userInfo,
 	allContacts: state.allContacts,
-	globals: state.globals
+	globals: state.globals,
+	networkConnection:state.networkConnection
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MenuList));
