@@ -348,7 +348,6 @@ EMGroupManager.prototype.blockGroupMembers = function (groupId, members, reason)
  * ONLY group owner can unblock both admin and members.
  * @param {String} groupId          Group ID.
  * @param {Array} members           string members array,  Unblocked users.
- * @param {EMError} error           EMError used for output.
  * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.unblockGroupMembers = function (groupId, members) {
@@ -375,7 +374,6 @@ EMGroupManager.prototype.unblockGroupMembers = function (groupId, members) {
  * Note: Only group's owner can change group's subject.
  * @param {String} groupId          Group ID.
  * @param {String} newSubject       The new group subject.
- * @param {EMError} error           EMError used for output.
  * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject) {
@@ -402,7 +400,6 @@ EMGroupManager.prototype.changeGroupSubject = function (groupId, newSubject) {
  * Note: Only group's owner can change group's description.
  * @param {String} groupId          Group ID.
  * @param {String} newDescription   The new group description.
- * @param {EMError} error           EMError used for output.
  * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescription) {
@@ -429,7 +426,6 @@ EMGroupManager.prototype.changeGroupDescription = function (groupId, newDescript
  * Note: Only group's owner can change group's extension.
  * @param {String} groupId          Group ID.
  * @param {String} newDescription   The new group extension.
- * @param {EMError} error           EMError used for output.
  * @return {Object}     {code,description,data}           The group.
  */
 EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension) {
@@ -454,7 +450,6 @@ EMGroupManager.prototype.changeGroupExtension = function (groupId, newExtension)
 /**
  * Get group's specification.
  * @param {String} groupId          Group ID.
- * @param {EMError} error           EMError used for output.
  * @param {Bool} fetchMembers       Whether get group's members.
  * @return {Object}    {code,description,data}            The group.
  */

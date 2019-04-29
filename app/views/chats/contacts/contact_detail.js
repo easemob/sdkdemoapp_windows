@@ -100,6 +100,6 @@ class MemberDetailView extends Component {
 const mapStateToProps = state => ({
 	selectMember: state.selectMember,
 	userInfo: state.userInfo,
-	globals: state.globals,
+	globals: state.globals
 });
 export default connect(mapStateToProps, actionCreators)(MemberDetailView);

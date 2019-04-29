@@ -173,7 +173,7 @@ export const messages = (state = {}, { type, payload = {} }) => {
 	// 删除消息
 	case "app/deleteMessage":
 		payload.messages.splice(payload.messages.indexOf(payload.deleteMsg), 1);
-		return _.extend({}, state, { [payload.id]: payload.messages });
+		return _.extend({}, state, { [payload.id]: payload.messages });zz
 	default:
 		return state;
 
@@ -239,7 +239,8 @@ export const unReadMessageCount = (state = {}, { type, payload }) => {
 		return _.extend({}, state, { [payload.id]: payload.unReadMsg || [] });
 	case "app/receiveMsg":
 		let conversationUnReadMsg = _.flatten((state[payload.id] || []).concat([payload.unReadMsg]));
-		return _.extend({}, state, { [payload.id]: conversationUnReadMsg });
+		let msgAtt = Array.from(new Set(conversationUnReadMsg));
+		return _.extend({}, state, { [payload.id]: msgAtt });
 	case "app/deleteConversation":
 		return _.extend({}, state, { [payload]: [] });
 	case "app/setLogout":
@@ -547,6 +548,12 @@ export const allGroupChats = (state = {}, { type, payload }) => {
 	switch(type){
 	case "app/setgroupchats":
 		return payload;
+	case "app/joinGroup":
+	{
+		state.allGroups.push(payload.id);
+		let groups = Array.from(new Set(state.allGroups));
+		return _.extend({}, state, { allGroups: groups });
+	}
 	case "app/leaveGroup":
 	case "app/destoryGroup":
 	{
