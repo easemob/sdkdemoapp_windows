@@ -140,9 +140,15 @@ class GroupSettingView extends Component {
 			userInfo,
 			selectConversationId,
 			conversationOfSelect,
-			globals
+			globals,
+			setNotice
 		} = this.props;
 		let groupManager = globals.groupManager;
+		if(!this.state.chatName || this.state.chatName == "")
+		{
+			setNotice("群组名称不能为空");
+			return;
+		}
 		groupManager.changeGroupSubject(selectConversationId,this.state.chatName.substring(0, 20)).then(res => {
 			if(res.code != 0)
 			  console.log("leave group fail:" + res.description);
