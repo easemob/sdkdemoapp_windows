@@ -883,7 +883,7 @@ class MainView extends PureComponent {
 			if(selectNav == ROUTES.chats.recents.__ && conversationId == selectConversationId){
 				let res = conversation.markMessageAsRead(message.msgId(),true);
 				console.log("res:" + res);
-				res && unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
+				unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
 			}
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
