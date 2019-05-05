@@ -42,7 +42,7 @@ class HorizontalLoginForm extends PureComponent {
 	}
 
 	render(){
-		const { getFieldDecorator } = this.props.form;
+		const { getFieldDecorator,setFieldsValue } = this.props.form;
 		const { membersIdOfCreateGroup } = this.props.reduxProps;
 		const { createGroup } = this.props;
 		return (
@@ -51,6 +51,10 @@ class HorizontalLoginForm extends PureComponent {
 					(e) => {
 						e.preventDefault();
 						createGroup(this.state.groupName, this.state.description);
+						setFieldsValue({
+							groupName: "",
+							groupDescription: ""
+						});
 					}
 				}
 				className="login-form"
@@ -69,11 +73,13 @@ class HorizontalLoginForm extends PureComponent {
 				</FormItem>
 				<FormItem>
 					{/* <span>群描述</span> */}
+					{getFieldDecorator("groupDescription",{})(
 					<Input
 						// prefix={ <Icon type="lock" style={ { color: "rgba(0,0,0,.25)" } } /> }
 						placeholder="群描述"
 						onChange={ this.handleChangeDesc }
 					/>
+					)}
 				</FormItem>
 
 				<FormItem>
