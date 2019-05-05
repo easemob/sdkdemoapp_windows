@@ -205,7 +205,6 @@ class CreateGroupView extends PureComponent {
 		var extInfo;
 		var selectMember;
 		var username;
-
 		if(membersIdArray.length == 1){
 			setNotice("当前选择的群成员为2人，自动进入单聊", "success");
 			selectMember = allMembersInfo[membersIdArray[0]];
