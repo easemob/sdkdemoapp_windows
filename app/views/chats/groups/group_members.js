@@ -110,7 +110,7 @@ class GroupMembersView extends Component {
 	handleSetOwner(newOwner){
 		const {
 			globals,
-			setOwnerAction,
+			conversationOfSelect,
 			selectConversationId
 		} = this.props;
 		// 转让群主
@@ -119,6 +119,8 @@ class GroupMembersView extends Component {
 			  console.log("transferGroupOwner fail:" + res.description);
 		});
 		this.setState(this.state);
+		conversationOfSelect("");
+		conversationOfSelect(selectConversationId);
 	}
 
 	// 设置为管理员
@@ -127,13 +129,15 @@ class GroupMembersView extends Component {
 		const {
 			globals,
 			selectConversationId,
-			setAdminAction,
+			conversationOfSelect,
 		} = this.props;
 		globals.groupManager.addGroupAdmin(selectConversationId, member).then(res => {
 			if(res.code != 0)
 			  console.log("addGroupAdmin fail:" + res.description);
 		});
 		this.setState(this.state);
+		conversationOfSelect("");
+		conversationOfSelect(selectConversationId);
 	}
 
 	// 取消管理员
@@ -142,14 +146,16 @@ class GroupMembersView extends Component {
 		const {
 			globals,
 			selectConversationId,
-			cancelAdminAction
+			cancelAdminAction,
+			conversationOfSelect
 		} = this.props;
 		globals.groupManager.removeGroupAdmin(selectConversationId, member).then(res => {
 			if(res.code != 0)
 			  console.log("removeGroupAdmin fail:" + res.description);
 		});
 		this.setState(this.state);
-
+		conversationOfSelect("");
+		conversationOfSelect(selectConversationId);
 	}
 
 	// 取消创建

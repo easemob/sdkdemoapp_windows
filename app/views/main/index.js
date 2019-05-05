@@ -567,39 +567,11 @@ class MainView extends PureComponent {
 		
 	}
 
-	asyncGetMemberInfo(inviter, group){
-		var df = $.Deferred();
-		var messageText;
-		const {
-			userInfo,
-			getMemberInfoAction,
-			allMembersInfo,
-		} = this.props;
-		if(inviter == "系统管理员"){
-			df.resolve(group ? group.groupSubject() : "");
-		}
-		else if(allMembersInfo[inviter]){
-			messageText = allMembersInfo[inviter].realName || allMembersInfo[inviter].easemobName;
-			df.resolve(messageText);
-		}
-		else{
-			api.getMemberInfo(userInfo.user.tenantId, inviter)
-			.done(function(data){
-				getMemberInfoAction(data);
-				df.resolve(data.realName);
-			})
-			.fail(function(){
-				df.resolve(inviter);
-			});
-		}
-		return df.promise();
-	}
-
 	// 添加群管理员时触发(只有是自己时才能收到通知)
 	// group : 发生操作的群组
 	// admin : 被提升的群管理员
 	onAddAdminFromGroup(groupId, admin){
-		const {msgsOfConversation} = this.props;
+		const {msgsOfConversation,selectConversationId} = this.props;
 		var group = this.groupManager.groupWithId(groupId);
 		this.groupManager.fetchGroupSpecification(groupId).then(res => {
 					
@@ -615,6 +587,11 @@ class MainView extends PureComponent {
 		let conversation = this.chatManager.conversationWithType(groupId, 1);
 		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
 		msgsOfConversation({ id: groupId, msgs: messages, conversation });
+		if(groupId == selectConversationId)
+		{
+			conversationOfSelect("");
+			conversationOfSelect(selectConversationId);
+		}
 	}
 
 	// 删除群管理员时触发(只有是自己时才能收到通知)
@@ -633,10 +610,15 @@ class MainView extends PureComponent {
 		console.log(`group.groupSubject() = ${group.groupSubject()}`);
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`admin = ${admin}`);
-		const { cancelAdminAction, groupChats,msgsOfConversation } = this.props;
+		const { msgsOfConversation,selectConversationId } = this.props;
 		let conversation = this.chatManager.conversationWithType(groupId, 1);
 		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
 		msgsOfConversation({ id: groupId, msgs: messages, conversation });
+		if(groupId == selectConversationId)
+		{
+			conversationOfSelect("");
+			conversationOfSelect(selectConversationId);
+		}
 	}
 
 	// 转让群主的时候触发
@@ -657,7 +639,15 @@ class MainView extends PureComponent {
 		console.log(`group.groupDescription() = ${group.groupDescription()}`);
 		console.log(`newOwner = ${newOwner}`);
 		console.log(`oldOwner = ${oldOwner}`);
-		const { setOwnerAction, groupChats } = this.props;
+		const { msgsOfConversation,selectConversationId } = this.props;
+		let conversation = this.chatManager.conversationWithType(groupId, 1);
+		var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
+		msgsOfConversation({ id: groupId, msgs: messages, conversation });
+		if(groupId == selectConversationId)
+		{
+			conversationOfSelect("");
+			conversationOfSelect(selectConversationId);
+		}
 	}
 
 	// 成员加入群组时触发
@@ -880,10 +870,12 @@ class MainView extends PureComponent {
 			!conference && !duplicate && conversationOfMessages.push(message);
 
 			// 根据窗体显示状态和是否选中来判断
+			let asread = false;
 			if(selectNav == ROUTES.chats.recents.__ && conversationId == selectConversationId){
 				let res = conversation.markMessageAsRead(message.msgId(),true);
 				console.log("res:" + res);
 				unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
+				asread = true;
 			}
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
@@ -907,7 +899,7 @@ class MainView extends PureComponent {
 					id: conversationId,
 					user: userInfo.user.easemobName,
 					conversation,
-					unReadMsg: message.isRead() ? [] : [message.msgId()]
+					unReadMsg: asread ? [] : [message.msgId()]
 				}
 			);
 		});

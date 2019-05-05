@@ -4,6 +4,7 @@ import { Switch, Input, Upload, Icon, Modal, Button } from "antd";
 import * as actionCreators from "@/stores/actions";
 import HeadImageView from "@/views/common/head_image";
 import $ from "jquery";
+import * as selectors from "@/stores/selectors";
 var _const = require("@/views/common/domain");
 
 class GroupSettingView extends Component {
@@ -336,9 +337,14 @@ class GroupSettingView extends Component {
 }
 
 const mapStateToProps = state => ({
-	selectGroup: state.selectGroup,
 	globals: state.globals,
+	selectGroup: state.selectGroup,
 	selectConversationId: state.selectConversationId,
-	userInfo: state.userInfo
+	allMembersInfo: state.allMembersInfo,
+	userInfo: state.userInfo,
+	addMembers: selectors.getAddMembers(state),
+	removeMembers: selectors.getRemoveMembers(state),
+	membersIdOfEditGroup: selectors.membersIdArray(state),
+	membersIdOfDeleteGroup: selectors.deleteGroupMembersIdArray(state),
 });
 export default connect(mapStateToProps, actionCreators)(GroupSettingView);
