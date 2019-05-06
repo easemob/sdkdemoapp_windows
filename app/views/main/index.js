@@ -359,7 +359,6 @@ class MainView extends PureComponent {
 					me.onLeaveGroup(groupId, reason);
 				}, 1);
 			});
-			this.groupListener.on
 
 			// 多设备监听
 			this.multiDevicesListener = new easemob.EMMultiDevicesListener();
@@ -562,18 +561,6 @@ class MainView extends PureComponent {
 			conversation = this.chatManager.conversationWithType(groupId, 1);
 			var messages = conversation.loadMoreMessagesByMsgId("", 20,0);
 			msgsOfConversation({ id: groupId, msgs: messages, conversation });
-			/*
-			this.asyncGetMemberInfo(inviter, group)
-			.done(function(name){
-				messageText = inviter == "系统管理员" ? `群 ${name} 创建成功` : `${name} 邀请你进群`;
-				textMsgBody = new easemob.EMTextMessageBody(messageText);
-				textRecvMsg = easemob.createReceiveMessage(group.groupId(), userInfo.user.easemobName, textMsgBody);
-				textRecvMsg.setFrom("system");
-				conversation.insertMessage(textRecvMsg);
-				requestGroupInfo(userInfo.user.tenantId, group.groupId(), conversation, me.groupManager, me.error);
-			});
-			*/
-			// msgs = messages[group.groupId()] && messages[group.groupId()].length > 0 ? [textRecvMsg].concat(messages[group.groupId()]) : [textRecvMsg];
 			receiveJoinGroupAction(
 				{
 					id: group.groupId(),
