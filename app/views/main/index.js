@@ -359,7 +359,6 @@ class MainView extends PureComponent {
 					me.onLeaveGroup(groupId, reason);
 				}, 1);
 			});
-			this.groupListener.on
 
 			// 多设备监听
 			this.multiDevicesListener = new easemob.EMMultiDevicesListener();
