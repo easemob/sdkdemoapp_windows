@@ -389,68 +389,56 @@ class MainView extends PureComponent {
 			// }
 
 			// 获取好友列表
-		var res = this.contactManager.allContacts();
-		if(res.code == 0 && res.data.length == 0)
-		{
-			this.contactManager.getContactsFromServer().then(serverres => {
-				console.log("error.errorCode:" + serverres.code + "  description:" + serverres.description);
-			  console.log("allContacts length:" + serverres.data.length);
-			  serverres.data.map((item) => {
-				console.log(item);
+			this.contactManager.getContactsFromServer().then(res => {
+				var res = this.contactManager.allContacts();
+				res.data.map((item) => {
+					console.log(item);
+				})
+				res.code == 0 && setAllContacts({contacts:res.data});
 			});
-			serverres.code == 0 && setAllContacts({contacts:serverres.data});
-			})
-		}else{
-			console.log("error.errorCode:" + res.code + "  description:" + res.description);
-			console.log("allContacts length:" + res.data.length);
-			res.data.map((item) => {
-				console.log(item);
-			})
-			res.code == 0 && setAllContacts({contacts:res.data});
-		}
 		
 
 		// 获取用户所在的组
-		let allGroup = this.groupManager.allMyGroups().data;
-		if(allGroup.length == 0)
-		{
+		
 			this.groupManager.fetchAllMyGroups().then(res => {
-				if(res.code != 0)
-				{
-					console.log("fetchMyGroup fail:" + res.description);
-				}
+				let allGroup = this.groupManager.allMyGroups().data;
 				let allGroups = [];
-				res.data.map((group) => {
-					allGroups.push(group.groupId());
-				});
-				setGroupChats({allGroups});
-			});
-		}else{
-			let allGroups = [];
-			allGroup.map((group) => {
+				allGroup.map((group) => {
 				allGroups.push(group.groupId());
 			});
 			setGroupChats({allGroups});
-		}
 
-			// this.chatManager.getConversations();// 获取缓存中的会话列表
-			let conversationType = 0;
-			this.chatManager.getConversations().map((item) => {
-				var msgObj = {};
-				var unReadMsgMsgId = [];
-				conversationType = item.conversationType();
-				//conversation = this.chatManager.conversationWithType(item.conversationId(), conversationType);
-				let unreadNum = item.unreadMessagesCount();
-				messages = item.loadMoreMessagesByMsgId("", unreadNum>20?unreadNum:20,0);
-				messages.map((msg) => {
-					msgObj[msg.msgId()] = msg.isRead();
-				});
-				_.map(msgObj, (msg, key) => {
-					!msg && unReadMsgMsgId.push(key);
-				});
-				unReadMsgCountAction({ id: item.conversationId(), unReadMsg: unReadMsgMsgId });
-				initConversationsActiton({ id: item.conversationId(), msgs: messages, "conversation":item });
+		
+		});
+
+		// this.chatManager.getConversations();// 获取缓存中的会话列表
+		
+		let conversationType = 0;
+		this.chatManager.getConversations().map((item) => {
+			var msgObj = {};
+			var unReadMsgMsgId = [];
+			conversationType = item.conversationType();
+			if(conversationType == 1)
+			{
+				let curgroup = this.groupManager.groupWithId(item.conversationId());
+				if(curgroup.groupSubject() == "")
+				{
+					this.chatManager.removeConversation(item.conversationId());
+					return;
+				}
+			}
+			//conversation = this.chatManager.conversationWithType(item.conversationId(), conversationType);
+			let unreadNum = item.unreadMessagesCount();
+			messages = item.loadMoreMessagesByMsgId("", unreadNum>20?unreadNum:20,0);
+			messages.map((msg) => {
+				msgObj[msg.msgId()] = msg.isRead();
 			});
+			_.map(msgObj, (msg, key) => {
+				!msg && unReadMsgMsgId.push(key);
+			});
+			unReadMsgCountAction({ id: item.conversationId(), unReadMsg: unReadMsgMsgId });
+			initConversationsActiton({ id: item.conversationId(), msgs: messages, "conversation":item });
+		});
 
 			const updateOnlineStatus = () => {
 				if(navigator.onLine){
@@ -492,7 +480,6 @@ class MainView extends PureComponent {
 			// leaveGroupAction(target);
 			break;
 		case 13:	// 离开群组
-			leaveGroupAction(target);
 			break;
 		case 26:	// 设为管理员
 			//setAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });

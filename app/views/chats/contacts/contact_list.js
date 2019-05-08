@@ -26,19 +26,19 @@ class MenuList extends Component {
 			globals,
 			setNotice
 		} = this.props;
-		
 		if(!this.state.chatName || this.state.chatName == "")
 		{
 			setNotice("联系人ID不能为空");
 			return;
 		}
+		let  name = this.state.chatName.toLowerCase();
 		var arrContacs = allContacts.contacts;
-		if(arrContacs.indexOf(this.state.chatName) > -1){
+		if(arrContacs.indexOf(name) > -1){
 			setNotice("联系人已在好友列表中");
 			return;
 		}
 		let contactManager = globals.contactManager;
-		contactManager.inviteContact(this.state.chatName,"welcome").then((res) => {
+		contactManager.inviteContact(name,"welcome").then((res) => {
 		if(res.code == 0)
 			setNotice("好友申请发送成功");
 		else

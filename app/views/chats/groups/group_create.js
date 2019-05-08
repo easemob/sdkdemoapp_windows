@@ -55,6 +55,10 @@ class HorizontalLoginForm extends PureComponent {
 							groupName: "",
 							groupDescription: ""
 						});
+						this.setState({
+							"groupName":"",
+							"description":""
+						})
 					}
 				}
 				className="login-form"
@@ -87,6 +91,7 @@ class HorizontalLoginForm extends PureComponent {
 					<Switch
 						checkedChildren="开"
 						unCheckedChildren="关"
+						defaultChecked={ inviteGroupMember }
 						onChange={ this.handleChangeInvite }
 					/>
 				</FormItem>
