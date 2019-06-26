@@ -31,6 +31,14 @@ const EMMultiDevicesListener = require('./modules/emmultideviceslistener');
 const EMClient = require('./modules/emclient');
 const EMLog = require('./modules/emlog');
 const EMChatPrivateConfigs = require('./modules/emchatprivateconfigs');
+const EMCallManager = require('./modules/emcallmanager');
+const EMCallManagerListener = require('./modules/emcallmanagerlistener');
+const EMCallConfigs = require('./modules/emcallconfigs');
+const EMConferenceListener = require('./modules/emcallconferencelistener');
+const EMCallSession = require('./modules/emcallsession');
+const EMCallSessionStatistics = require('./modules/emcallsessionstatistics');
+const EMCallRtcProxy = require('./modules/emcallrtcproxy');
+const EMCallRtcListener = require('./modules/emcallrtclistener');
 
 /**chat type.
  * {
@@ -83,5 +91,13 @@ module.exports = {
   createSendMessage: createSendMessage,
   createReceiveMessage: createReceiveMessage,
   EMLog: EMLog,
-  EMChatPrivateConfigs: EMChatPrivateConfigs
+  EMChatPrivateConfigs: EMChatPrivateConfigs,
+  EMCallManager: EMCallManager,
+  EMCallManagerListener: EMCallManagerListener,
+  EMCallConfigs: EMCallConfigs,
+  EMConferenceListener: EMConferenceListener,
+  EMCallSession: EMCallSession,
+  EMCallSessionStatistics: EMCallSessionStatistics,
+  EMCallRtcProxy: EMCallRtcProxy,
+  EMCallRtcListener: EMCallRtcListener
 };

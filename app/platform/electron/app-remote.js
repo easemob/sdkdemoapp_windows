@@ -14,8 +14,6 @@ electron,
 import _ from "underscore";
 const metadata = require("../../package");
 const { shell } = require("electron");
-const { autoUpdater } = require("electron-updater");
-var feedUrl = `https://download-sdk.oss-cn-beijing.aliyuncs.com/mp/sandbox/${process.platform}`;
 var exec = require('child_process').exec;
 const IS_MAC_OSX = process.platform === "darwin";
 if(DEBUG && process.type === "renderer"){
@@ -101,7 +99,6 @@ class AppRemote {
 		// 收到更新通知
 		ipcMain.on("receive-client-upgrade", (event) => {
 			console.log("receive-client-upgrade");
-			this.checkForAutoUpdate();
 		});
 
 	}
@@ -299,48 +296,7 @@ class AppRemote {
 				}]).popup(browserWindow);
 			});
 		}
-
-		setTimeout(this.checkForAutoUpdate.bind(this), 1000);
 	}
-
-	checkForAutoUpdate(){
-		// 自动更新
-		let sendUpdateMessage = (message, data) => {
-			this.mainWindow.webContents.send("message", { message, data });
-		};
-
-		autoUpdater.setFeedURL(feedUrl);
-
-		autoUpdater.on("error", function(message){
-			sendUpdateMessage("error", message);
-		});
-		autoUpdater.on("checking-for-update", function(message){
-			sendUpdateMessage("checking-for-update", message);
-		});
-		autoUpdater.on("update-available", function(message){
-			sendUpdateMessage("update-available", message);
-		});
-		autoUpdater.on("update-not-available", function(message){
-			sendUpdateMessage("update-not-available", message);
-		});
-
-		// 更新下载进度事件
-		autoUpdater.on("download-progress", function(progressObj){
-			sendUpdateMessage("downloadProgress", progressObj);
-		});
-		autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) => {
-			ipcMain.on("updateNow", (e, arg) => {
-				// some code here to handle event
-				autoUpdater.quitAndInstall();
-			});
-			this.isUpdating = true;
-			sendUpdateMessage("isUpdateNow", event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate);
-		});
-
-		// 执行自动更新检查
-		autoUpdater.checkForUpdates();
-	}
-
 	// 复制
 	copySelect(){
 		this.mainWindow.webContents.send("copiedValue");

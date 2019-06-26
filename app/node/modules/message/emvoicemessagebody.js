@@ -12,7 +12,12 @@ const easemobNode = require('./../../load');
  * @param {Number} duration 语音文件时间
  */
 function EMVoiceMessageBody (localPath, duration) {
-  this._body = new easemobNode.EMVoiceMessageBody(localPath, duration);
+  if(typeof(localPath) == 'object')
+  {
+    this._body = localPath;
+  }else{
+    this._body = new easemobNode.EMVoiceMessageBody(localPath, duration);
+  }
 }
 
 /**

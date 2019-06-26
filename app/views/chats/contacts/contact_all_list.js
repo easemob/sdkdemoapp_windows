@@ -63,8 +63,6 @@ class ContactView extends PureComponent {
 		isEditSelector = _.filter(groupMemberData, function(item){
 			return item == memberInfo;
 		});
-		console.log("selectMemberEasemobnameData:" + selectMemberEasemobnameData);
-		console.log("memberInfo:" + memberInfo);
 		return (
 			<Checkbox
 				checked={

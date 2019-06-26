@@ -1,0 +1,66 @@
+.videoandaudio{
+	display: none;
+	position: absolute;
+	z-index: 1;
+	top: 60px;
+    right: 10px;
+    height: 480px !important;
+    width: 640px;
+    background-color: #ccc;
+}
+.videoandaudio-localvideo{
+    position: absolute;
+	z-index: 2;
+    right: 0px;
+    height: 30%;
+    width: 30%;
+    object-fit: contain;
+}
+.videoandaudio-remotevideo{
+    position: absolute;
+	z-index: 1;
+    right: 0px;
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    bottom: 0px;
+    object-fit: contain;
+}
+.videoandaudio-userinfo{
+    z-index: 3;
+    color:red;
+    position:absolute;
+    font-size: 18px;
+    top:80px;
+    left:120px;
+    right:120px;
+}
+.videoandaudio-pauseorresume{
+    z-index: 3;
+    color:red;
+    position:absolute;
+    font-size: 40px;
+    bottom:60px;
+    left:120px;
+    display: none;
+}
+.videoandaudio-answer{
+    z-index: 3;
+    color:green;
+    position:absolute;
+    font-size: 40px;
+    bottom:60px;
+    left:120px;
+    display: block;
+    transform:rotate(90deg);
+}
+.videoandaudio-hangup{
+    z-index: 3;
+    color:red;
+    position:absolute;
+    font-size: 40px;
+    bottom:60px;
+    right:120px;
+    display: block;
+
+}

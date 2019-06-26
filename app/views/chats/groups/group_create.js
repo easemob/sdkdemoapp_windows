@@ -2,13 +2,12 @@ import React, { PureComponent } from "react";
 import * as actionCreators from "@/stores/actions";
 import * as selectors from "@/stores/selectors";
 import { connect } from "react-redux";
-import { Icon, Modal, Input, Button, Form, Upload, Switch } from "antd";
+import { Icon, Modal, Input, Button, Form, Switch } from "antd";
 import HeadImageView from "@/views/common/head_image";
 import MenuList from "../contacts/contact_all_list";
 import _ from "underscore";
-import { setSelectConvType } from "../../../stores/actions";
-var _const = require("@/views/common/domain");
-var inviteGroupMember = false;
+const EventEmitter = require('events').EventEmitter;
+var gEventEmiter = new EventEmitter();
 
 
 class HorizontalLoginForm extends PureComponent {
@@ -18,12 +17,27 @@ class HorizontalLoginForm extends PureComponent {
 			groupName: "",
 			description: "",
 			createGroupButtonState: false,
+			allowMemberInvited:false
 		};
 		this.handleChangeGroupName = this.handleChangeGroupName.bind(this);
 		this.handleChangeDesc = this.handleChangeDesc.bind(this);
 		this.handleChangeInvite = this.handleChangeInvite.bind(this);
+
+		var me = this;
+		gEventEmiter.on('cancelcreategroup',(event)=>{
+			console.log("cancelcreategroup");
+			me.cancelcreategroup();
+		});
 	}
 
+	cancelcreategroup(){
+		this.setState({
+			groupName: "",
+			description: "",
+			createGroupButtonState: false,
+			allowMemberInvited:false
+		})
+	}
 	handleChangeGroupName(e){
 		this.setState({
 			groupName: e.target.value
@@ -38,7 +52,9 @@ class HorizontalLoginForm extends PureComponent {
 
 	// 允许群成员邀请成员开关
 	handleChangeInvite(checked){
-		inviteGroupMember = checked;
+		this.setState({
+			allowMemberInvited: checked
+		})
 	}
 
 	render(){
@@ -50,14 +66,15 @@ class HorizontalLoginForm extends PureComponent {
 				onSubmit={
 					(e) => {
 						e.preventDefault();
-						createGroup(this.state.groupName, this.state.description);
+						createGroup(this.state.groupName, this.state.description,this.state.allowMemberInvited);
 						setFieldsValue({
 							groupName: "",
 							groupDescription: ""
 						});
 						this.setState({
 							"groupName":"",
-							"description":""
+							"description":"",
+							allowMemberInvited:false
 						})
 					}
 				}
@@ -89,9 +106,10 @@ class HorizontalLoginForm extends PureComponent {
 				<FormItem>
 					<span>允许群成员邀请</span>
 					<Switch
+					    id="allowMemberInvited"
 						checkedChildren="开"
 						unCheckedChildren="关"
-						defaultChecked={ inviteGroupMember }
+						checked={ this.state.allowMemberInvited }
 						onChange={ this.handleChangeInvite }
 					/>
 				</FormItem>
@@ -193,10 +211,12 @@ class CreateGroupView extends PureComponent {
 			avatarUrl: ""
 		});
 		cancelCreateGroupAction();
+		console.log("cancel");
+		gEventEmiter.emit('cancelcreategroup');
 	}
 
 	// 创建群组时除了自己应该至少选 2 人，否则去单聊
-	createGroup(groupName, description){
+	createGroup(groupName, description,allowMemberInvited){
 		const {
 			membersId,
 			membersIdArray,
@@ -239,7 +259,7 @@ class CreateGroupView extends PureComponent {
 			description = description ? description.substring(0, 100) : "";
 			var groupManager = globals.groupManager;
 			// 组设置，4个参数分别为组类型（0,1,2,3），最大成员数，邀请是否需要确认，扩展信息
-			var setting = new globals.easemob.EMMucSetting(inviteGroupMember?1:0, 20, false, "test");
+			var setting = new globals.easemob.EMMucSetting(allowMemberInvited?1:0, 5000, false, "test");
 			console.log("membersIdArray:" + membersIdArray);
 			console.log("membersId:" + membersId);
 			groupManager.createGroup(groupName,description,"welcome message",setting,membersIdArray).then((res)=>{

@@ -7,6 +7,7 @@ import { Input, Button, Upload, Icon, Modal } from "antd";
 import uuid from "uuid";
 import _ from "underscore";
 import { ipcRenderer } from "electron";
+import { audioAndVideo } from "@/views/main/receive_audio_video";
 // import $ from "jquery";
 const { remote } = require("electron");
 let configDir = remote.app.getPath("userData");
@@ -35,6 +36,8 @@ class ChatSendBoxView extends PureComponent {
 		this.handleKeyDown = this.handleKeyDown.bind(this);
 
 		this.hideInviteDialog = this.hideInviteDialog.bind(this);
+		this.handleMakeVideoCall = this.handleMakeVideoCall.bind(this);
+		this.handleMakeVoiceCall = this.handleMakeVoiceCall.bind(this);
 
 		// this.handleTest = this.handleTest.bind(this);
 
@@ -362,7 +365,36 @@ class ChatSendBoxView extends PureComponent {
 	// 	var notification = new Notification("Hello Notification", { body: "I hope that all the browser will support this function!" });
 	//
 	// }
-
+	handleMakeVideoCall(e)
+	{
+		const{setNotice,isSelectCovGroup,selectConversationId,globals,setsession,video1v1} = this.props;
+		if(video1v1.callsession)
+		{
+			setNotice("正在通话中","fail");
+			return;
+		}
+		if(isSelectCovGroup)
+		{
+			setNotice("群组会话赞不支持此功能");
+		}
+		let result = globals.callManager.asyncMakeCall(selectConversationId,1,"desktop call");
+		setsession({callsession:result.data});
+	}
+	handleMakeVoiceCall(e)
+	{
+		const{setNotice,isSelectCovGroup,selectConversationId,globals,setsession,video1v1} = this.props;
+		if(video1v1.callsession)
+		{
+			setNotice("正在通话中","fail");
+			return;
+		}
+		if(isSelectCovGroup)
+		{
+			setNotice("群组会话赞不支持此功能");
+		}
+		let result = globals.callManager.asyncMakeCall(selectConversationId,0,"desktop call");
+		setsession({callsession:result.data});
+	}
 	render(){
 		const uploadProps = {
 			action: "//jsonplaceholder.typicode.com/posts/",
@@ -381,6 +413,8 @@ class ChatSendBoxView extends PureComponent {
 					<div title="文件"><Upload { ...uploadProps } data={ this.uploadAttachmentData }><Icon type="file" /></Upload></div>
 					{/* 上传视频 */}
 					{/* <div title="视频"><Upload { ...uploadProps } data={ this.uploadVideoData } accept="video/*"><Icon type="video-camera" /></Upload></div> */}
+					{isGroup?null: <div title="视频" onClick={this.handleMakeVideoCall}><Icon type="video-camera" /></div>}
+					{isGroup?null: <div title="语音" onClick={this.handleMakeVoiceCall}><Icon type="phone" /></div>}
 				</div>
 				<TextArea
 					placeholder="请输入..."
@@ -420,9 +454,11 @@ const mapStateToProps = state => ({
 	globals: state.globals,
 	userInfo: state.userInfo,
 	allMembersInfo: state.allMembersInfo,
+	userInfo: state.userInfo,
 	// memberInfo: selectors.getGroupMembers(state),
 	networkStatus: state.networkConnection,
-	conversations: state.conversations
+	conversations: state.conversations,
+	video1v1: state.video1v1
 	// memberInfo: state.memberInfo
 });
 export default connect(mapStateToProps, actionCreators)(ChatSendBoxView);
