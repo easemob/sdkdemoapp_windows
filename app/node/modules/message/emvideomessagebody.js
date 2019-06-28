@@ -40,7 +40,12 @@ function EMVideoSize (width, height) {
  * @param {String} thumbnailLocalPath 视频缩略图本地位置
  */
 function EMVideoMessageBody(localPath, thumbnailLocalPath) {
-  this._body = new easemobNode.EMVideoMessageBody(localPath, thumbnailLocalPath);
+  if(typeof(localPath) == 'object')
+  {
+    this._body = localPath;
+  }else{
+    this._body = new easemobNode.EMVideoMessageBody(localPath, thumbnailLocalPath);
+  }
 }
 
 /**

@@ -110,7 +110,7 @@ class MenuList extends Component {
 					mode="inline"
 				>
 					{
-						arrContacs.map( (contact) => {
+						arrContacs && arrContacs.map( (contact) => {
 							console.log(contact);
 							return <Menu.Item key={contact}>{contact}</Menu.Item>
 						})

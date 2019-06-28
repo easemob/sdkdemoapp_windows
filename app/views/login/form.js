@@ -122,28 +122,28 @@ class LoginForm extends PureComponent {
 					"image":""
 				}
 			};
-			if(globals.emclient){
-				this.emclient = globals.emclient;
-			}
-			else{
-				this.emclient = utils.initEmclient();
-			}
+		// 	if(globals.emclient){
+		// 		this.emclient = globals.emclient;
+		// 	}
+		// 	else{
+		// 		this.emclient = utils.initEmclient();
+		// 	}
 
-			this.emclient.login( this.state.userName, this.state.password).then((res) => {
-				console.log(`loginCode:${res.code}`);
-			if(res.code != 0){
-				setNotice(`登录失败，${res.code}`);
-				this.emclient.logout();
-				logout();
-				return false;
-			}
+		// 	this.emclient.login( this.state.userName, this.state.password).then((res) => {
+		// 		console.log(`loginCode:${res.code}`);
+		// 	if(res.code != 0){
+		// 		setNotice(`登录失败，${res.code}`);
+		// 		this.emclient.logout();
+		// 		logout();
+		// 		return false;
+		// 	}
 			
-			this.props.reduxProps.history.push("/chats/recents");
-		});
-		//这个放到成功里
-		globalAction({
-			emclient: this.emclient
-		});
+		 	this.props.reduxProps.history.push("/chats/recents");
+		// });
+		// //这个放到成功里
+		// globalAction({
+		// 	emclient: this.emclient
+		// });
 		localStorage.setItem("userInfo", JSON.stringify(userInfo));
 		requestLogin(userInfo);
 		}

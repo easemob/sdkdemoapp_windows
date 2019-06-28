@@ -8,8 +8,6 @@ import { connect } from "react-redux";
 import * as actionCreators from "@/stores/actions";
 import Notify from "../notice";
 import { ipcRenderer } from "electron";
-import { Icon } from "antd";
-import UpdateView from "../update";
 const IS_MAC_OSX = process.platform === "darwin";
 
 class AppView extends Component {

@@ -6,7 +6,10 @@ import ROUTES from "../common/routes";
 import ContactView from "../chats/contacts";
 import ConversationListView from "../chats/conversation";
 import GroupsView from "../chats/groups";
+import {Icon} from "antd"
 import { ipcRenderer } from "electron";
+import { setsession } from "../../stores/actions";
+import Video1v1View from "../1v1video/1v1video"
 
 const mainViews = [
 	{ path: ROUTES.chats.recents.__, view: ConversationListView },
@@ -21,7 +24,6 @@ class Container extends Component {
 		this.state = {
 			conId: ""
 		};
-		const { setNotice, globals, userInfo, sendMsg } = this.props;
 	}
 
 	sendSyncMsg(conferenceId){
@@ -50,10 +52,10 @@ class Container extends Component {
 	// 		return <Redirect to="/chats/recents" />;
 	// 	}
 	// }
-
 	render(){
 		return (
 			<div className="app-main-container dock">
+			<Video1v1View/>
 			<Switch>
 				{
 					mainViews.map((item) => {
@@ -75,6 +77,7 @@ class Container extends Component {
 const mapStateToProps = state => ({
 	userInfo: state.userInfo,
 	globals: state.globals,
-	messages: state.messages
+	messages: state.messages,
+	video1v1: state.video1v1
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(Container));

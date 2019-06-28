@@ -25,10 +25,10 @@ function EMCallback() {
     self._eventEmitter.emit('onSuccess');
   };
   self._callback.onFail = function(error) {
-    self._eventEmitter.emit('onSuccess', new EMError(error));
+    self._eventEmitter.emit('onFail', new EMError(error));
   };
   self._callback.onProgress = function(progress) {
-    self._eventEmitter.emit('onSuccess', progress);
+    self._eventEmitter.emit('onProgress', progress);
   };
 }
 

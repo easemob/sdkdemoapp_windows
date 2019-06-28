@@ -69,15 +69,6 @@ class MainView extends PureComponent {
 				console.log("new emclient");
 				this.emclient = utils.initEmclient();
 			}
-			this.emclient.login( userInfo.user.easemobName, userInfo.user.easemobPwd).then((res) => {
-				console.log(`loginCode:${res.code}`);
-			if(res.code != 0){
-				setNotice(`登录失败，${res.code}`);
-				this.emclient.logout();
-				logout();
-				return false;
-			}
-		});
 			this.log = new easemob.EMLog();
 			this.error = new easemob.EMError();
 
@@ -135,15 +126,15 @@ class MainView extends PureComponent {
 
 			this.listener.onReceiveCmdMessages ((messages) => {
 				console.log("\n\n EMChatManagerListener onReceiveCmdMessages ----- !");
-				setTimeout(function(){
-					userChange(messages, me.props);
-				}, 1);
 			});
 
 			// 收到消息撤回
 			this.listener.onReceiveRecallMessages ((message) => {
 				me.onReceiveRecallMessages(message);
 			});
+			this.listener.onMessageAttachmentsStatusChanged((message,error) => {
+				me.onMessageAttachmentsStatusChanged(message,error);
+			})
 			// addListener(listener) 添加消息回调监听，从监听中获取接收消息。
 			this.chatManager.clearListeners();
 			this.chatManager.addListener(this.listener);
@@ -151,6 +142,40 @@ class MainView extends PureComponent {
 
 
 			this.groupManager = this.emclient.getGroupManager();
+			this.callManager = this.emclient.getCallManager();
+			this.callmanagerlistener = new easemob.EMCallManagerListener();
+			this.callManager.clearListeners();
+			this.callManager.addListener(this.callmanagerlistener);
+			let emcallconfigs = this.callManager.getCallConfigs();
+			emcallconfigs.setVideoResolution(640,480);
+			emcallconfigs.setIsSendPushIfOffline(true);
+			this.callManager.setSendPushMessage((from,to,type) => {
+			  me.SendPushMessage(from,to,type);
+			})
+			this.callManager.getRemoteStream((remoteStream,type) => {
+				me.getRemoteStream(remoteStream,type);
+			  })
+			  this.callManager.getLocalStream((localStream,type) => {
+				me.getLocalStream(localStream,type);
+			  })
+			this.callmanagerlistener.onRecvCallIncoming((callsession) => {
+					me.onRecvCallIncoming(callsession);
+				});
+			this.callmanagerlistener.onRecvCallConnected((callsession) => {
+					me.onRecvCallConnected(callsession);
+				});
+			this.callmanagerlistener.onRecvCallAccepted((callsession) => {
+				  me.onRecvCallAccepted(callsession);
+				});
+			this.callmanagerlistener.onRecvCallEnded((callsession,reason,error) => {
+					me.onRecvCallEnded(callsession,reason,error);
+					});
+			this.callmanagerlistener.onRecvCallNetworkStatusChanged((callsession,toStatus) => {
+				me.onRecvCallNetworkStatusChanged(callsession,toStatus);
+				});
+			this.callmanagerlistener.onRecvCallStateChanged((callsession,type) => {
+				me.onRecvCallStateChanged(callsession,type);
+				});
 			globalAction({
 				emclient: this.emclient,
 				chatManager: this.chatManager,
@@ -159,7 +184,8 @@ class MainView extends PureComponent {
 				groupManager: this.groupManager,
 				emCallback: this.emCallback,
 				groupManager: this.groupManager,
-				contactManager:this.contactManager
+				contactManager:this.contactManager,
+				callManager:this.callManager
 			});
 
 
@@ -367,6 +393,7 @@ class MainView extends PureComponent {
 				console.log(`operation : ${operation}`);
 				console.log(`target : ${target}`);
 				console.log(`ext : ${ext}`);
+				me.onContactMultiDevicesEvent(operation, target, ext);
 			});
 			this.multiDevicesListener.onGroupMultiDevicesEvent((operation, target, usernames) => {
 				console.log(`operation : ${operation}`);
@@ -387,7 +414,8 @@ class MainView extends PureComponent {
 			// 	this.emclient.logout();
 			// 	logout();
 			// }
-
+		this.emclient.login( userInfo.user.easemobName, userInfo.user.easemobPwd).then((res) => {
+			console.log(`loginCode:${res.code}`);
 			// 获取好友列表
 			this.contactManager.getContactsFromServer().then(res => {
 				var res = this.contactManager.allContacts();
@@ -439,6 +467,14 @@ class MainView extends PureComponent {
 			unReadMsgCountAction({ id: item.conversationId(), unReadMsg: unReadMsgMsgId });
 			initConversationsActiton({ id: item.conversationId(), msgs: messages, "conversation":item });
 		});
+		if(res.code != 0){
+			this.props.history.push('/index');
+			setNotice(`登录失败，${res.description}`,'fail');
+			this.emclient.logout();
+			logout();
+			return false;
+		}
+	});
 
 			const updateOnlineStatus = () => {
 				if(navigator.onLine){
@@ -471,27 +507,122 @@ class MainView extends PureComponent {
 
 		console.log("sendCmd");
 	}
-
+	// 多设备联系人回调
+	onContactMultiDevicesEvent(operation, target, ext)
+	{
+		const {setAllContacts} = this.props;
+			// 获取好友列表
+			this.contactManager.getContactsFromServer().then(res => {
+				var res = this.contactManager.allContacts();
+				res.data.map((item) => {
+					console.log(item);
+				})
+				res.code == 0 && setAllContacts({contacts:res.data});
+			});
+	}
 	// 多设备群组操作回调
 	onGroupMultiDevices(operation, target, usernames){
-		const { setAdminAction, cancelAdminAction, setOwnerAction, groupChats, leaveGroupAction } = this.props;
+		const {createAGroup,leaveGroupAction,setNotice,selectConversationId,conversationOfSelect} = this.props;
+		let group = this.groupManager.groupWithId(target);
+		function updateGroupUI(){
+			if(target == selectConversationId)
+			{
+				conversationOfSelect("");
+				conversationOfSelect(selectConversationId);
+			}
+		}
 		switch(operation){
-		case 12:	// 加入群组
-			// leaveGroupAction(target);
-			break;
-		case 13:	// 离开群组
-			break;
-		case 26:	// 设为管理员
-			//setAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });
-			break;
-		case 27:	// 取消管理员
-			//cancelAdminAction({ id: target, adminMember: usernames[0], group: groupChats[target] });
-			break;
-		case 25:	// 更换群主
-			//setOwnerAction({ id: target, owner: usernames[0], group: groupChats[target] });
-			break;
-		default:
-			break;
+			case 10:// 创建群组
+				{
+					let conversation = this.chatManager.conversationWithType(target,1);
+					createAGroup({easemobGroupId:target,conversation});
+					this.groupManager.fetchGroupSpecification(target).then(res => {
+
+					});
+					this.groupManager.fetchGroupMembers(target, "", 200).then((res) => {
+		
+					},(error) => {});
+					setNotice(`创建群组${group.groupSubject()}`);
+				}
+				break;
+			case 11://解散群组
+			    {	
+					leaveGroupAction(target);
+					setNotice(`解散群组${group.groupSubject()}`);
+			    }
+			    break;
+			case 12://加入群组
+			    {
+					this.groupManager.fetchGroupSpecification(target).then(res => {
+
+					});
+					this.groupManager.fetchGroupMembers(target, "", 200).then((res) => {
+		
+					},(error) => {});
+					setNotice(`加入群组${group.groupSubject()}`);
+			    }
+			    break;
+			case 13://离开群组
+				{
+					leaveGroupAction(group.groupId());
+					setNotice(`离开群组${group.groupSubject()}`);
+				}
+				break;
+			case 14://收到入群邀请
+			    break;
+			case 15://同意群组申请
+			    {
+					this.groupManager.fetchGroupSpecification(target).then(res => {
+
+					});
+					this.groupManager.fetchGroupMembers(target, "", 200).then((res) => {
+		
+					},(error) => {});
+					setNotice(`加入群组${group.groupSubject()}`);
+			    }
+			    break;
+			case 16://拒绝群组申请
+			    break;
+			case 17://发出入群邀请
+			    break;
+			case 18://对方同意群组邀请
+			    {
+					this.groupManager.fetchGroupMembers(target, "", 200).then((res) => {
+		
+					},(error) => {});
+					setNotice(`加入群组${group.groupSubject()}`);
+				}
+			    break;
+			case 19://对方拒绝群组邀请
+			    break;
+			case 20://踢人
+			    break;
+			case 21://禁止成员发言
+			    break;
+			case 22://解禁成员发言
+			    break;
+			case 23://屏蔽群消息
+			    break;
+			case 24://解除消息屏蔽
+			    break;
+			case 25://更改群主
+				setNotice(`群组 ${group.groupSubject()} 群主变更为${usernames}`);
+				updateGroupUI();
+			    break;
+			case 26://群成员升级为管理员
+				setNotice(`群组 ${group.groupSubject()} 群成员${usernames}升为管理员`);
+				updateGroupUI();
+			    break;
+			case 27://管理员降为群成员
+			    setNotice(`群组 ${group.groupSubject()} 管理员${usernames}降为群成员`);
+			    updateGroupUI();
+			    break;
+			case 28://增加禁言
+			    break;
+			case 29://移除禁言
+			    break;
+			default:
+				break;
 		}
 	}
 
@@ -519,7 +650,9 @@ class MainView extends PureComponent {
 		});
 		if(selectNav == ROUTES.chats.recents.__ && conversationId == selectConversationId){
 			let res = conversation.markMessageAsRead(textRecvMsg.msgId(),true);
-			res && unReadMsgCountAction({ id: conversationId, unReadMsg: [textRecvMsg.msgId()] });
+			res && unReadMsgCountAction({ id: conversationId, unReadMsg: [] });
+		}else{
+			unReadMsgCountAction({ id: conversationId, unReadMsg: [textRecvMsg.msgId()] });
 		}
 	}
 
@@ -795,6 +928,220 @@ class MainView extends PureComponent {
 		inviteMemberAction({ id: group.groupId(), members: [invitee] });
 	}
 
+	onRecvCallIncoming(callsession){
+		const {setsession,video1v1} = this.props;
+		if(video1v1.callsession){
+			// 忙碌
+			this.callManager.asyncEndCall(callsession,3);
+			return;
+		}
+		setsession({callsession});
+		console.log("onRecvCallIncoming");
+		console.log(`${callsession.getCallId()}`);
+	}
+	onRecvCallConnected(callsession)
+	{
+		console.log("onRecvCallConnected");
+		console.log(`${callsession.getCallId()}`);
+		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 连接中...";
+	}
+	onRecvCallAccepted(callsession)
+	{
+		const {setsession} = this.props;
+		console.log("onRecvCallAccepted");
+		console.log(`${callsession.getCallId()}`);
+		console.log(callsession.getStatus());
+		setsession({callsession,startTime:new Date()});
+		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 通话中...";
+	}
+	onRecvCallEnded(callsession,reason,error){
+		const {video1v1,endcall,selectConversationId,selectNav,receiveMsgAction,unReadMsgCountAction,userInfo,messages,setNotice} = this.props;
+		console.log("onRecvCallEnded");
+		console.log(`${callsession.getCallId()}`);
+		console.log(`reason:${reason}`);
+		console.log(`errorcode:${error.errorCode}`);
+		console.log(`errorcode:${error.description}`);
+		console.log("status:" + callsession.getStatus());
+		let from = callsession.getIsCaller()? userInfo.user.easemobName:callsession.getRemoteName();
+		let to = callsession.getIsCaller()? callsession.getRemoteName():userInfo.user.easemobName;
+		let msgText = callsession.getType() == 1? "视频":"语音";
+		if(reason == 0)
+		{
+			if(video1v1.startTime)
+			{
+				let stopTime = new Date()
+				let timeDiff = parseInt((stopTime.getTime() - video1v1.startTime.getTime())/1000);
+				// 计时器
+				function timer(time){
+					var hour = parseInt(time / 3600);
+					var minute = parseInt((time - hour * 3600) / 60);
+					var second = (time % 60);
+					hour = prefixInteger(hour, 2);
+					minute = prefixInteger(minute, 2);
+					second = prefixInteger(second, 2);
+					return `${hour}:${minute}:${second}`;
+				}
+				function prefixInteger(num, n){
+					return (Array(n).join(0) + num).slice(-n);
+				}
+				console.log("通话时长:" + timer(timeDiff));
+				msgText += "通话时长:" + timer(timeDiff);
+			}else{
+				if(callsession.getIsCaller()){
+					console.log("已取消");
+					msgText += "已取消";
+				}else{
+					console.log("未接听");
+					msgText += "未接听";
+				}
+			}
+		}
+		if(reason == 1)
+		{
+			console.log("无响应");
+			msgText += "无响应";
+		}
+		if(reason == 2){
+			console.log("已拒绝");
+			msgText += "已拒绝";
+		}
+		if(reason < 3){
+			let textMsgBody = new easemob.EMTextMessageBody(msgText);
+			let	textRecvMsg = callsession.getIsCaller()?easemob.createSendMessage(from, to, textMsgBody):easemob.createReceiveMessage(from, to, textMsgBody);
+			let conversation = this.chatManager.conversationWithType(callsession.getRemoteName(),0);
+			var msgs = messages[callsession.getRemoteName()];
+			conversation.insertMessage(textRecvMsg);
+			msgs.push(textRecvMsg);
+			receiveMsgAction(
+			{
+				messages: msgs,
+				selectConversationId:callsession.getRemoteName(),
+				id: callsession.getRemoteName(),
+				user: userInfo.user.easemobName,
+				conversation,
+				unReadMsg:[textRecvMsg.msgId()]
+			}
+			);
+			if(selectNav == ROUTES.chats.recents.__ && conversation.conversationId() == selectConversationId){
+				let res = conversation.markAllMessagesAsRead();
+				res && unReadMsgCountAction({ id: conversation.conversationId(), unReadMsg: [] });
+			}
+		}
+		
+		if(reason == 3){
+			console.log("会话忙");
+			setNotice("会话忙","fail");
+		}
+		if(reason == 4){
+			console.log("会话连接失败");
+			setNotice("会话连接失败","fail");
+		}
+		if(reason == 5){
+			console.log("会话不支持");
+			setNotice("会话不支持","fail");
+		}
+		if(reason == 6)
+		{
+			console.log("对方不在线");
+			setNotice("对方不在线","fail");
+		}
+		endcall();
+		if(video1v1.localvideocontrol && video1v1.localvideocontrol.srcObject)
+		{
+			video1v1.localvideocontrol.srcObject.getTracks().forEach((track) => {
+				track.stop();
+			})
+			video1v1.localvideocontrol.pause();
+			video1v1.localvideocontrol.srcObject = null;
+		}
+		if(video1v1.remotevideocontrol && video1v1.remotevideocontrol.srcObject)
+		{
+			video1v1.remotevideocontrol.srcObject.getTracks().forEach((track) => {
+				track.stop();
+			})
+			video1v1.remotevideocontrol.pause();
+			video1v1.remotevideocontrol.srcObject = null;
+		}
+	}
+	onRecvCallNetworkStatusChanged(callsession,toStatus){
+		const {setNotice} = this.props;
+		console.log("onRecvCallNetworkStatusChanged");
+		console.log(`${callsession.getCallId()}`);
+		console.log(`toStatus:${toStatus}`);
+		if(toStatus == 0){
+			setNotice("会话连接成功");
+		}else if(toStatus == 1){
+			setNotice("会话不稳定");
+		}else if(toStatus == 2){
+			setNotice("会话断开")
+		}
+	}
+
+	onRecvCallStateChanged(callsession,type){
+		const {setNotice} = this.props;
+		console.log("onRecvCallStateChanged");
+		console.log(`${callsession.getCallId()}`);
+		console.log(`type:${type}`);
+		if(type == 0){
+			setNotice("音频暂停");
+		}else if(type == 1){
+			setNotice("音频恢复");
+		}else if(type == 2){
+			setNotice("视频暂停");
+		}else if(type == 3){
+			setNotice("视频恢复")
+		}
+	}
+
+	getLocalStream(localStream,type)
+	{
+		const {video1v1,setsession} = this.props;
+		video1v1.localvideocontrol.srcObject = localStream;
+		setsession({localStream});
+	}
+	getRemoteStream(remoteStream,type)
+	{
+		const {video1v1,setsession} = this.props;
+		video1v1.remotevideocontrol.srcObject = remoteStream;
+		setsession({remoteStream});
+	}
+	SendPushMessage(from,to,type){
+		const {video1v1,messages,receiveMsgAction,unReadMsgCountAction,selectNav,selectConversationId} = this.props;
+		let textMsgBody = new easemob.EMTextMessageBody(type == 0?"语音未接听":"视频未接听");
+		let textMsg = easemob.createSendMessage(from, to, textMsgBody);
+		let callback = new easemob.EMCallback();
+	   
+		textMsg.setCallback(callback)
+		this.chatManager.sendMessage(textMsg);
+		this.callManager.asyncEndCall(video1v1.callsession.getCallId(),6);
+
+		let conversation = this.chatManager.conversationWithType(to,0);
+		var msgs = messages[to];
+		conversation.insertMessage(textMsg);
+		msgs.push(textMsg);
+		receiveMsgAction(
+			{
+				messages: msgs,
+				selectConversationId:to,
+				id: to,
+				user: from,
+				conversation,
+				unReadMsg:[textMsg.msgId()]
+			});
+		if(selectNav == ROUTES.chats.recents.__ && conversation.conversationId() == selectConversationId){
+				let res = conversation.markAllMessagesAsRead();
+				res && unReadMsgCountAction({ id: conversation.conversationId(), unReadMsg: [] });
+			}
+	}
+
+	onMessageAttachmentsStatusChanged(message,error){
+		console.log("onMessageAttachmentsStatusChanged");
+		let msg = message.bodies()[0];
+		console.log(msg.downloadStatus());
+		console.log(msg);
+		console.log(msg.remotePath(),msg.localPath(),msg.type());
+	}
+
 	// 收到消息回调，图片文件类型需要 download
 	onReceiveMsg(msgs){
 		const {
@@ -833,6 +1180,7 @@ class MainView extends PureComponent {
 				}
 			}
 			msg = message.bodies()[0];
+			console.log("type:" + msg.type());
 			switch(msg.type()){
 			case 1: // image message
 				me.chatManager.downloadMessageAttachments(message);
@@ -922,6 +1270,7 @@ const mapStateToProps = state => ({
 	selectMember: state.selectMember,
 	memberOfSelect: state.memberOfSelect,
 	msgsOfConversation: state.msgsOfConversation,
-	selectNav:state.selectNav
+	selectNav:state.selectNav,
+	video1v1:state.video1v1
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(MainView));

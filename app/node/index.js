@@ -31,6 +31,10 @@ const EMMultiDevicesListener = require('./modules/emmultideviceslistener');
 const EMClient = require('./modules/emclient');
 const EMLog = require('./modules/emlog');
 const EMChatPrivateConfigs = require('./modules/emchatprivateconfigs');
+const EMCallManager = require('./modules/emcallmanager');
+const EMCallManagerListener = require('./modules/emcallmanagerlistener');
+const EMCallConfigs = require('./modules/emcallconfigs');
+const EMCallSession = require('./modules/emcallsession');
 
 /**chat type.
  * {
@@ -83,5 +87,9 @@ module.exports = {
   createSendMessage: createSendMessage,
   createReceiveMessage: createReceiveMessage,
   EMLog: EMLog,
-  EMChatPrivateConfigs: EMChatPrivateConfigs
+  EMChatPrivateConfigs: EMChatPrivateConfigs,
+  EMCallManager: EMCallManager,
+  EMCallManagerListener: EMCallManagerListener,
+  EMCallConfigs: EMCallConfigs,
+  EMCallSession: EMCallSession
 };

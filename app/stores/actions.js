@@ -385,3 +385,18 @@ export const clearPublicGroupList = payload => ({
 	type: "clear/getPublicGroup",
 	payload
 })
+
+export const endcall = payload => ({
+	type:"app/endcall",
+	payload
+})
+
+export const setsession = payload => ({
+	type:"app/setsession",
+	payload
+})
+
+export const addvideocontrol = payload => ({
+	type: "app/addvideocontrol",
+	payload
+})
