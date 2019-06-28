@@ -3,7 +3,7 @@
 const easemobNode = require('./../load');
 
 /**
- * Easemob EMConferenceListener implementation.
+ * Easemob EMCallRtcListener implementation.
  */
 
 /**
