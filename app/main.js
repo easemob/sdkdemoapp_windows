@@ -24944,7 +24944,7 @@ module.exports = exports["default"];
 /* 429 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"DesktopDemo","productName":"IM-SDK桌面端Demo","version":"3.5.5","description":"IM-SDK桌面端Demo","main":"./main.js","author":"","company":"北京易掌云峰科技有限公司","license":"ISC","repository":{"type":"git","url":"https://github.com/easemob/sdkdemoapp_windows.git"}}
+module.exports = {"name":"DesktopDemo","productName":"IM-SDK桌面端Demo","version":"3.6.0","description":"IM-SDK桌面端Demo","main":"./main.js","author":"","company":"北京易掌云峰科技有限公司","license":"ISC","repository":{"type":"git","url":"https://github.com/easemob/sdkdemoapp_windows.git"}}
 
 /***/ }),
 /* 430 */

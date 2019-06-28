@@ -20,7 +20,9 @@ const fs = require("fs")
  * @param {Object} chatConfigs EMChatConfigs
  */
 function EMClient(chatConfigs,autoLogin) {
+  chatConfigs.setSdkVersion("3.6.0");
   this._emclient = easemobNode.createEMClient(chatConfigs._chatConfigs);
+  chatConfigs.setClientResource("desktop");
   if(autoLogin)
   {
     console.log("autologin");

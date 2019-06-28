@@ -77,7 +77,7 @@ function EMCallManager(callManager) {
            if(remoteStream) return;
            console.log("ontrack");
            remoteStream = event.streams[0];
-           self._eventEmitter.emit("getRemoteStream",remoteStream);
+           self._eventEmitter.emit("getRemoteStream",remoteStream,type);
          };
          pc.onconnectionstatechange = (e) => {
            console.log("onconnectionstatechange:" + (pc && pc.connectionState));
@@ -135,6 +135,8 @@ function EMCallManager(callManager) {
           answertype = type;
         }
         pc && pc.setConfiguration(JSON.parse(localConfig));
+        let videowidth = self.getCallConfigs().getVideoResolutionWidth();
+        let videoheight = self.getCallConfigs().getVideoResolutionHeight();
         if(isCaller)
         {
           //访问用户媒体设备
@@ -164,7 +166,7 @@ function EMCallManager(callManager) {
               })
              });
              localStream = stream;
-             self._eventEmitter.emit("getLocalStream",localStream);
+             self._eventEmitter.emit("getLocalStream",localStream,type);
           }
       
           function error(error) {
@@ -175,7 +177,7 @@ function EMCallManager(callManager) {
       
           if (navigator.mediaDevices.getUserMedia) {
             //调用用户媒体设备, 访问摄像头
-            getUserMedia(type == 0?{audio:{autoGainControl:true,noiseSuppression:true,echoCancellation:true}}:{ video: { width: 640, height: 480 },audio:{autoGainControl:true,noiseSuppression:true,echoCancellation:true} }, success, error);
+            getUserMedia(type == 0?{audio:true}:{ video: { width: videowidth>0?videowidth:640, height: videoheight>0?videoheight:480 },audio:true }, success, error);
           } else {
             alert('不支持访问用户媒体');
             _manager.asyncEndCall(callId,4);
@@ -185,7 +187,7 @@ function EMCallManager(callManager) {
         pc.onaddstream = function(e){
           console.log("onaddstream");
           remoteStream = e.stream;
-          self._eventEmitter.emit("getRemoteStream",remoteStream);
+          self._eventEmitter.emit("getRemoteStream",remoteStream,type);
         }
     });
     rtcProxy.setRtcRemoteJson((callId,json) => {
@@ -312,26 +314,16 @@ EMCallManager.prototype.getCallConfigs = function () {
 };
 
 /**
- * get call Streams
- * @return {Object} 返回会话流{localStream,remoteStream}
- */
-EMCallManager.prototype.getStreams = function(){
-  return {
-    localStream,
-    remoteStream
-  }
-}
-
-/**
  * 发起视频呼叫
  * @param {String} remoteName 被呼叫方名称
- * @param {Number} type 呼叫类型
+ * @param {Number} type 呼叫类型,0音频，1视频
  * @param {String} ext 扩展信息
- * @return {EMCallSession} 建立的会话
+ * @return {EMCallSessionResult} 建立的会话
  */
 EMCallManager.prototype.asyncMakeCall = function(remoteName,type,ext)
 {
   let error = new EMError();
+  answertype = type;
   let retsession = new EMCallSession(this._manager.asyncMakeCall(remoteName,type,ext,error._error));
   return {
     code:error.errorCode,
@@ -341,14 +333,22 @@ EMCallManager.prototype.asyncMakeCall = function(remoteName,type,ext)
 }
 
 /**
+ * @typedef {Object} EMCallSessionResult
+ * @property {Number} code 结果ID，0为成功，其他为错误ID
+ * @property {String} description 错误描述，code不为0时使用
+ * @property {EMCallSession} data 音视频会话控制
+ */
+
+/**
  * 接受视频呼叫
  * @param {String} callId 呼叫方名称
- * @return {void}
  */
 EMCallManager.prototype.asyncAnswerCall = function(callId)
 {
   let _manager = this._manager;
   let _eventEmitter = this._eventEmitter;
+  let videowidth = this.getCallConfigs().getVideoResolutionWidth();
+  let videoheight = this.getCallConfigs().getVideoResolutionHeight();
   pc && pc.setRemoteDescription(remoteObj).then(() => {
     console.log("setRemoteDescription success");
       //访问用户媒体设备
@@ -375,7 +375,7 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
          })
        })
         localStream = stream;
-        _eventEmitter.emit("getLocalStream",localStream);
+        _eventEmitter.emit("getLocalStream",localStream,answertype);
         remoteCandidate.forEach((obj) => {
           let candidate = {};
           candidate.candidate = obj["candidate"];
@@ -400,7 +400,7 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
   
       if (navigator.mediaDevices.getUserMedia) {
         //调用用户媒体设备, 访问摄像头
-        getUserMedia(answertype == 0?{audio:{autoGainControl:true,noiseSuppression:true,echoCancellation:true}}:{ video: {width:640,height:480},audio:{autoGainControl:true,noiseSuppression:true,echoCancellation:true} }, success, fail);
+        getUserMedia(answertype == 0?{audio:true}:{ video: {width: videowidth>0?videowidth:640, height: videoheight>0?videoheight:480},audio:true }, success, fail);
       } else {
         alert('不支持访问用户媒体');
         _manager.asyncEndCall(callId,4);
@@ -414,7 +414,6 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
  * 结束视频会话
  * @param {String} callId 呼叫方名称
  * @param {Number} reason 结束原因，0挂掉，1无响应，2拒绝，3忙碌，4失败，5不支持，6离线
- * @return {void}
  */
 EMCallManager.prototype.asyncEndCall = function(callId,reason)
 {
@@ -422,10 +421,10 @@ EMCallManager.prototype.asyncEndCall = function(callId,reason)
 }
 
 /**
- * 修改会话类型，切换语音视频
+ * 修改会话状态
  * @param {String} callId 呼叫方名称
- * @param {Number} controlType 修改后的类型，0语音，1视频
- * @return {void}
+ * @param {Number} controlType 修改后的状态，0语音暂停，1为语音继续，2为视频暂停，3为视频继续
+ * @return {Result}
  */
 EMCallManager.prototype.updateCall = function(callId,controlType)
 {
@@ -436,6 +435,11 @@ EMCallManager.prototype.updateCall = function(callId,controlType)
     description:error.description
   }
 }
+/**
+  * @typedef {Object} Result
+  * @property {Number} code 返回码.0为正常，其他错误
+  * @property {String} description 错误描述信息
+  */
 
 /**
  * 强制结束会话
@@ -449,7 +453,6 @@ EMCallManager.prototype.forceEndAllCall = function()
 /**
  * 设置语音视频请求时，对方不在线的消息推送回调
  * @param {EMCallManager~sendPushMessage} callback 回调函数
- * @return {void}
  */
 EMCallManager.prototype.setSendPushMessage = function(callback){
   this._eventEmitter.on('sendPushMessage', callback);
@@ -459,15 +462,33 @@ EMCallManager.prototype.setSendPushMessage = function(callback){
  * @param {String} from 语音/视频发送者
  * @param {String} to 语音/视频接收者
  * @param {Number} type 类型，0语音，1视频
- * @return {void}
  */
+
 /**
- * 设置收到媒体流后的回调
+ * 设置收到远程媒体流后的回调
+ * @param {EMCallManager~getRemoteStream}
  */
 EMCallManager.prototype.getRemoteStream = function(callback){
   this._eventEmitter.on('getRemoteStream',callback);
 }
+
+/**
+ * 设置收到本地媒体流后的回调
+ * @param {EMCallManager~getLocalStream}
+ */
 EMCallManager.prototype.getLocalStream = function(callback){
   this._eventEmitter.on('getLocalStream',callback);
 }
+
+/**
+ * @function EMCallManager~getLocalStream
+ * @param {MediaStream} stream 收到的远程媒体流
+ * @param {Number} type 音视频类型，0音频，1视频
+ */
+
+ /**
+ * @function EMCallManager~getRemoteStream
+ * @param {MediaStream} stream 收到的本地媒体流
+ * @param {Number} type 音视频类型，0音频，1视频
+ */
 module.exports = EMCallManager;

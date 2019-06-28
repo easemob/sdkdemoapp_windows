@@ -69,14 +69,6 @@ EMCallSession.prototype.getStatus = function () {
   };
 
 /**
- * get the Statistics of session
- * @return {EMCallSessionStatistics} 返回会话详情数据
-*/
-EMCallSession.prototype.getStatistics = function () {
-    return new EMCallSessionStatistics(this._callSession.getStatistics());
-  };
-
-/**
  * get the ext info of session
  * @return {String} 返回会话扩展信息
 */
@@ -87,7 +79,7 @@ EMCallSession.prototype.getExt = function () {
 /**
  * update the session state
  * @param  {Number} controltype 设置会话状态，0音频暂停，1音频恢复，2视频暂停，3视频恢复
- * @return {Object}
+ * @return {Result}
  */
 EMCallSession.prototype.update = function (controltype) {
     let err = new EMError();
@@ -98,17 +90,15 @@ EMCallSession.prototype.update = function (controltype) {
     }
   };
 
-/**
- * switch camera
- * @return {void}
- */
-EMCallSession.prototype.switchCamera = function (lost) {
-    this._callSession.switchCamera(lost);
-  };
+  /**
+   * @typedef {Object} Result
+   * @property {Number} code 返回码.0为正常，其他错误
+   * @property {String} description 错误描述信息
+   */
   
 /**
  * set if enable quality check
- * @param {Bool} enable 是否开启质量检查
+ * @param {Bool} enable 是否开启音视频网络质量检查
  * @return {void}
 */
 EMCallSession.prototype.enableQualityChecker = function (enable) {

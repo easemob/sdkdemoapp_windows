@@ -147,15 +147,16 @@ class MainView extends PureComponent {
 			this.callManager.clearListeners();
 			this.callManager.addListener(this.callmanagerlistener);
 			let emcallconfigs = this.callManager.getCallConfigs();
+			emcallconfigs.setVideoResolution(640,480);
 			emcallconfigs.setIsSendPushIfOffline(true);
 			this.callManager.setSendPushMessage((from,to,type) => {
-			  me.setSendPushMessage(from,to,type);
+			  me.SendPushMessage(from,to,type);
 			})
-			this.callManager.getRemoteStream((remoteStream) => {
-				me.getRemoteStream(remoteStream);
+			this.callManager.getRemoteStream((remoteStream,type) => {
+				me.getRemoteStream(remoteStream,type);
 			  })
-			  this.callManager.getLocalStream((localStream) => {
-				me.getLocalStream(localStream);
+			  this.callManager.getLocalStream((localStream,type) => {
+				me.getLocalStream(localStream,type);
 			  })
 			this.callmanagerlistener.onRecvCallIncoming((callsession) => {
 					me.onRecvCallIncoming(callsession);
@@ -467,7 +468,8 @@ class MainView extends PureComponent {
 			initConversationsActiton({ id: item.conversationId(), msgs: messages, "conversation":item });
 		});
 		if(res.code != 0){
-			setNotice(`登录失败，${res.code}`);
+			this.props.history.push('/index');
+			setNotice(`登录失败，${res.description}`,'fail');
 			this.emclient.logout();
 			logout();
 			return false;
@@ -935,19 +937,19 @@ class MainView extends PureComponent {
 		}
 		setsession({callsession});
 		console.log("onRecvCallIncoming");
-		console.log(`${callsession}`);
+		console.log(`${callsession.getCallId()}`);
 	}
 	onRecvCallConnected(callsession)
 	{
 		console.log("onRecvCallConnected");
-		console.log(`${callsession}`);
+		console.log(`${callsession.getCallId()}`);
 		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 连接中...";
 	}
 	onRecvCallAccepted(callsession)
 	{
 		const {setsession} = this.props;
 		console.log("onRecvCallAccepted");
-		console.log(`${callsession}`);
+		console.log(`${callsession.getCallId()}`);
 		console.log(callsession.getStatus());
 		setsession({callsession,startTime:new Date()});
 		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 通话中...";
@@ -955,7 +957,7 @@ class MainView extends PureComponent {
 	onRecvCallEnded(callsession,reason,error){
 		const {video1v1,endcall,selectConversationId,selectNav,receiveMsgAction,unReadMsgCountAction,userInfo,messages,setNotice} = this.props;
 		console.log("onRecvCallEnded");
-		console.log(`${callsession}`);
+		console.log(`${callsession.getCallId()}`);
 		console.log(`reason:${reason}`);
 		console.log(`errorcode:${error.errorCode}`);
 		console.log(`errorcode:${error.description}`);
@@ -1064,7 +1066,7 @@ class MainView extends PureComponent {
 	onRecvCallNetworkStatusChanged(callsession,toStatus){
 		const {setNotice} = this.props;
 		console.log("onRecvCallNetworkStatusChanged");
-		console.log(`${callsession}`);
+		console.log(`${callsession.getCallId()}`);
 		console.log(`toStatus:${toStatus}`);
 		if(toStatus == 0){
 			setNotice("会话连接成功");
@@ -1078,7 +1080,7 @@ class MainView extends PureComponent {
 	onRecvCallStateChanged(callsession,type){
 		const {setNotice} = this.props;
 		console.log("onRecvCallStateChanged");
-		console.log(`${callsession}`);
+		console.log(`${callsession.getCallId()}`);
 		console.log(`type:${type}`);
 		if(type == 0){
 			setNotice("音频暂停");
@@ -1091,19 +1093,19 @@ class MainView extends PureComponent {
 		}
 	}
 
-	getLocalStream(localStream)
+	getLocalStream(localStream,type)
 	{
 		const {video1v1,setsession} = this.props;
 		video1v1.localvideocontrol.srcObject = localStream;
 		setsession({localStream});
 	}
-	getRemoteStream(remoteStream)
+	getRemoteStream(remoteStream,type)
 	{
 		const {video1v1,setsession} = this.props;
 		video1v1.remotevideocontrol.srcObject = remoteStream;
 		setsession({remoteStream});
 	}
-	setSendPushMessage(from,to,type){
+	SendPushMessage(from,to,type){
 		const {video1v1,messages,receiveMsgAction,unReadMsgCountAction,selectNav,selectConversationId} = this.props;
 		let textMsgBody = new easemob.EMTextMessageBody(type == 0?"语音未接听":"视频未接听");
 		let textMsg = easemob.createSendMessage(from, to, textMsgBody);
@@ -1134,7 +1136,6 @@ class MainView extends PureComponent {
 
 	onMessageAttachmentsStatusChanged(message,error){
 		console.log("onMessageAttachmentsStatusChanged");
-		alert("aa");
 		let msg = message.bodies()[0];
 		console.log(msg.downloadStatus());
 		console.log(msg);

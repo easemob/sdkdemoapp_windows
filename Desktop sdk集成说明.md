@@ -33,6 +33,7 @@ Windows sdk目录结构如下。使用时将sdk拷贝到工程目录下。
       easemobWin.node
       libcurl.dll
       libcurl.lib
+	  libcrypto.1.0.0.dylib
 ## sdk模块介绍
 SDK 采用模块化设计，每一模块的功能相对独立和完善，用户可以根据自己的需求选择使用下面的模块：
 ![](http://docs-im.easemob.com/_media/im/android/sdk/image005.png)
@@ -197,6 +198,28 @@ SDK 采用模块化设计，每一模块的功能相对独立和完善，用户�
    
     let config = emclient.getChatConfigs();
 配置信息包括日志路径，资源路径、下载路径、是否自动同意好友申请、是否自动同意组邀请、退出群组时是否删除消息等，详见[./jsdoc/out/EmChatConfigs.html](./jsdoc/out/EmChatConfigs.html)
+### 私有化部署 ###
+sdk提供私有化部署中的服务器设置接口，私有化部署设置使用api中的**EMChatPrivateConfigs**，可以由系统配置模块的**privateConfigs**接口获取，代码如下：
+```
+let privateconfigs = config.privateConfigs();
+```
+**EMChatPrivateConfigs**使用属性配置服务器部署信息，设置及获取的方法如下：
+```
+privateconfigs.enableDns=true;
+privateconfigs.chatServer="192.168.1.100";
+privateconfigs.chatPort=5000;
+privateconfigs.restServer="http://192.168.1.101:5001";
+privateconfigs.resolverServer="http://192.168.1.101:5002";
+privateconfigs.chatDomain="http://192.168.1.101:5003";
+privateconfigs.groupDomain="http://192.168.1.101:5004";
+console.log(privateconfigs.enableDns);
+console.log(privateconfigs.chatServer);
+console.log(privateconfigs.chatPort);
+console.log(privateconfigs.restServer);
+console.log(privateconfigs.resolverServer);
+console.log(privateconfigs.chatDomain);
+console.log(privateconfigs.groupDomain);
+```
 ### 日志输出
 sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以输出String和数字，代码如下：
 
@@ -219,6 +242,9 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
     log.Error("Error Test");
     log.Error(5);
 注：由于EMChatConfig对象创建时会指定日志输出路径，日志对象的创建一般放到EMChatConfig创建之后。
+windwos桌面端Demo日志生成在c:/用户/{user}/AppData/Roaming/{ProcessName}/easemob-desktop/easemobLog路径下的easemob.log，{user}为操作系统用户名，{ProcessName}为进程名称，热启动时为electron，安装后启动时为IM-SDK桌面端Demo。
+
+mac桌面端Demo日志生成在/Users/{user}/Library/Application Support/{ProcessName}/easemob-desktop/easemobLog路径下的easemolog.log，{user}为操作系统用户名，{ProcessName}为进程名称，热启动时为electron，安装后启动时为**IM-SDK桌面端Demo。
 ### 好友管理
 好友管理功能包括添加好友，删除好友，同意好友申请，拒绝好友申请，获取用户所有好友，获取黑名单列表，好友移入黑名单，从黑名单移除以及好友管理消息监听。
 
@@ -1463,6 +1489,109 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
       console.log('target = ' + target);
       console.log('usernames = ' + usernames);
 	});
+### 1v1音视频会话管理
+1v1音视频会话管理允许用户发起、接听、挂断单人的音视频会话，可以在会话过程中进行暂停、恢复，并对会话过程进行监听。
+
+1v1音视频会话管理模块为EMCallManager，由EMClient模块加载时主动创建，可以使用EMClient模块的getCallManager方法获取，代码如下
+
+    var callManager = emclient.getCallManager();
+#### 注册消息回调监听 ####
+    function setCallManagerListener(callManager, listener) {
+      // 收到会话请求
+      listener.onRecvCallIncoming((callsession) => {});
+      // 会话连接上
+      listener.onRecvCallConnected((callsession) => {});
+      // 会话已接通
+      listener.onRecvCallAccepted((callsession) => {});
+      // 会话挂断
+      listener.onRecvCallEnded((callsession,reason,error) => {});
+      // 网络状态变化
+      listener.onRecvCallNetworkStatusChanged((callsession,toStatus) => {});
+      // 对方会话状态变化，如暂停，恢复
+      listener.onRecvCallStateChanged((callsession,type) => {});
+    }
+    var managerlistener = new easemob.EMCallManagerListener();
+    setCallManagerListener(callManager, managerlistener);
+    // 添加回调监听
+    callManager.addListener(managerlistener);
+#### 移除回调监听 ####
+    callManager.removeListener(managerlistener);
+#### 发起音视频会话 ####
+用户可以主动发起单人会话，方法如下
+
+    /** 
+     * 发起音视频会话asyncMakeCall
+     * @param remoteName Srign，对方用户ID，输入参数
+     * @param type Number，会话类型，0为音频，1为视频，输入参数
+     * @param ext String，会话扩展信息
+     * return CallSessionResult
+     */
+	let result = callManager.asyncMakeCall(remoteName,type,ext);
+#### 接听音视频会话 ####
+接听会话方法一般在收到onRecvCallIncoming后调用，方法如下
+    /** 
+     * 接听音视频会话asyncAnswerCall
+     * @param callId,String，呼叫方ID，输入参数
+     */
+	callManager.asyncAnswerCall(callId);
+callId可以通过callsession的getCallId()方法获取。
+#### 挂断音视频会话 ####
+用户可以在收到会话请求时，直接挂断会话，
+    /** 
+     * 接听音视频会话asyncAnswerCall
+     * @param callId,String，呼叫方ID，输入参数
+     * @param reason,Number 结束原因，0挂掉，1无响应，2拒绝，3忙碌，4失败，5不支持，6离线
+     */
+	callManager.asyncEndCall(callId,reason);
+#### 切换语音视频状态 ####
+
+    /**
+     * 修改会话类型，切换语音视频状态
+     * @param {String} callId 呼叫方Id
+     * @param {Number} controlType 修改后的类型，0语音暂停，1为语音继续，2视频暂停，3视频继续
+     */
+    callManager.updateCal(callId,controlType);
+#### 音视频配置 ####
+
+获取配置
+
+    let emcallconfigs = callManager.getCallConfigs();
+    console.log("IsSendPushIfOffline:" + emcallconfigs.getIsSendPushIfOffline());
+    console.log("VideoResolutionWidth:" + emcallconfigs.getVideoResolutionWidth());
+    console.log("VideoResolutionHeight:" + emcallconfigs.getVideoResolutionHeight());
+    console.log("VideoKbps:" + emcallconfigs.getVideoKbps());
+    console.log("PingInterval:" + emcallconfigs.getPingInterval());
+    console.log("AudioKbps:" + emcallconfigs.getAudioKbps());
+    console.log("EnableCustomizeVideoData:" + emcallconfigs.getEnableCustomizeVideoData());
+
+设置配置
+
+    emcallconfigs.setIsSendPushIfOffline(true);
+    emcallconfigs.setVideoResolution(640,480);
+    emcallconfigs.setVideoKbps（128);
+    emcallconfigs.setPingInterval(60);
+    emcallconfigs.setAudioKbps(132);
+    callManager.setCallConfigs(emcallconfigs);
+#### 会话控制接口 ####
+音视频会话控制模块为EMCallSesssion，呼叫方通过asyncMakeCall返回，接听方通过监听回调的onRecvCallIncoming获取到。通过会话控制模块可以获取到以下会话信息
+    // 获取CallId
+    console.log(callsession.getCallId());
+    // 获取本地名称
+    console.log(callsession.getLocalName());
+    // 获取会话类型，0音频，1视频
+    console.log(callsession.getType());
+    // 获取对方名称
+    console.log(callsession.getRemoteName());
+    // 获取是否呼叫方
+    console.log(callsession.getIsCaller());
+    // 获取会话状态，0断开，1振铃，2正在连接，3已连接，4已接听
+    console.log(callsession.getStatus());
+    // 获取会话详情EMCallSessionStatistics
+    console.log(callsession.getStatistics());
+    // 获取会话扩展信息
+    console.log(callsession.getExt());
+    // 修改会话状态，0音频暂停，1音频恢复，2视频暂停，3视频恢复
+    console.log(callsession.update(controltype));
 ## 附录
 ### 文档中用到的结构体定义
 #### Result
@@ -1521,4 +1650,11 @@ sdk提供输出到日志文件的js接口，需要先创建EMLog对象，可以�
         code:result.errorCode, //{Number} 0表示成功,其它值为失败
         description:result.description, //{String} code为非0值时有效，表示失败原因
         data //{Array} EMMessage对象数组，code为0时有效
+    }
+
+#### CallSessionResult
+    {
+        code:result.errorCode, //{Number} 0表示成功,其它值为失败
+        description:result.description, //{String} code为非0值时有效，表示失败原因
+        data //{Object} EMCallSession对象，code为0时有效
     }

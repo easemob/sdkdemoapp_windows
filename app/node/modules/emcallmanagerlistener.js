@@ -45,15 +45,6 @@ function EMCallManagerListener() {
 }
 
 /**
- * Callback user when user receive an unsupported video/audio feature
- * @param {EMCallManagerListener~onRecvCallFeatureUnsupportedCallback} callback 回调函数
- * @return {void}
- */
-EMCallManagerListener.prototype.onRecvCallFeatureUnsupported = function (callback) {
-  this._eventEmitter.on('onRecvCallFeatureUnsupported', callback);
-};
-
-/**
  * Callback user when user receive an video/audio call
  * @param {EMCallManagerListener~onRecvCallIncomingCallback} callback 回调函数
  * @return {void}

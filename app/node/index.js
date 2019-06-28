@@ -34,11 +34,7 @@ const EMChatPrivateConfigs = require('./modules/emchatprivateconfigs');
 const EMCallManager = require('./modules/emcallmanager');
 const EMCallManagerListener = require('./modules/emcallmanagerlistener');
 const EMCallConfigs = require('./modules/emcallconfigs');
-const EMConferenceListener = require('./modules/emcallconferencelistener');
 const EMCallSession = require('./modules/emcallsession');
-const EMCallSessionStatistics = require('./modules/emcallsessionstatistics');
-const EMCallRtcProxy = require('./modules/emcallrtcproxy');
-const EMCallRtcListener = require('./modules/emcallrtclistener');
 
 /**chat type.
  * {
@@ -95,9 +91,5 @@ module.exports = {
   EMCallManager: EMCallManager,
   EMCallManagerListener: EMCallManagerListener,
   EMCallConfigs: EMCallConfigs,
-  EMConferenceListener: EMConferenceListener,
-  EMCallSession: EMCallSession,
-  EMCallSessionStatistics: EMCallSessionStatistics,
-  EMCallRtcProxy: EMCallRtcProxy,
-  EMCallRtcListener: EMCallRtcListener
+  EMCallSession: EMCallSession
 };

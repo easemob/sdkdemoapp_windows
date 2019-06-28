@@ -36,7 +36,7 @@ EMCallConfigs.prototype.getIsSendPushIfOffline = function () {
 };
 
 /**
- * set the resolution of video,contain width and height.
+ * set the resolution of video,contain width and height.it will be applied on the next video call.
  * @param {Number} width 视频宽度
  * @param {Number} height 视频高度
  * @return {void}
@@ -88,7 +88,7 @@ EMCallConfigs.prototype.setPingInterval = function (interval) {
 
 /**
  * get the period of ping.
- * @return {Number} 返回心跳周期
+ * @return {Number} 返回心跳周期，单位秒，最小10
  */
 EMCallConfigs.prototype.getPingInterval = function () {
   return this._callConfigs.getPingInterval();
@@ -109,23 +109,6 @@ EMCallConfigs.prototype.setAudioKbps = function (kbps) {
  */
 EMCallConfigs.prototype.getAudioKbps = function () {
   return this._callConfigs.getAudioKbps();
-};
-
-/**
- * set if enable customize video data.
- * @param {Bool} bEnableCustomize 设置是否开启订制视频数据
- * @return {void}
- */
-EMCallConfigs.prototype.setEnableCustomizeVideoData = function (bEnableCustomize) {
-  this._callConfigs.setEnableCustomizeVideoData(bEnableCustomize);
-};
-
-/**
- * get if enable customize video data.
- * @return {Number} 获取是否开启订制视频数据
- */
-EMCallConfigs.prototype.getEnableCustomizeVideoData = function () {
-    return this._callConfigs.getEnableCustomizeVideoData();
 };
 
 /**

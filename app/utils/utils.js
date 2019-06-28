@@ -42,10 +42,8 @@ const utils = {
 		});
 		this.chatConfigs = new easemob.EMChatConfig(`${configDir}/easemob-desktop`, `${configDir}/easemob-desktop`, (userInfo && userInfo.user.appkey), 0);
 		this.chatConfigs.setDeleteMessageAsExitGroup(true);
-		this.chatConfigs.setSdkVersion("3.5.5");
 
 		const emclient = new easemob.EMClient(this.chatConfigs);
-		this.chatConfigs.setClientResource("desktop");
 		return emclient;
 	}
 };
