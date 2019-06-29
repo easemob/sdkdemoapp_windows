@@ -21,7 +21,19 @@ const fs = require("fs")
  */
 function EMClient(chatConfigs,autoLogin) {
   chatConfigs.setSdkVersion("3.6.0");
+  console.log(process.platform);
+  if(process.platform === "darwin"){
+    chatConfigs.setOs(3);
+  }else{
+    chatConfigs.setOs(4);
+  }
+  chatConfigs.setClientResource("desktop");
   this._emclient = easemobNode.createEMClient(chatConfigs._chatConfigs);
+  if(process.platform === "darwin"){
+    chatConfigs.setOs(3);
+  }else{
+    chatConfigs.setOs(4);
+  }
   chatConfigs.setClientResource("desktop");
   if(autoLogin)
   {
