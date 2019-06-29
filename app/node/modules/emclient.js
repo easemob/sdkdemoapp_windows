@@ -25,8 +25,6 @@ function EMClient(chatConfigs,autoLogin) {
   chatConfigs.setOs(4);
   chatConfigs.setClientResource("desktop");
   this._emclient = easemobNode.createEMClient(chatConfigs._chatConfigs);
-  chatConfigs.setOs(4);
-  chatConfigs.setClientResource("desktop");
   if(autoLogin)
   {
     console.log("autologin");
