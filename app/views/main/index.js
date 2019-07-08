@@ -947,11 +947,12 @@ class MainView extends PureComponent {
 	}
 	onRecvCallAccepted(callsession)
 	{
-		const {setsession} = this.props;
+		const {setsession,video1v1} = this.props;
 		console.log("onRecvCallAccepted");
 		console.log(`${callsession.getCallId()}`);
 		console.log(callsession.getStatus());
 		setsession({callsession,startTime:new Date()});
+		callsession.getIsCaller() && video1v1.timeOut && clearTimeout(video1v1.timeOut);
 		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 通话中...";
 	}
 	onRecvCallEnded(callsession,reason,error){
