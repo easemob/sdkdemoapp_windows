@@ -951,8 +951,9 @@ class MainView extends PureComponent {
 		console.log("onRecvCallAccepted");
 		console.log(`${callsession.getCallId()}`);
 		console.log(callsession.getStatus());
-		setsession({callsession,startTime:new Date()});
 		callsession.getIsCaller() && video1v1.timeOut && clearTimeout(video1v1.timeOut);
+		setsession({callsession,startTime:new Date(),timeOut:undefined});
+		
 		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 通话中...";
 	}
 	onRecvCallEnded(callsession,reason,error){
@@ -963,6 +964,10 @@ class MainView extends PureComponent {
 		console.log(`errorcode:${error.errorCode}`);
 		console.log(`errorcode:${error.description}`);
 		console.log("status:" + callsession.getStatus());
+		if(callsession.getIsCaller() && video1v1.timeOut){
+			console.log("clearTimeout");
+			clearTimeout(video1v1.timeOut);
+		}
 		let from = callsession.getIsCaller()? userInfo.user.easemobName:callsession.getRemoteName();
 		let to = callsession.getIsCaller()? callsession.getRemoteName():userInfo.user.easemobName;
 		let msgText = callsession.getType() == 1? "视频":"语音";
