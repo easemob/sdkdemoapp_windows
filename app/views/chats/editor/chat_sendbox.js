@@ -378,7 +378,15 @@ class ChatSendBoxView extends PureComponent {
 			setNotice("群组会话赞不支持此功能");
 		}
 		let result = globals.callManager.asyncMakeCall(selectConversationId,1,"desktop call");
-		setsession({callsession:result.data});
+		let t = setTimeout(() => {
+			console.log("timeout");
+			if(!(video1v1.localvideocontrol && video1v1.localvideocontrol.srcObject && video1v1.localvideocontrol.srcObject.active &&
+				video1v1.remotevideocontrol && video1v1.remotevideocontrol.srcObject && video1v1.remotevideocontrol.srcObject.active)){
+					result.data && globals.callManager.asyncEndCall(result.data.getCallId(),2);
+				}
+		},60000);
+		setsession({callsession:result.data,timeOut:t});
+		
 	}
 	handleMakeVoiceCall(e)
 	{
@@ -393,7 +401,14 @@ class ChatSendBoxView extends PureComponent {
 			setNotice("群组会话赞不支持此功能");
 		}
 		let result = globals.callManager.asyncMakeCall(selectConversationId,0,"desktop call");
-		setsession({callsession:result.data});
+		let t = setTimeout(() => {
+			console.log("timeout");
+			if(!(video1v1.localvideocontrol && video1v1.localvideocontrol.srcObject && video1v1.localvideocontrol.srcObject.active &&
+				video1v1.remotevideocontrol && video1v1.remotevideocontrol.srcObject && video1v1.remotevideocontrol.srcObject.active)){
+					result.data && globals.callManager.asyncEndCall(result.data.getCallId(),2);
+				}
+		},60000);
+		setsession({callsession:result.data,timeOut:t});
 	}
 	render(){
 		const uploadProps = {
