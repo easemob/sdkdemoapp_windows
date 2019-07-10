@@ -15,7 +15,7 @@
     right: 0px;
     height: 30%;
     width: 30%;
-    object-fit: contain;
+    object-fit: fit;
 }
 .videoandaudio-remotevideo{
     position: absolute;
@@ -25,7 +25,7 @@
     width: 100%;
     top: 0px;
     bottom: 0px;
-    object-fit: contain;
+    object-fit: fit;
 }
 .videoandaudio-userinfo{
     z-index: 303;
@@ -35,6 +35,7 @@
     top:80px;
     left:120px;
     right:120px;
+    text-align: center;
 }
 .videoandaudio-pauseorresume{
     z-index: 303;
@@ -42,7 +43,7 @@
     position:absolute;
     font-size: 40px;
     bottom:60px;
-    left:120px;
+    left:80px;
     display: none;
 }
 .videoandaudio-answer{
@@ -51,7 +52,7 @@
     position:absolute;
     font-size: 40px;
     bottom:60px;
-    left:120px;
+    left:80px;
     display: block;
     transform:rotate(90deg);
 }
@@ -61,7 +62,7 @@
     position:absolute;
     font-size: 40px;
     bottom:60px;
-    right:120px;
+    right:80px;
     display: block;
 
 }

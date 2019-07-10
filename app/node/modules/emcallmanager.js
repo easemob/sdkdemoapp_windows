@@ -135,9 +135,6 @@ function EMCallManager(callManager) {
             }
 
             updateSDP();
-            
-            answersdp = answersdp.replace(/c=IN IP4 0.0.0.0/g, "c=IN IP4 172.17.2.32");
-            answersdp = answersdp.replace(/audio 9/g, "audio 49707");
               let sdp = {};
               sdp["type"] = "answer";
               sdp["sdp"] = answersdp;
