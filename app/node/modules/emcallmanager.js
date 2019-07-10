@@ -91,6 +91,10 @@ function EMCallManager(callManager) {
          }
          pc.oniceconnectionstatechange = (e) => {
           console.log("oniceconnectionstatechange: " + (pc && pc.iceConnectionState));
+          if(pc && pc.iceConnectionState === "failed")
+          {
+            _manager.asyncEndCall(callId,0);
+          }
           if(pc && pc.iceConnectionState === "disconnected")
           {
             rtcListerner.onReceiveNetworkDisconnected();
@@ -98,6 +102,11 @@ function EMCallManager(callManager) {
           if(pc && pc.iceConnectionState === "connected")
           {
             rtcListerner.onReceiveNetworkConnected();
+          }
+         }
+         pc.onicegatheringstatechange = (e) => {
+          console.log("onicegatheringstatechange:" + (pc && pc.iceGatheringState));
+          if(pc && (pc.iceGatheringState == "complete")) {
             rtcListerner.onReceiveSetup("");
             if(!callIsCaller)
             {
@@ -135,12 +144,6 @@ function EMCallManager(callManager) {
               console.log("localDescription:" + JSON.stringify(sdp));
               rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
             }
-          }
-         }
-         pc.onicegatheringstatechange = (e) => {
-          console.log("onicegatheringstatechange:" + (pc && pc.iceGatheringState));
-          if(pc && (pc.iceGatheringState == "complete")) {
-            
           }
          }
          pc.onsignalingstatechange = (e) => {
