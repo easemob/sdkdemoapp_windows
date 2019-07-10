@@ -93,7 +93,7 @@ function EMCallManager(callManager) {
           console.log("oniceconnectionstatechange: " + (pc && pc.iceConnectionState));
           if(pc && pc.iceConnectionState === "failed")
           {
-            _manager.asyncEndCall(callId,6);
+            _manager.asyncEndCall(callId,0);
           }
           if(pc && pc.iceConnectionState === "disconnected")
           {
