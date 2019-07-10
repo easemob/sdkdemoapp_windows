@@ -1089,13 +1089,13 @@ class MainView extends PureComponent {
 		console.log(`${callsession.getCallId()}`);
 		console.log(`type:${type}`);
 		if(type == 0){
-			setNotice("音频暂停");
+			setNotice("对方音频暂停");
 		}else if(type == 1){
-			setNotice("音频恢复");
+			setNotice("对方音频恢复");
 		}else if(type == 2){
-			setNotice("视频暂停");
+			setNotice("对方视频暂停");
 		}else if(type == 3){
-			setNotice("视频恢复")
+			setNotice("对方视频恢复")
 		}
 	}
 
@@ -1109,6 +1109,10 @@ class MainView extends PureComponent {
 	{
 		const {video1v1,setsession} = this.props;
 		video1v1.remotevideocontrol.srcObject = remoteStream;
+		video1v1.remotevideocontrol.muted = false;
+		if(video1v1.remotevideocontrol.paused){
+			video1v1.remotevideocontrol.play();
+		}
 		setsession({remoteStream});
 	}
 	SendPushMessage(from,to,type){

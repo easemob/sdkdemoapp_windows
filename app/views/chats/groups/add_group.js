@@ -71,9 +71,14 @@ class AddGroup extends Component {
 	}
 
 	handleOk(){
-		const { globals, setNotice, setGroupChats, clearPublicGroupList,userInfo } = this.props;
+		const { globals, setNotice, setGroupChats, clearPublicGroupList,userInfo,allGroupChats } = this.props;
 		const { selectGroupId } = this.state;
 		if(selectGroupId){
+			let arrGroupChats = allGroupChats.allGroups || [];
+			if(arrGroupChats.indexOf(selectGroupId) > -1){
+				setNotice("已经在该群组中");
+				return;
+			}
 			globals.groupManager.joinPublicGroup(selectGroupId)
 			.then((res) => {
 				if(res.code == 0){
@@ -246,6 +251,7 @@ class AddGroup extends Component {
 const mapStateToProps = state => ({
 	publicGroup: state.publicGroup,
 	globals: state.globals,
+	allGroupChats: state.allGroupChats,
 	userInfo: state.userInfo
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(AddGroup));
