@@ -130,10 +130,10 @@ class Video1v1View extends PureComponent {
 		return (
 			<div id="videoandaudio" className='videoandaudio'>
 			{
-				<video onClick={this.changeLocation} id="localVideo" className='videoandaudio-localvideo' muted={true} autoPlay={true} controls={false}></video>
+				<video id="localVideo" className='videoandaudio-localvideo' muted={true} autoPlay={true} controls={false}></video>
 			}
 			{
-				<video onClick={this.changeLocation} id="remoteVideo" className='videoandaudio-remotevideo' autoPlay={true} controls={true}></video>
+				<video id="remoteVideo" className='videoandaudio-remotevideo' autoPlay={true} controls={true}></video>
 			}
             {this.showUserInfo()}
 			{this.showAnswerControl()}
