@@ -68,15 +68,6 @@ function EMCallManager(callManager) {
                       //self.onEvent(new __event.ICEConnected({webrtc: webrtc}));
                       webrtc.onEvent = null;
                       rtcListerner.onReceiveSetup("");
-                      if(!callIsCaller)
-                      {
-                        let error = new EMError();  
-                        _manager.asyncAnswerCall(callId,error._error);
-                        webrtc && webrtc.createAnswer((sdp) => {
-                          rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
-                        },() => {
-                        });
-                      }
                       return;
                   }
                   if(state == 'closed'){
@@ -98,6 +89,7 @@ function EMCallManager(callManager) {
 
           onIceCandidate: function (candidate) { //event.candidate
               //self._onIceCandidate && candidate && self._onIceCandidate(webrtc, candidate);
+              console.log("onIceCandidate:" + candidate);
               rtcListerner.onReceiveLocalCandidate(JSON.stringify(candidate));
           },
 
@@ -372,6 +364,18 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
   // }).catch((reason) => {
   //   console.log("setRemoteDescription fail:"+reason);
   // });
+}
+
+EMCallManager.prototype.sendAnswer = function(callId){
+  let _manager = this._manager;
+    webrtc && webrtc.createAnswer((sdp) => {
+      console.log("sendanswer");
+      rtcListerner.onReceiveSetup("");
+      let error = new EMError();  
+      _manager.asyncAnswerCall(callId,error._error);
+      rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
+    },() => {
+    });
 }
 
 /**

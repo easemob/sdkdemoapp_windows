@@ -943,6 +943,7 @@ class MainView extends PureComponent {
 	{
 		console.log("onRecvCallConnected");
 		console.log(`${callsession.getCallId()}`);
+		this.callManager.sendAnswer(callsession.getCallId());
 		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 连接中...";
 	}
 	onRecvCallAccepted(callsession)
