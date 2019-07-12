@@ -6,17 +6,13 @@ const EMCallSession = require('./emcallsession');
 const EMCallRtcProxy = require('./emcallrtcproxy');
 const EMCallRtcListener = require('./emcallrtclistener');
 const EventEmitter = require('events').EventEmitter;
-const SDPSection = require('./SDPSession');
 require('./EWebrtc');
 var rtcListerner;
 var webrtc;
-var answersdp;
 var answertype;
 var callIsCaller;
-var remoteObj;
 var remoteCandidate =[];
 var localStream;
-var remoteStream;
 /**
  * Easemob EMCallManager implementation.
  */
