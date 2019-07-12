@@ -13,7 +13,13 @@ class Video1v1View extends PureComponent {
 		this.showAnswerControl = this.showAnswerControl.bind(this);
 		this.showPauseControl = this.showPauseControl.bind(this);
 		this.showUserInfo = this.showUserInfo.bind(this);
-        this.changeLocation = this.changeLocation.bind(this);
+		this.changeLocation = this.changeLocation.bind(this);
+		this.addvideocontrol = this.videoPlaying.bind(this);
+		this.videoPlaying = this.videoPlaying.bind(this);
+		this.state = {
+			width:640,
+			height:480
+		}
     }
     componentDidMount() {
 		const {addvideocontrol,video1v1} = this.props;
@@ -89,6 +95,7 @@ class Video1v1View extends PureComponent {
 		const {video1v1} = this.props;
 		if(video1v1.callsession && this.isStartCall())
 		{
+			console.log(this.remotevideocontrol.videoWidth,this.remotevideocontrol.videoHeight);
 			return <span onClick={ this.handlePauseOrResume }><Icon id="pauseorresume" title='暂停/继续' type={video1v1.pause?"play-circle":"pause-circle"} className='videoandaudio-pauseorresume' /></span>;
 		}else
 		{
@@ -107,6 +114,9 @@ class Video1v1View extends PureComponent {
             }
 		}else
 		{
+			if(video1v1.callsession && video1v1.callsession.getType() == 0){
+				return <span className='videoandaudio-userinfo' >{video1v1.callsession.getRemoteName()}语音通话中</span>;
+			}
 			return null;
 		}
     }
@@ -126,14 +136,23 @@ class Video1v1View extends PureComponent {
 		  return true;
 		return false;
 	}
+	videoPlaying(){
+		const { video1v1} = this.props;
+		let width = document.getElementById('remoteVideo').videoWidth;
+		let height = document.getElementById('remoteVideo').videoHeight;
+		if(width > 0 && height > 0 && video1v1.callsession.getType() == 1){
+			document.getElementById('videoandaudio').style.width = width*480/height + 'px';
+		}
+	}
 	render(){
+		const {video1v1} = this.props;
 		return (
 			<div id="videoandaudio" className='videoandaudio'>
 			{
 				<video id="localVideo" className='videoandaudio-localvideo' muted={true} autoPlay={true} controls={false}></video>
 			}
 			{
-				<video id="remoteVideo" className='videoandaudio-remotevideo' autoPlay={true} controls={true}></video>
+				<video id="remoteVideo" onPlaying={this.videoPlaying} className='videoandaudio-remotevideo' autoPlay={true} controls={false}></video>
 			}
             {this.showUserInfo()}
 			{this.showAnswerControl()}

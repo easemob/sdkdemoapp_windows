@@ -964,6 +964,7 @@ class MainView extends PureComponent {
 		console.log(`errorcode:${error.errorCode}`);
 		console.log(`errorcode:${error.description}`);
 		console.log("status:" + callsession.getStatus());
+		document.getElementById('videoandaudio').style.width = '640px';
 		if(callsession.getIsCaller() && video1v1.timeOut){
 			console.log("clearTimeout");
 			clearTimeout(video1v1.timeOut);
