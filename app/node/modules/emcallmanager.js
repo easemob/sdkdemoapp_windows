@@ -7,8 +7,9 @@ const EMCallRtcProxy = require('./emcallrtcproxy');
 const EMCallRtcListener = require('./emcallrtclistener');
 const EventEmitter = require('events').EventEmitter;
 const SDPSection = require('./SDPSession');
+require('./EWebrtc');
 var rtcListerner;
-var pc;
+var webrtc;
 var answersdp;
 var answertype;
 var callIsCaller;
@@ -51,108 +52,89 @@ function EMCallManager(callManager) {
         let jsonConfig = JSON.parse(localConfig);
         let configuration = {iceServers:jsonConfig.iceServers};
         console.log("configuration：" + JSON.stringify(configuration));
-        pc = new RTCPeerConnection(jsonConfig);
-        if(!pc)
-          return false;
-        pc.onicecandidate = (e) => {
-          if(JSON.stringify( e.candidate).indexOf('tcp') != -1){
-            return;
-          }
-          console.log("oncandidate:" +JSON.stringify( e.candidate));
-          
-          if(JSON.stringify( e.candidate) == "null")
-          {
-            
-          }else{
-            let candidate = {};
-            candidate["type"] = "candidate";
-            candidate["candidate"] = e.candidate["candidate"];
-            candidate["mid"] = e.candidate["sdpMid"];
-            candidate["mlineindex"] = e.candidate["sdpMLineIndex"];
-            rtcListerner.onReceiveLocalCandidate(JSON.stringify(candidate));
-          }
-        }
-        pc.onnegotiationneeded = (e) => {
-             console.log("onnegotiationneeded:" + e);
-         };
-         // once media for a remote track arrives, show it in the remote video element
-         pc.ontrack = (event) => {
-           // don't set srcObject again if it is already set.
-           if(remoteStream) return;
-           console.log("ontrack");
-           remoteStream = event.streams[0];
-           self._eventEmitter.emit("getRemoteStream",remoteStream,type);
-         };
-         pc.onconnectionstatechange = (e) => {
-           console.log("onconnectionstatechange:" + (pc && pc.connectionState));
-         }
-         pc.onicecandidateerror = (e) => {
-          console.log("onicecandidateerror:" + e.errorText);
-         }
-         pc.oniceconnectionstatechange = (e) => {
-          console.log("oniceconnectionstatechange: " + (pc && pc.iceConnectionState));
-          if(pc && pc.iceConnectionState === "failed")
-          {
-            _manager.asyncEndCall(callId,0);
-          }
-          if(pc && pc.iceConnectionState === "disconnected")
-          {
-            rtcListerner.onReceiveNetworkDisconnected();
-          }
-          if(pc && pc.iceConnectionState === "connected")
-          {
-            rtcListerner.onReceiveNetworkConnected();
-          }
-         }
-         pc.onicegatheringstatechange = (e) => {
-          console.log("onicegatheringstatechange:" + (pc && pc.iceGatheringState));
-          if(pc && (pc.iceGatheringState == "complete")) {
-            rtcListerner.onReceiveSetup("");
-            if(!callIsCaller)
-            {
-              let error = new EMError();  
-              _manager.asyncAnswerCall(callId,error._error);
-              function updateSDP() {
-                var sdpSection = new SDPSection(answersdp);
-                var ms = sdpSection.parseMsidSemantic(sdpSection.headerSection);
-                if(!ms){
-                    return;
-                }
+        var offerOptions = {
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+      };
+        webrtc = new emedia.EWebrtc({
+          //iceServerConfig: jsonConfig,
+          onIceStateChange: function(iceState){
+              var state = iceState;
+              console.log("onIceStateChange:" + iceState);
+              try{
+                  if(state == 'failed'){
+                      //self.onEvent(new __event.ICEConnectFail({webrtc: webrtc}));
+                      //webrtc.onEvent && webrtc.onEvent(new __event.ICEConnectFail({webrtc: webrtc}));
+                      _manager.asyncEndCall(callId,0);
+                      return;
+                  }
+                  if(state == 'connected'){
+                      //self.onEvent(new __event.ICEConnected({webrtc: webrtc}));
+                      webrtc.onEvent = null;
+                      rtcListerner.onReceiveSetup("");
+                      if(!callIsCaller)
+                      {
+                        let error = new EMError();  
+                        _manager.asyncAnswerCall(callId,error._error);
+                        webrtc && webrtc.createAnswer((sdp) => {
+                          rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
+                        },() => {
+                        });
+                      }
+                      return;
+                  }
+                  if(state == 'closed'){
+                      //self.onEvent(new __event.ICEClosed({webrtc: webrtc}));
+                      //webrtc.onEvent && webrtc.onEvent(new __event.ICEClosed({webrtc: webrtc}));
 
-                if(ms.WMS == '*') {
-                    sdpSection.updateHeaderMsidSemantic(ms.WMS = "MS_0000");
-                }
-                var audioSSRC = sdpSection.parseSSRC(sdpSection.audioSection);
-                var videoSSRC = sdpSection.parseSSRC(sdpSection.videoSection);
+                      return;
+                  }
+                  if(state == 'disconnected'){
+                      //self.onEvent(new __event.ICEDisconnected({webrtc: webrtc}));
+                      //webrtc.onEvent && webrtc.onEvent(new __event.ICEDisconnected({webrtc: webrtc}));
 
-                audioSSRC && sdpSection.updateAudioSSRCSection(1000, "CHROME0000", ms.WMS, audioSSRC.label || "LABEL_AUDIO_1000");
-                if(videoSSRC){
-                    sdpSection.updateVideoSSRCSection(2000, "CHROME0000", ms.WMS, videoSSRC.label || "LABEL_VIDEO_2000");
-                }
-                // mslabel cname
-
-                answersdp = sdpSection.getUpdatedSDP();
+                      return;
+                  }
+              }finally {
+                  self._onIceStateChange && self._onIceStateChange(webrtc, iceState);
               }
+          },
 
-              updateSDP();
-              let sdp = {};
-              sdp["type"] = "answer";
-              sdp["sdp"] = answersdp;
-              console.log("localDescription:" + JSON.stringify(sdp));
-              rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
-            }
+          onIceCandidate: function (candidate) { //event.candidate
+              //self._onIceCandidate && candidate && self._onIceCandidate(webrtc, candidate);
+              rtcListerner.onReceiveLocalCandidate(JSON.stringify(candidate));
+          },
+
+          onGotRemoteStream: function (remoteStream1) {
+
+              //webrtc.onGotMediaStream && webrtc.onGotMediaStream(remoteStream1);
+
+              //self.onEvent(new __event.ICERemoteMediaStream({webrtc: webrtc}));
+              self._eventEmitter.emit("getRemoteStream",remoteStream1,type);
+          },
+          onAddIceCandidateError: function (err) {
+              //self.onEvent(new __event.AddIceCandError({webrtc: webrtc, event: err}))
+          },
+          onSetSessionDescriptionError: function (error) {
+              console.log('onSetSessionDescriptionError : Failed to set session description: ' + error.toString());
+              //self.onEvent && self.onEvent(new __event.ICEConnectFail({webrtc: webrtc, event: error}));
+          },
+          onCreateSessionDescriptionError: function (error) {
+              console.log('Failed to create session description: ' + error.toString());
+              //self.onEvent && self.onEvent(new __event.ICEConnectFail({webrtc: webrtc, event: error}));
+          },
+          onSetRemoteSuccess: function(){
+            rtcListerner.onReceiveSetup("");
           }
-         }
-         pc.onsignalingstatechange = (e) => {
-          console.log("onsignalingstatechange:" + (pc && pc.signalingState));
-         }
-         pc.onstatsended = (e) => {
-          console.log("onstatsended");
-         }
-         pc.ondatachannel = (e) => {
-          console.log("ondatachannel");
-         }
-        return true;
+          // onSetLocalSessionDescriptionSuccess: function (error) {
+          //     _logger.debug('onSetLocalSessionDescriptionSuccess : setLocalDescription complete: ' + error.toString());
+          //     self.onEvent && self.onEvent(new __event.ICEConnectFail({webrtc: webrtc, event: error}));
+          // },
+      }, {iceServerConfig: jsonConfig,offerOptions});
+      webrtc.__setRemoteSDP = true;
+      console.log(webrtc);
+      webrtc.createRtcPeerConnection(jsonConfig);
+      return true;
     });
     rtcProxy.setRtcConfigure((callId,type,isCaller,localConfig) => {
         console.log("setRtcConfigure");
@@ -165,7 +147,6 @@ function EMCallManager(callManager) {
         {
           answertype = type;
         }
-        pc && pc.setConfiguration(JSON.parse(localConfig));
         let videowidth = self.getCallConfigs().getVideoResolutionWidth();
         let videoheight = self.getCallConfigs().getVideoResolutionHeight();
         if(isCaller)
@@ -177,25 +158,17 @@ function EMCallManager(callManager) {
           }
           function success(stream) {
             console.log("getUserMedia success");
-            stream.getTracks().forEach( (track) => {
-              console.log("addtrack");
-              pc && pc.addTrack(track,stream);
-            });
-            var offerOptions = {
-              offerToReceiveAudio: true,
-              offerToReceiveVideo: true
-            };
-            pc && pc.createOffer(offerOptions).then((sdpinit) => {
-              pc && pc.setLocalDescription(sdpinit).then(() => {
-                let sdp = {};
-                sdp["type"] = "offer";
-                sdp["sdp"] = sdpinit.sdp;
-                rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
-                console.log("setLocalDescription success");
-              }).catch((reason) => {
-                console.log("setLocalDescription fail:" + reason);
-              })
-             });
+            webrtc && webrtc.addTrack(stream.getTracks(),stream);
+            console.log("createOffer start");
+            webrtc.createOffer((localsdp) => {
+              let sdp = {};
+              sdp["type"] = "offer";
+              sdp["sdp"] = localsdp.sdp;
+              rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
+            },() => {
+              console.log("createofferError:");
+            })
+            console.log("123");
              localStream = stream;
              self._eventEmitter.emit("getLocalStream",localStream,type);
           }
@@ -214,12 +187,6 @@ function EMCallManager(callManager) {
             _manager.asyncEndCall(callId,4);
           }
         }
-
-        pc.onaddstream = function(e){
-          console.log("onaddstream");
-          remoteStream = e.stream;
-          self._eventEmitter.emit("getRemoteStream",remoteStream,type);
-        }
     });
     rtcProxy.setRtcRemoteJson((callId,json) => {
         console.log("setRtcRemoteJson");
@@ -229,48 +196,33 @@ function EMCallManager(callManager) {
         obj.type = obj.type.toLowerCase();
         if(obj.type == "candidate")
         {
-          let candidate = {};
-            candidate.candidate = obj["candidate"];
-            candidate.sdpMLineIndex = obj["mlineindex"];
-            candidate.sdpMid = obj["mid"];
-            pc && pc.addIceCandidate(candidate).then(() => {
-              console.log("AddIceCandidate success");
-            }).catch((reason) => {
-              console.log("AddIceCandidate fail:" + reason);
-            })
+          webrtc && webrtc.addIceCandidate(obj);
           if(!callIsCaller)
           {
             remoteCandidate.push(obj);
           }
           
         }else{
-          if(obj.type == "offer")
-            {
-              remoteObj = obj;
-              var videoSectionReplace = function (regx, use) {
-                var videoSectionIndex = remoteObj.sdp.indexOf("m=video");
-                var audioSectionIndex = remoteObj.sdp.indexOf("m=audio");
-                var end = audioSectionIndex > videoSectionIndex ? audioSectionIndex : remoteObj.sdp.length;
-    
-                remoteObj.sdp = remoteObj.sdp.replace(regx, function (match, offset, string) {
-                    if(offset >= videoSectionIndex && offset < end){
-                        return use;
-                    }else{
-                        return match;
-                    }
-                });
-            };
-    
-            answertype == 0 && videoSectionReplace(/a=sendrecv|a=sendonly/g, "a=inactive");
-              pc && pc.setRemoteDescription(remoteObj);
-              return;
-            }
-            pc && pc.setRemoteDescription(obj).then(() => {
-            console.log("setRemoteDescription success");
-            rtcListerner.onReceiveSetup("");
-          }).catch((reason) => {
-            console.log("setRemoteDescription fail:"+reason);
-          });
+              if(obj.type == "offer"){
+                if(answertype == 0){ //将remote sdp中 video中改为 a=mid:video -》 a=sendrecv|a=sendonly--recvonly
+                  var videoSectionReplace = function (regx, use) {
+                      var videoSectionIndex = obj.sdp.indexOf("m=video");
+                      var audioSectionIndex = obj.sdp.indexOf("m=audio");
+                      var end = audioSectionIndex > videoSectionIndex ? audioSectionIndex : obj.sdp.length;
+          
+                      obj.sdp = obj.sdp.replace(regx, function (match, offset, string) {
+                          if(offset >= videoSectionIndex && offset < end){
+                              return use;
+                          }else{
+                              return match;
+                          }
+                      });
+                  };
+          
+                  videoSectionReplace(/a=sendrecv|a=sendonly/g, "a=inactive");
+                }
+              }
+              webrtc && webrtc.setRemoteDescription(obj);
         }
         
       
@@ -289,22 +241,13 @@ function EMCallManager(callManager) {
     rtcProxy.endRtc((callId) => {
         console.log("endRtc");
         console.log("callId:" + callId);
-        pc && pc.close();
+        webrtc && webrtc.close(false,false,false);
         rtcListerner && rtcListerner.onReceiveClose("hangup");
-        //pc = null;
     });
     rtcProxy.getRtcReport(async (callId) => {
         console.log("getRtcReport");
         console.log("callId:" + callId);
         let statsOutput = "";
-        // await remoteStream && pc&& pc.getStats(remoteStream.getTracks()[0]).then(stats => {
-        //   console.log("stats");
-        //   stats.forEach(report => {
-        //     statsOutput += JSON.stringify(report);
-        //   });
-        //   console.log(statsOutput);
-        // });
-        
         return statsOutput;
     });
     rtcProxy.switchCamera((callId) => {
@@ -395,8 +338,8 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
   let _eventEmitter = this._eventEmitter;
   let videowidth = this.getCallConfigs().getVideoResolutionWidth();
   let videoheight = this.getCallConfigs().getVideoResolutionHeight();
-  pc && pc.setRemoteDescription(remoteObj).then(() => {
-    console.log("setRemoteDescription success");
+  // webrtc && webrtc.setRemoteDescription(remoteObj).then(() => {
+  //   console.log("setRemoteDescription success");
       //访问用户媒体设备
       function getUserMedia(constraints, success, fail) {
       //最新的标准API
@@ -404,44 +347,17 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
       }
       function success(stream) {
         console.log("getUserMedia success");
-        stream.getTracks().forEach( (track) => {
-          console.log("addtrack");
-          pc && pc.addTrack(track,stream);
+        webrtc && webrtc.addTrack(stream.getTracks(),stream);
+        webrtc && webrtc.createPRAnswer((sdp) => {
+          rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
+        },() => {
+          console.log("createPranswer fail");
         });
-        pc && pc.createAnswer().then((sdpinit) => {
-          answersdp = sdpinit.sdp;
-          sdpinit.sdp = sdpinit.sdp.replace(/a=recvonly/g, 'a=inactive');
-          pc && pc.setLocalDescription(sdpinit).then((val) => {
-            var sdpSection = new SDPSection(sdpinit.sdp);
-
-            sdpSection.updateHeaderMsidSemantic("MS_0000");
-            sdpSection.updateAudioSSRCSection(1000, "CHROME0000", "MS_0000", "LABEL_AUDIO_1000");
-            sdpSection.updateVideoSSRCSection(2000, "CHROME0000", "MS_0000", "LABEL_VIDEO_2000");
-
-            sdpinit.sdp = sdpSection.getUpdatedSDP();
-            let sdp = {};
-            sdp["type"] = "pranswer";
-            sdp["sdp"] = sdpinit.sdp;
-            console.log("localDescription:" + JSON.stringify(sdp));
-           rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
-         }).catch((e) => {
-           console.log("setLocalDescription fail:" + e);
-         })
-       })
         localStream = stream;
         _eventEmitter.emit("getLocalStream",localStream,answertype);
         remoteCandidate.forEach((obj) => {
-          let candidate = {};
-          candidate.candidate = obj["candidate"];
-          candidate.sdpMLineIndex = obj["mlineindex"];
-          candidate.sdpMid = obj["mid"];
-          console.log(JSON.stringify(candidate));
-          pc && pc.addIceCandidate(candidate).then(() => {
-            console.log("AddIceCandidate success");
-          }).catch((reason) => {
-            console.log("AddIceCandidate fail:" + reason);
-          })
-        })
+          webrtc && webrtc.addIceCandidate(obj)
+        });
         remoteCandidate = [];
       }
   
@@ -457,9 +373,9 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
         alert('不支持访问用户媒体');
         _manager.asyncEndCall(callId,4);
       }
-  }).catch((reason) => {
-    console.log("setRemoteDescription fail:"+reason);
-  });
+  // }).catch((reason) => {
+  //   console.log("setRemoteDescription fail:"+reason);
+  // });
 }
 
 /**
