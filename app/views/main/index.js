@@ -514,6 +514,8 @@ class MainView extends PureComponent {
 		res.data.map((item) => {
 			console.log(item);
 		})
+		var conversation = this.chatManager.conversationWithType(username, 0);
+		conversation.clearAllMessages();
 		setAllContacts({contacts:res.data});
 		deleteConversationAction(username);
 	}
