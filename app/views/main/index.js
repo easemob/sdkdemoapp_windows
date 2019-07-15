@@ -196,21 +196,6 @@ class MainView extends PureComponent {
 			});
 			this.contactListener.onContactDeleted((username) => {
 				me.onContactDeleted(username);
-				const {
-					selectMember,
-					memberOfSelect,
-					setAllContacts
-					} = this.props;
-				console.log("onContactDeleted username: " + username);
-				if(username == selectMember.easemobName)
-				{
-					memberOfSelect({});
-				}
-				var res = this.contactManager.allContacts();
-				res.data.map((item) => {
-					console.log(item);
-				})
-				setAllContacts({contacts:res.data});
 			});
 			this.contactListener.onContactInvited((username, reason) => {
 				if(gInvitedContacts.indexOf(username) > -1)
@@ -972,8 +957,6 @@ class MainView extends PureComponent {
 		if(!callsession.getIsCaller()){
 			this.callManager.sendAnswer(callsession.getCallId());
 		}
-		
-		this.callManager.sendAnswer(callsession.getCallId());
 	}
 	onRecvCallAccepted(callsession)
 	{
