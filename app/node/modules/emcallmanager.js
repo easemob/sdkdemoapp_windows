@@ -90,8 +90,12 @@ function EMCallManager(callManager) {
 
           onIceCandidate: function (candidate) { //event.candidate
               //self._onIceCandidate && candidate && self._onIceCandidate(webrtc, candidate);
-              console.log("onIceCandidate:" + candidate);
-              rtcListerner.onReceiveLocalCandidate(JSON.stringify(candidate));
+              let jsonCandidate = JSON.parse(JSON.stringify(candidate));
+              jsonCandidate['type'] = "candidate";
+              jsonCandidate['mid'] = jsonCandidate['sdpMid'];
+              jsonCandidate['mlineindex'] = jsonCandidate['sdpMLineIndex'];
+              console.log("onIceCandidate:" + JSON.stringify(jsonCandidate));
+              rtcListerner.onReceiveLocalCandidate(JSON.stringify(jsonCandidate));
           },
 
           onGotRemoteStream: function (remoteStream1) {
@@ -190,7 +194,7 @@ function EMCallManager(callManager) {
           {
             remoteCandidate.push(obj);
           }
-          
+          console.log()
         }else{
               if(obj.type == "offer"){
                 if(answertype == 0){ //将remote sdp中 video中改为 a=mid:video -》 a=sendrecv|a=sendonly--recvonly
