@@ -68,6 +68,7 @@ function EMCallManager(callManager) {
                       //self.onEvent(new __event.ICEConnected({webrtc: webrtc}));
                       webrtc.onEvent = null;
                       rtcListerner.onReceiveSetup("");
+                      rtcListerner.onReceiveNetworkConnected();
                       return;
                   }
                   if(state == 'closed'){
@@ -79,7 +80,7 @@ function EMCallManager(callManager) {
                   if(state == 'disconnected'){
                       //self.onEvent(new __event.ICEDisconnected({webrtc: webrtc}));
                       //webrtc.onEvent && webrtc.onEvent(new __event.ICEDisconnected({webrtc: webrtc}));
-
+                      rtcListerner.onReceiveNetworkDisconnected();
                       return;
                   }
               }finally {
@@ -370,6 +371,21 @@ EMCallManager.prototype.sendAnswer = function(callId){
   let _manager = this._manager;
     webrtc && webrtc.createAnswer((sdp) => {
       console.log("sendanswer");
+      rtcListerner.onReceiveSetup("");
+      let error = new EMError();  
+      _manager.asyncAnswerCall(callId,error._error);
+      rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
+    },() => {
+    });
+}
+
+/**
+ * 接收方发送Answer消息，在即onRecvCallConnected中调用
+ * @param {String} callId 呼叫方名称
+ */
+EMCallManager.prototype.sendAnswer = function(callId){
+  let _manager = this._manager;
+    webrtc && webrtc.createAnswer((sdp) => {
       rtcListerner.onReceiveSetup("");
       let error = new EMError();  
       _manager.asyncAnswerCall(callId,error._error);
