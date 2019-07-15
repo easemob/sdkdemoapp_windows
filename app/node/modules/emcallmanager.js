@@ -367,6 +367,18 @@ EMCallManager.prototype.asyncAnswerCall = function(callId)
   // });
 }
 
+EMCallManager.prototype.sendAnswer = function(callId){
+  let _manager = this._manager;
+    webrtc && webrtc.createAnswer((sdp) => {
+      console.log("sendanswer");
+      rtcListerner.onReceiveSetup("");
+      let error = new EMError();  
+      _manager.asyncAnswerCall(callId,error._error);
+      rtcListerner.onReceiveLocalSdp(JSON.stringify(sdp));
+    },() => {
+    });
+}
+
 /**
  * 接收方发送Answer消息，在即onRecvCallConnected中调用
  * @param {String} callId 呼叫方名称

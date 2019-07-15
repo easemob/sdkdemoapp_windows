@@ -973,6 +973,7 @@ class MainView extends PureComponent {
 			this.callManager.sendAnswer(callsession.getCallId());
 		}
 		
+		this.callManager.sendAnswer(callsession.getCallId());
 	}
 	onRecvCallAccepted(callsession)
 	{
