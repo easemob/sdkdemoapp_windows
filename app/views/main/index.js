@@ -192,17 +192,14 @@ class MainView extends PureComponent {
 			this.contactListener = new easemob.EMContactListener();
 			
 			this.contactListener.onContactAdded((username) => {
-				console.log("onContactAdded username: " + username);
-				var res = this.contactManager.allContacts();
-				res.data.map((item) => {
-					console.log(item);
-				})
-				setAllContacts({contacts:res.data});
+				me.onContactAdded(username);
 			});
 			this.contactListener.onContactDeleted((username) => {
+				me.onContactDeleted(username);
 				const {
 					selectMember,
-					memberOfSelect
+					memberOfSelect,
+					setAllContacts
 					} = this.props;
 				console.log("onContactDeleted username: " + username);
 				if(username == selectMember.easemobName)
@@ -507,6 +504,35 @@ class MainView extends PureComponent {
 
 		console.log("sendCmd");
 	}
+	onContactAdded(username){
+		const {setAllContacts} = this.props;
+		console.log("onContactAdded username: " + username);
+		var res = this.contactManager.allContacts();
+		res.data.map((item) => {
+			console.log(item);
+		})
+		setAllContacts({contacts:res.data});
+	}
+	onContactDeleted(username){
+		const {
+			selectMember,
+			memberOfSelect,
+			setAllContacts,
+			deleteConversationAction
+			} = this.props;
+		console.log("onContactDeleted username: " + username);
+		if(username == selectMember.easemobName)
+		{
+			memberOfSelect({});
+		}
+		var res = this.contactManager.allContacts();
+		res.data.map((item) => {
+			console.log(item);
+		})
+		setAllContacts({contacts:res.data});
+		deleteConversationAction(username);
+	}
+				
 	// 多设备联系人回调
 	onContactMultiDevicesEvent(operation, target, ext)
 	{
@@ -943,8 +969,10 @@ class MainView extends PureComponent {
 	{
 		console.log("onRecvCallConnected");
 		console.log(`${callsession.getCallId()}`);
-		this.callManager.sendAnswer(callsession.getCallId());
-		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 连接中...";
+		if(!callsession.getIsCaller()){
+			this.callManager.sendAnswer(callsession.getCallId());
+		}
+		
 	}
 	onRecvCallAccepted(callsession)
 	{
@@ -954,8 +982,6 @@ class MainView extends PureComponent {
 		console.log(callsession.getStatus());
 		callsession.getIsCaller() && video1v1.timeOut && clearTimeout(video1v1.timeOut);
 		setsession({callsession,startTime:new Date(),timeOut:undefined});
-		
-		//document.getElementById("callState").textContent = "与" + callsession.getRemoteName() + " 的" + (callsession.getType() == 0?"音频":"视频") + " 通话中...";
 	}
 	onRecvCallEnded(callsession,reason,error){
 		const {video1v1,endcall,selectConversationId,selectNav,receiveMsgAction,unReadMsgCountAction,userInfo,messages,setNotice} = this.props;

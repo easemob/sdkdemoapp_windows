@@ -1498,9 +1498,15 @@ mac桌面端Demo日志生成在/Users/{user}/Library/Application Support/{Proces
 #### 注册消息回调监听 ####
     function setCallManagerListener(callManager, listener) {
       // 收到会话请求
-      listener.onRecvCallIncoming((callsession) => {});
+      listener.onRecvCallIncoming((callsession) => {
+      // 在这里可以选择接通或者拒绝会话
+      });
       // 会话连接上
-      listener.onRecvCallConnected((callsession) => {});
+      listener.onRecvCallConnected((callsession) => {
+      // 会话连接上之后，如果是应答方，需要Answer信息
+        if(callsession.getIsCaller())
+          callManager.sendAnswer(callsession.getCallId());
+      });
       // 会话已接通
       listener.onRecvCallAccepted((callsession) => {});
       // 会话挂断
@@ -1523,20 +1529,24 @@ mac桌面端Demo日志生成在/Users/{user}/Library/Application Support/{Proces
      * 发起音视频会话asyncMakeCall
      * @param remoteName Srign，对方用户ID，输入参数
      * @param type Number，会话类型，0为音频，1为视频，输入参数
-     * @param ext String，会话扩展信息
+     * @param ext String，会话扩展信息，应答方可见
      * return CallSessionResult
      */
 	let result = callManager.asyncMakeCall(remoteName,type,ext);
 #### 接听音视频会话 ####
 接听会话方法一般在收到onRecvCallIncoming后调用，方法如下
+
     /** 
      * 接听音视频会话asyncAnswerCall
      * @param callId,String，呼叫方ID，输入参数
      */
 	callManager.asyncAnswerCall(callId);
 callId可以通过callsession的getCallId()方法获取。
+#### 发送Answer消息 ####
+发送Answer消息由接听方在会话连接上之后调用，即onRecvCallConnected中调用，方法如下
 #### 挂断音视频会话 ####
-用户可以在收到会话请求时，直接挂断会话，
+用户可以在收到会话请求时，直接挂断会话，也可以在通话过程中挂断，调用挂断电话API时，需要传入挂断原因
+
     /** 
      * 接听音视频会话asyncAnswerCall
      * @param callId,String，呼叫方ID，输入参数
@@ -1552,26 +1562,39 @@ callId可以通过callsession的getCallId()方法获取。
      */
     callManager.updateCal(callId,controlType);
 #### 音视频配置 ####
-
 获取配置
 
     let emcallconfigs = callManager.getCallConfigs();
+    // 呼叫时，若对方不在线，是否发送离线通知
     console.log("IsSendPushIfOffline:" + emcallconfigs.getIsSendPushIfOffline());
+    // 视频宽度
     console.log("VideoResolutionWidth:" + emcallconfigs.getVideoResolutionWidth());
+    // 视频高度
     console.log("VideoResolutionHeight:" + emcallconfigs.getVideoResolutionHeight());
-    console.log("VideoKbps:" + emcallconfigs.getVideoKbps());
+    // 音视频心跳周期
     console.log("PingInterval:" + emcallconfigs.getPingInterval());
-    console.log("AudioKbps:" + emcallconfigs.getAudioKbps());
-    console.log("EnableCustomizeVideoData:" + emcallconfigs.getEnableCustomizeVideoData());
 
 设置配置
 
+    // 呼叫时，若对方不在线，是否发送离线通知
     emcallconfigs.setIsSendPushIfOffline(true);
+    // 视频宽度，高度
     emcallconfigs.setVideoResolution(640,480);
-    emcallconfigs.setVideoKbps（128);
+    // 音视频心跳周期
     emcallconfigs.setPingInterval(60);
-    emcallconfigs.setAudioKbps(132);
     callManager.setCallConfigs(emcallconfigs);
+#### 发送离线通知 ####
+设置了若呼叫时，对方处于离线状态，执行的回调。当配置中设置了setIsSendPushIfOffline(true)，该API可以应用。应用方法如下：
+
+    // 传入回调函数，回调函数的三个参数分别为本地发送方ID，对方ID，呼叫类型(0语音，1视频)
+    callManager.setSendPushMessage((from,to,type) => {
+	  let textMsgBody = new easemob.EMTextMessageBody(type == 0?"语音请求":"视频请求");
+      let textMsg = easemob.createSendMessage(from, to, textMsgBody);
+      let callback = new easemob.EMCallback();
+      
+      textMsg.setCallback(callback)
+      emclient.getChatManager().sendMessage(textMsg);
+    })
 #### 会话控制接口 ####
 音视频会话控制模块为EMCallSesssion，呼叫方通过asyncMakeCall返回，接听方通过监听回调的onRecvCallIncoming获取到。通过会话控制模块可以获取到以下会话信息
     // 获取CallId
