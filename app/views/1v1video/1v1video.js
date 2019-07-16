@@ -122,7 +122,7 @@ class Video1v1View extends PureComponent {
     }
 	changeLocation(){
 		const {video1v1} = this.props;
-		if(video1v1.callsession && video1v1.localStream && video1v1.remoteStream && video1v1.callsession.getType() == 1)
+		if(video1v1.callsession && video1v1.localStream && video1v1.remoteStream && video1v1.callsession.getType() == 1 && !(video1v1.pause || video1v1.remotepause))
 		{
 			let tmpStream = this.videocontrol.srcObject;
 			this.videocontrol.srcObject = this.remotevideocontrol.srcObject;
