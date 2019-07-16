@@ -1098,18 +1098,22 @@ class MainView extends PureComponent {
 	}
 
 	onRecvCallStateChanged(callsession,type){
-		const {setNotice} = this.props;
+		const {setNotice,setsession} = this.props;
 		console.log("onRecvCallStateChanged");
 		console.log(`${callsession.getCallId()}`);
 		console.log(`type:${type}`);
 		if(type == 0){
 			setNotice("对方音频暂停");
+			setsession({remotepause:false});
 		}else if(type == 1){
 			setNotice("对方音频恢复");
+			setsession({remotepause:false});
 		}else if(type == 2){
 			setNotice("对方视频暂停");
+			setsession({remotepause:true});
 		}else if(type == 3){
 			setNotice("对方视频恢复")
+			setsession({remotepause:false});
 		}
 	}
 
