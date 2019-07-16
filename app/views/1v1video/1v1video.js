@@ -124,10 +124,9 @@ class Video1v1View extends PureComponent {
 		const {video1v1} = this.props;
 		if(video1v1.callsession && video1v1.localStream && video1v1.remoteStream && video1v1.callsession.getType() == 1)
 		{
-			let localVideoCss = this.videocontrol.className;
-			let remoteVideoCss = this.remotevideocontrol.className;
-			this.remotevideocontrol.className = localVideoCss;
-			this.videocontrol.className = remoteVideoCss;
+			let tmpStream = this.videocontrol.srcObject;
+			this.videocontrol.srcObject = this.remotevideocontrol.srcObject;
+			this.remotevideocontrol.srcObject = tmpStream;
 		}
     }
 	isStartCall(){
@@ -149,10 +148,10 @@ class Video1v1View extends PureComponent {
 		return (
 			<div id="videoandaudio" className='videoandaudio'>
 			{
-				<video id="localVideo" className='videoandaudio-localvideo' muted={true} autoPlay={true} controls={false}></video>
+				<video id="localVideo" onClick={this.changeLocation} className='videoandaudio-localvideo' muted={true} autoPlay={true} controls={false}></video>
 			}
 			{
-				<video id="remoteVideo" onPlaying={this.videoPlaying} className='videoandaudio-remotevideo' autoPlay={true} controls={false}></video>
+				<video id="remoteVideo" onClick={this.changeLocation} onPlaying={this.videoPlaying} className='videoandaudio-remotevideo' autoPlay={true} controls={false}></video>
 			}
             {this.showUserInfo()}
 			{this.showAnswerControl()}
