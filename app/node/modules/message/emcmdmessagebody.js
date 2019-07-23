@@ -12,7 +12,12 @@ const easemobNode = require('./../../load');
  * @param {String} action
  */
 function EMCmdMessageBody(action) {
-  this._body = new easemobNode.EMCmdMessageBody(action);
+  if(typeof action == "object"){
+    this._body = action;
+  }else{
+    this._body = new easemobNode.EMCmdMessageBody(action);
+  }
+  
 }
 
 /**
