@@ -76,6 +76,9 @@ class MainView extends PureComponent {
 
 			console.log(`listern：${this.connectListener}`);
 			this.connectListener = new easemob.EMConnectionListener();
+			this.connectListener.onConnect(() => {
+				networkConnectAction();
+			})
 			this.connectListener.onDisconnect((error) => {
 				console.log("EMConnectionListener onDisconnect");
 				console.log(error.errorCode);
@@ -99,6 +102,7 @@ class MainView extends PureComponent {
 					});
 				}
 				else{
+					networkConnectAction("连接已断开");
 					// 尝试发一条 cmd 消息，看看网络有没有真的断掉
 					me.sendTempCmd();
 				}
@@ -126,6 +130,15 @@ class MainView extends PureComponent {
 
 			this.listener.onReceiveCmdMessages ((messages) => {
 				console.log("\n\n EMChatManagerListener onReceiveCmdMessages ----- !");
+				messages.forEach((msg) => {
+					let body = msg.bodies()[0];
+					console.log(msg,body);
+					console.log("action:" + body.action());
+					console.log("params:" + body.params().forEach((param) => {
+						console.log(JSON.stringify(param))
+					}));
+				})
+				
 			});
 
 			// 收到消息撤回
@@ -457,19 +470,6 @@ class MainView extends PureComponent {
 			return false;
 		}
 	});
-
-			const updateOnlineStatus = () => {
-				if(navigator.onLine){
-					// 尝试发一条 cmd 消息，看看网络有没有真的断掉
-					this.sendTempCmd();
-					networkConnectAction();
-				}
-				else{
-					networkConnectAction("连接已断开");
-				}
-			};
-			window.addEventListener("online",  updateOnlineStatus);
-			window.addEventListener("offline",  updateOnlineStatus);
 		}
 		else{
 			this.props.history.push("/index");
