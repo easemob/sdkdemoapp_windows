@@ -1,6 +1,7 @@
 'use strict';
 
 const EMChatroom = require('./emchatroom');
+const EMError = require('./EMError')
 const {EMCursorResult, EMPageResult, EMStringCursorResult} = require('./emcursorresult');
 const async = require('async');
 
@@ -57,7 +58,8 @@ EMChatroomManager.prototype.chatroomWithId = function (chatroomId) {
  * @return {Array} EMChatroom array.
  */
 EMChatroomManager.prototype.fetchAllChatrooms = function () {
-  var result = this._manager.fetchAllChatrooms();
+  var error = new EMError();
+  var result = this._manager.fetchAllChatrooms(error._error);
   var list = new Array(result.length);
   for (var i = 0; i < result.length; i++) {
     list[i] = new EMChatroom(result[i]);
@@ -208,7 +210,7 @@ EMChatroomManager.prototype.fetchChatroomsWithCursor = function (cursor, pageSiz
   var _manager = this._manager;
   async function f(){
     try{
-      let error = new Error();
+      let error = new EMError();
       let cursor = new EMCursorResult(_manager.fetchChatroomsWithCursor(cursor, pageSize, error._error), 1);
       return {
         code:error.errorCode,
@@ -233,7 +235,7 @@ EMChatroomManager.prototype.fetchChatroomsWithPage = function (pageNum, pageSize
   var _manager = this._manager;
   async function f(){
     try{
-      let error = new Error();
+      let error = new EMError();
       let cursor = new EMPageResult(_manager.fetchChatroomsWithPage(pageNum, pageSize, error._error), 1);
       return {
         code:error.errorCode,
@@ -257,7 +259,7 @@ EMChatroomManager.prototype.joinedChatroomById = function (chatroomId) {
   var _manager = this._manager;
   async function f(){
     try{
-      let error = new Error();
+      let error = new EMError();
       let chatroom = new EMChatroom(_manager.joinedChatroomById(chatroomId));
       return {
         code:error.errorCode,
@@ -282,7 +284,7 @@ EMChatroomManager.prototype.joinedChatroomById = function (chatroomId) {
  * @return {Array} object list. The list of mute users. object like { "key" : name, "value" : 111 }.
  */
 EMChatroomManager.prototype.fetchChatroomMutes = function (chatroomId, pageNum, pageSize) {
-  let error = new Error();
+  let error = new EMError();
   let chatroom = this._manager.fetchChatroomMutes(chatroomId, pageNum, pageSize, error._error);
   return {
     code:error.errorCode,
@@ -301,7 +303,7 @@ EMChatroomManager.prototype.fetchChatroomMutes = function (chatroomId, pageNum, 
  * @return {EMChatroom}
  */
 EMChatroomManager.prototype.fetchChatroomBans = function (chatroomId, pageNum, pageSize) {
-  let error = new Error();
+  let error = new EMError();
   let chatroom = this._manager.fetchChatroomBans(chatroomId, pageNum, pageSize, error._error);
   return {
     code:error.errorCode,
@@ -316,7 +318,7 @@ EMChatroomManager.prototype.fetchChatroomBans = function (chatroomId, pageNum, p
  * @return {EMChatroom}
  */
 EMChatroomManager.prototype.fetchChatroomAnnouncement = function (chatroomId) {
-  let error = new Error();
+  let error = new EMError();
   let chatroom =  this._manager.fetchChatroomAnnouncement(chatroomId, error._error);
   return {
     code:error.errorCode,
