@@ -1,7 +1,7 @@
 'use strict';
 
 const EMChatroom = require('./emchatroom');
-const EMError = require('./EMError')
+const EMError = require('./emerror')
 const {EMCursorResult, EMPageResult, EMStringCursorResult} = require('./emcursorresult');
 const async = require('async');
 
