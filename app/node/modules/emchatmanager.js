@@ -207,7 +207,8 @@ EMChatManager.prototype.fetchHistoryMessages = function (conversationId, type, p
       return {
         code:error.errorCode,
         description:error.description,
-        data:cursorresult.result()
+        data:cursorresult.result(),
+        nextcursor:cursorresult.nextPageCursor()
       };
     }catch(err)
     {
