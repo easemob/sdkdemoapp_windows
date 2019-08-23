@@ -215,7 +215,8 @@ EMChatroomManager.prototype.fetchChatroomsWithCursor = function (cursor, pageSiz
       return {
         code:error.errorCode,
         description:error.description,
-        data:cursor.result()
+        data:cursor.result(),
+        nextcursor:cursor.nextPageCursor()
       }
     }catch(err)
     {

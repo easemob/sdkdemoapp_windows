@@ -494,7 +494,8 @@ EMGroupManager.prototype.fetchGroupMembers = function (groupId, cursor, pageSize
       return {
         code:error.errorCode,
         description:error.description,
-        data:memberlist.result()
+        data:memberlist.result(),
+        nextcursor:memberlist.nextPageCursor()
       };
     }catch(err)
     {
@@ -522,7 +523,8 @@ EMGroupManager.prototype.fetchGroupBans = function (groupId, pageNum, pageSize) 
       return {
         code:error.errorCode,
         description:error.description,
-        data:grouplist.result()
+        data:grouplist.result(),
+        nextcursor:grouplist.nextPageCursor()
       };
     }catch(err)
     {
