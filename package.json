@@ -92,7 +92,7 @@
     "mocha": "^3.2.0",
     "node-addon-loader": "0.0.6",
     "node-loader": "^0.6.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "^4.13.1",
     "postcss-loader": "^2.0.6",
     "react-addons-test-utils": "^15.4.1",
     "redux-logger": "^2.7.4",
