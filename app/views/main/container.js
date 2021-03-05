@@ -9,7 +9,6 @@ import GroupsView from "../chats/groups";
 import {Icon} from "antd"
 import { ipcRenderer } from "electron";
 import { setsession } from "../../stores/actions";
-import Video1v1View from "../1v1video/1v1video"
 
 const mainViews = [
 	{ path: ROUTES.chats.recents.__, view: ConversationListView },
@@ -55,7 +54,6 @@ class Container extends Component {
 	render(){
 		return (
 			<div className="app-main-container dock">
-			<Video1v1View/>
 			<Switch>
 				{
 					mainViews.map((item) => {
@@ -77,7 +75,6 @@ class Container extends Component {
 const mapStateToProps = state => ({
 	userInfo: state.userInfo,
 	globals: state.globals,
-	messages: state.messages,
-	video1v1: state.video1v1
+	messages: state.messages
 });
 export default withRouter(connect(mapStateToProps, actionCreators)(Container));
