@@ -19,7 +19,7 @@ const fs = require("fs")
  * @param {Object} chatConfigs EMChatConfigs
  */
 function EMClient(chatConfigs,autoLogin) {
-  chatConfigs.setSdkVersion("3.6.0");
+  chatConfigs.setSdkVersion("3.8.0");
   console.log(process.platform);
   chatConfigs.setOs(4);
   chatConfigs.setClientResource("desktop");
