@@ -1,0 +1,14 @@
+{
+	"name": "DesktopDemo",
+	"productName": "IM-SDK桌面端Demo",
+	"version": "3.8.0",
+	"description": "IM-SDK桌面端Demo",
+	"main": "./main.js",
+	"author": "",
+	"company": "北京易掌云峰科技有限公司",
+	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/easemob/sdkdemoapp_windows.git"
+	}
+}

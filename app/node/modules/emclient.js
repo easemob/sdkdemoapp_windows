@@ -7,7 +7,6 @@ const EMContactManager = require('./emcontactmanager');
 const EMChatManager = require('./emchatmanager');
 const EMGroupManager = require('./emgroupmanager');
 const EMChatroomManager = require('./emchatroommanager');
-const EMCallManager = require('./emcallmanager');
 const async = require('async');
 const fs = require("fs")
 /**
@@ -20,7 +19,7 @@ const fs = require("fs")
  * @param {Object} chatConfigs EMChatConfigs
  */
 function EMClient(chatConfigs,autoLogin) {
-  chatConfigs.setSdkVersion("3.6.0");
+  chatConfigs.setSdkVersion("3.8.0");
   console.log(process.platform);
   chatConfigs.setOs(4);
   chatConfigs.setClientResource("desktop");
@@ -234,14 +233,6 @@ EMClient.prototype.getGroupManager = function () {
  */
 EMClient.prototype.getChatroomManager = function () {
   return new EMChatroomManager(this._emclient.getChatroomManager());
-};
-
-/**
- * Get call manager to manage the chatroom.
- * @return {EMCallManager} 返回聊天室管理对象
- */
-EMClient.prototype.getCallManager = function () {
-  return new EMCallManager(this._emclient.getCallManager());
 };
 
 /**

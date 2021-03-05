@@ -611,20 +611,6 @@ export const publicGroup = (state = [], { type, payload, meta }) => {
 		return state;
 	}
 };
-export const video1v1 = (state = [],{type, payload}) => {
-	switch(type){
-		case "app/logout":
-			return {};
-		case "app/endcall":
-			return {localvideocontrol:state.localvideocontrol,remotevideocontrol:state.remotevideocontrol};
-		case "app/setsession":
-			return _.extend({},state,payload);
-		case "app/addvideocontrol":
-			return _.extend({},state,payload);
-		default:
-			return state;
-	}
-}
 
 export default combineReducers({
 	globals,
@@ -654,6 +640,5 @@ export default combineReducers({
 	allContacts,
 	allGroupChats,
 	isSelectCovGroup,
-	publicGroup,
-	video1v1
+	publicGroup
 });

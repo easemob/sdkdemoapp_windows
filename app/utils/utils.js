@@ -17,7 +17,7 @@ const utils = {
 				"user":{
 					"id":1,
 					"os":"PC",
-					"appkey":"easemob-demo#chatdemoui",
+					"appkey":"easemob-demo#easeim",
 					"tenantId":9,
 					"image":""
 				}
