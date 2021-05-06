@@ -140,7 +140,7 @@
     "redux-thunk": "^2.3.0",
     "remove-markdown": "^0.2.2",
     "source-map-support": "^0.4.8",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "uuid": "^3.1.0",
     "wine": "^0.9.8",
     "wolfy87-eventemitter": "^5.2.6",
