@@ -2,6 +2,7 @@
 
 var easemobNode = require('./load');
 const EMCmdMessageBody = require('./modules/message/emcmdmessagebody');
+const EMCustomMessageBody = require('./modules/message/emcustommessagebody');
 const EMFileMessageBody = require('./modules/message/emfilemessagebody');
 const {EMImageSize, EMImageMessageBody} = require('./modules/message/emimagemessagebody');
 const EMLocationMessageBody = require('./modules/message/emlocationmessagebody');
@@ -57,6 +58,7 @@ module.exports = {
   EMVideoSize: EMVideoSize,
   EMVideoMessageBody: EMVideoMessageBody,
   EMVoiceMessageBody: EMVoiceMessageBody,
+  EMCustomMessageBody: EMCustomMessageBody,
   EMMessage: EMMessage,
   EMCallback: EMCallback,
   EMChatConfig: EMChatConfig,

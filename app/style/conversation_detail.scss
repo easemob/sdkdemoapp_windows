@@ -223,6 +223,22 @@
 				}
 			}
 		}
+		.idCard{
+			border: 1px solid #ccc;
+			height: 60px;
+			width: 180px;
+			display: flex;
+			align-items: center;
+			cursor: pointer;
+	
+			div:nth-child(1){
+				width: 40px;
+				height: 40px;
+				background: #ccc;
+				margin: 0 5px;
+				border-radius: 20px;
+			}
+		}
 		.search-file-direction{
 			cursor: pointer;
 			margin: 0 5px;

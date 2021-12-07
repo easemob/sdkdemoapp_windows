@@ -110,6 +110,14 @@ const msgParse = (msgBody, userInfo) => {
 			remotePath: msg.remotePath(),
 			downloadStatus: msg.downloadStatus(), // 0:正在下载， 1:下载成功， 2:下载失败， 3:状态未知。
 		};
+	case 7:
+		return {
+			type:"CUSTOM",
+			exts:msg.exts(),
+			event:msg.event(),
+			shortVal: "[自定义消息]",
+			displayName: "自定义消息",
+		};
 	default:
 		return {
 			type: "OTHER",

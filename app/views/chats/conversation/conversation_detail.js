@@ -7,6 +7,7 @@ import { msgParse } from "@/utils/msg_parse";
 import ImgPreview from "./img_preview";
 import HeadImageView from "@/views/common/head_image";
 import FileView from "./file_view";
+import UserCardView from './userCard_view'
 import LocationView from "./location_view";
 import moment from "moment";
 import { downLoadFile } from "@/utils/local_remote_file";
@@ -160,6 +161,8 @@ class ConversationDetailView extends Component {
 			// return <AudioView { ...msg } />;
 		case "LOCATION":
 			return <div>[收到位置消息，请在手机上查看]</div>;
+		case "CUSTOM":
+			return <UserCardView msg={ msg } item={ item } { ...this.props } />;
 		default:
 			return msg.value;
 		}

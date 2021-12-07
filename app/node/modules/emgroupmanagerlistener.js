@@ -25,23 +25,23 @@ function EMGroupManagerListener(manager) {
   self._listener.onReceiveInviteFromGroup = function (groupId, inviter, inviteMessage) {
     self._eventEmitter.emit('onReceiveInviteFromGroup', groupId, inviter, inviteMessage);
   };
-  self._listener.onReceiveInviteAcceptionFromGroup = function (group, invitee) {
-    self._eventEmitter.emit('onReceiveInviteAcceptionFromGroup', group, invitee);
+  self._listener.onReceiveInviteAcceptionFromGroup = function (groupId, invitee) {
+    self._eventEmitter.emit('onReceiveInviteAcceptionFromGroup', groupId, invitee);
   };
-  self._listener.onReceiveInviteDeclineFromGroup = function (group, invitee, reason) {
-    self._eventEmitter.emit('onReceiveInviteDeclineFromGroup', group, invitee, reason);
+  self._listener.onReceiveInviteDeclineFromGroup = function (groupId, invitee, reason) {
+    self._eventEmitter.emit('onReceiveInviteDeclineFromGroup', groupId, invitee, reason);
   };
-  self._listener.onAutoAcceptInvitationFromGroup = function (group, inviter, inviteMessage) {
-    self._eventEmitter.emit('onAutoAcceptInvitationFromGroup', group, inviter, inviteMessage);
+  self._listener.onAutoAcceptInvitationFromGroup = function (groupId, inviter, inviteMessage) {
+    self._eventEmitter.emit('onAutoAcceptInvitationFromGroup', groupId, inviter, inviteMessage);
   };
-  self._listener.onLeaveGroup = function (group, reason) {
-    self._eventEmitter.emit('onLeaveGroup', group, reason);
+  self._listener.onLeaveGroup = function (groupId, reason) {
+    self._eventEmitter.emit('onLeaveGroup', groupId, reason);
   };
-  self._listener.onReceiveJoinGroupApplication = function (group, from, message) {
-    self._eventEmitter.emit('onReceiveJoinGroupApplication', group, from, message);
+  self._listener.onReceiveJoinGroupApplication = function (groupId, from, message) {
+    self._eventEmitter.emit('onReceiveJoinGroupApplication', groupId, from, message);
   };
-  self._listener.onReceiveAcceptionFromGroup = function (group) {
-    self._eventEmitter.emit('onReceiveAcceptionFromGroup', group);
+  self._listener.onReceiveAcceptionFromGroup = function (groupId) {
+    self._eventEmitter.emit('onReceiveAcceptionFromGroup', groupId);
   };
   self._listener.onReceiveRejectionFromGroup = function (groupId, reason) {
     self._eventEmitter.emit('onReceiveRejectionFromGroup', groupId, reason);
@@ -53,35 +53,35 @@ function EMGroupManagerListener(manager) {
     }
     self._eventEmitter.emit('onUpdateMyGroupList', groupList);
   };
-  self._listener.onAddMutesFromGroup = function (group, mutes, muteExpire) {
-    self._eventEmitter.emit('onAddMutesFromGroup', group, mutes, muteExpire);
+  self._listener.onAddMutesFromGroup = function (groupId, mutes, muteExpire) {
+    self._eventEmitter.emit('onAddMutesFromGroup', groupId, mutes, muteExpire);
   };
-  self._listener.onRemoveMutesFromGroup = function (group, mutes) {
-    self._eventEmitter.emit('onRemoveMutesFromGroup', group, mutes);
+  self._listener.onRemoveMutesFromGroup = function (groupId, mutes) {
+    self._eventEmitter.emit('onRemoveMutesFromGroup', groupId, mutes);
   };
-  self._listener.onAddAdminFromGroup = function (group, admin) {
-    self._eventEmitter.emit('onAddAdminFromGroup', group, admin);
+  self._listener.onAddAdminFromGroup = function (groupId, admin) {
+    self._eventEmitter.emit('onAddAdminFromGroup', groupId, admin);
   };
-  self._listener.onRemoveAdminFromGroup = function (group, admin) {
-    self._eventEmitter.emit('onRemoveAdminFromGroup', group, admin);
+  self._listener.onRemoveAdminFromGroup = function (groupId, admin) {
+    self._eventEmitter.emit('onRemoveAdminFromGroup', groupId, admin);
   };
-  self._listener.onAssignOwnerFromGroup = function (group, newOwner, oldOwner) {
-    self._eventEmitter.emit('onAssignOwnerFromGroup', group, newOwner, oldOwner);
+  self._listener.onAssignOwnerFromGroup = function (groupId, newOwner, oldOwner) {
+    self._eventEmitter.emit('onAssignOwnerFromGroup', groupId, newOwner, oldOwner);
   };
-  self._listener.onMemberJoinedGroup = function (group, member) {
-    self._eventEmitter.emit('onMemberJoinedGroup', group, member);
+  self._listener.onMemberJoinedGroup = function (groupId, member) {
+    self._eventEmitter.emit('onMemberJoinedGroup', groupId, member);
   };
-  self._listener.onMemberLeftGroup = function (group, member) {
-    self._eventEmitter.emit('onMemberLeftGroup', group, member);
+  self._listener.onMemberLeftGroup = function (groupId, member) {
+    self._eventEmitter.emit('onMemberLeftGroup', groupId, member);
   };
-  self._listener.onUpdateAnnouncementFromGroup = function (group, announcement) {
-    self._eventEmitter.emit('onUpdateAnnouncementFromGroup', group, announcement);
+  self._listener.onUpdateAnnouncementFromGroup = function (groupId, announcement) {
+    self._eventEmitter.emit('onUpdateAnnouncementFromGroup', groupId, announcement);
   };
-  self._listener.onUploadSharedFileFromGroup = function (group, sharedFile) {
-    self._eventEmitter.emit('onUploadSharedFileFromGroup', group, sharedFile);
+  self._listener.onUploadSharedFileFromGroup = function (groupId, sharedFile) {
+    self._eventEmitter.emit('onUploadSharedFileFromGroup', groupId, sharedFile);
   };
-  self._listener.onDeleteSharedFileFromGroup = function (group, fileId) {
-    self._eventEmitter.emit('onDeleteSharedFileFromGroup', group, fileId);
+  self._listener.onDeleteSharedFileFromGroup = function (groupId, fileId) {
+    self._eventEmitter.emit('onDeleteSharedFileFromGroup', groupId, fileId);
   };
 }
 
@@ -114,7 +114,7 @@ EMGroupManagerListener.prototype.onReceiveInviteAcceptionFromGroup = function (c
 
 /**
  * @function EMGroupManagerListener~onReceiveInviteAcceptionFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} invitee
  * @return {void}
  */
@@ -130,7 +130,7 @@ EMGroupManagerListener.prototype.onReceiveInviteDeclineFromGroup = function (cal
 
 /**
  * @function EMGroupManagerListener~onReceiveInviteDeclineFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} invitee
  * @param {String} reason
  * @return {void}
@@ -148,7 +148,7 @@ EMGroupManagerListener.prototype.onAutoAcceptInvitationFromGroup = function (cal
 
 /**
  * @function EMGroupManagerListener~onAutoAcceptInvitationFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} invitee
  * @param {String} inviteMessage
  * @return {void}
@@ -165,7 +165,7 @@ EMGroupManagerListener.prototype.onLeaveGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onLeaveGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} reason
  * @return {void}
  */
@@ -181,7 +181,7 @@ EMGroupManagerListener.prototype.onReceiveJoinGroupApplication = function (callb
 
 /**
  * @function EMGroupManagerListener~onReceiveJoinGroupApplicationCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} from
  * @param {String} message
  * @return {void}
@@ -198,7 +198,7 @@ EMGroupManagerListener.prototype.onReceiveAcceptionFromGroup = function (callbac
 
 /**
  * @function EMGroupManagerListener~onReceiveAcceptionFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @return {void}
  */
 
@@ -244,7 +244,7 @@ EMGroupManagerListener.prototype.onAddMutesFromGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onAddMutesFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {Array} mutes. String mute array.
  * @param {Number} muteExpire
  * @return {void}
@@ -261,7 +261,7 @@ EMGroupManagerListener.prototype.onRemoveMutesFromGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onRemoveMutesFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {Array} mutes. String mute array.
  * @return {void}
  */
@@ -277,7 +277,7 @@ EMGroupManagerListener.prototype.onAddAdminFromGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onAddAdminFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} admin
  * @return {void}
  */
@@ -293,7 +293,7 @@ EMGroupManagerListener.prototype.onRemoveAdminFromGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onRemoveAdminFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} admin
  * @return {void}
  */
@@ -309,7 +309,7 @@ EMGroupManagerListener.prototype.onAssignOwnerFromGroup= function (callback) {
 
 /**
  * @function EMGroupManagerListener~onAssignOwnerFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} newOwner
  * @param {String} oldOwner
  * @return {void}
@@ -326,7 +326,7 @@ EMGroupManagerListener.prototype.onMemberJoinedGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onMemberJoinedGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} Owner
  * @return {void}
  */
@@ -342,7 +342,7 @@ EMGroupManagerListener.prototype.onMemberLeftGroup = function (callback) {
 
 /**
  * @function EMGroupManagerListener~onMemberLeftGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} Owner
  * @return {void}
  */
@@ -358,7 +358,7 @@ EMGroupManagerListener.prototype.onUpdateAnnouncementFromGroup = function (callb
 
 /**
  * @function EMGroupManagerListener~onUpdateAnnouncementFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} announcement
  * @return {void}
  */
@@ -374,7 +374,7 @@ EMGroupManagerListener.prototype.onUploadSharedFileFromGroup = function (callbac
 
 /**
  * @function EMGroupManagerListener~onUploadSharedFileFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {EMMucSharedFile} sharedFile
  * @return {void}
  */
@@ -390,7 +390,7 @@ EMGroupManagerListener.prototype.onDeleteSharedFileFromGroup = function (callbac
 
 /**
  * @function EMGroupManagerListener~onDeleteSharedFileFromGroupCallback
- * @param {EMGroup} group
+ * @param {String} groupId
  * @param {String} fileId
  * @return {void}
  */

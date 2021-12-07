@@ -7,6 +7,7 @@ const EMLocationMessageBody = require('./emlocationmessagebody');
 const EMVoiceMessageBody = require('./emvoicemessagebody');
 const EMFileMessageBody = require('./emfilemessagebody');
 const EMCmdMessageBody = require('./emcmdmessagebody');
+const EMCustomMessageBody = require('./emcustommessagebody');
 
 /**
  * Easemob EMMessage implementation.
@@ -331,6 +332,9 @@ EMMessage.prototype.bodies = function () {
         break;
       case 6:   //COMMAND
         messageBodys[i] = new EMCmdMessageBody(bodies[i]);
+        break;
+      case 7:
+        messageBodys[i] = new EMCustomMessageBody(bodies[i]);
         break;
       default:
     }
