@@ -160,7 +160,7 @@ class AppRemote {
 		if(flash){
 			if(!this._flashTrayIconTask){
 				this._flashTrayIconTask = setInterval(() => {
-					this.tray.setImage(this._trayIcons[(this._trayIconCounter++) % 2]);
+					this.tray && this.tray.setImage(this._trayIcons[(this._trayIconCounter++) % 2]);
 				}, 400);
 			}
 		}
@@ -169,7 +169,7 @@ class AppRemote {
 				clearInterval(this._flashTrayIconTask);
 				this._flashTrayIconTask = null;
 			}
-			this.tray.setImage(this._trayIcons[0]);
+			this.tray && this.tray.setImage(this._trayIcons[0]);
 		}
 	}
 
