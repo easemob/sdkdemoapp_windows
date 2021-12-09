@@ -26,6 +26,7 @@ class ChatSendBoxView extends PureComponent {
 		this.uploadPictureData = this.uploadPictureData.bind(this);
 		this.uploadAttachmentData = this.uploadAttachmentData.bind(this);
 		this.uploadVideoData = this.uploadVideoData.bind(this);
+		this.clickCard = this.clickCard.bind(this);
 
 		this.handleScreenShot = this.handleScreenShot.bind(this);
 		this.handlePaste = this.handlePaste.bind(this);
@@ -327,6 +328,14 @@ class ChatSendBoxView extends PureComponent {
 		this.input.focus();
 	}
 
+	// 发送名片
+	clickCard(e) {
+		const { globals,userInfo } = this.props;
+		let cardMsgBody = new globals.easemob.EMCustomMessageBody("userCard")
+		cardMsgBody.setExts({'avatar':'https://download-sdk.oss-cn-beijing.aliyuncs.com/downloads/IMDemo/avatar/Image1.png','nickname':'测试昵称','uid':userInfo && userInfo.user.easemobName})
+		this.sendMsg(cardMsgBody)
+	}
+
 	// 选择图片
 	uploadPictureData(data){
 		const { globals } = this.props;
@@ -380,6 +389,7 @@ class ChatSendBoxView extends PureComponent {
 					{/* 上传文件 */}
 					<div title="文件"><Upload { ...uploadProps } data={ this.uploadAttachmentData }><Icon type="file" /></Upload></div>
 					{/* 上传视频 */}
+		            <div title="名片"> <Icon type='credit-card' onClick={this.clickCard} /></div>
 					{/* <div title="视频"><Upload { ...uploadProps } data={ this.uploadVideoData } accept="video/*"><Icon type="video-camera" /></Upload></div> */}
 				</div>
 				<TextArea

@@ -994,7 +994,7 @@ class MainView extends PureComponent {
 
 			// 先判断是不是群组， 再判断下群组列表里有没有这个群组，没有的话去取一下群信息
 			if(conversationType == 1 && (!conversations[conversationId])){
-				this.groupManager.fetchAllMyGroups().then(res => {
+				me.groupManager.fetchAllMyGroups().then(res => {
 					if(res.code != 0)
 					{
 						console.log("fetchMyGroup fail:" + res.description);
