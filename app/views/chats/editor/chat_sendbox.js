@@ -389,7 +389,7 @@ class ChatSendBoxView extends PureComponent {
 					{/* 上传文件 */}
 					<div title="文件"><Upload { ...uploadProps } data={ this.uploadAttachmentData }><Icon type="file" /></Upload></div>
 					{/* 上传视频 */}
-		            <div title="名片"> <Icon type='credit-card' onClick={this.clickCard} /></div>
+		            <div title="名片" onClick={this.clickCard} ></div>
 					{/* <div title="视频"><Upload { ...uploadProps } data={ this.uploadVideoData } accept="video/*"><Icon type="video-camera" /></Upload></div> */}
 				</div>
 				<TextArea
