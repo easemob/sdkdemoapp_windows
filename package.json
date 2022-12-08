@@ -78,7 +78,7 @@
     "eslint-plugin-jsx-a11y": "5.0.3",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.12.4",
-    "express": "^4.14.0",
+    "express": "^4.17.3",
     "extract-text-webpack-plugin": "^1.0.1",
     "fbjs-scripts": "^0.7.1",
     "file-loader": "^0.11.2",
